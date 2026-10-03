@@ -1,1 +1,4 @@
-# Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados
+# optimization-project
+
+Proyecto base para experimentos de optimización con funciones benchmark
+(Rosenbrock y Rastrigin) y algoritmos bioinspirados.
