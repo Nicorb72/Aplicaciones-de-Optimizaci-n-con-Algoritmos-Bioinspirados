@@ -1,4 +1,6 @@
 function: rosenbrock
-initial_point: [-1.2, 1.0]
-learning_rate: 0.001
+domain:
+  lower: -2
+  upper: 2
 iterations: 10000
+seed: 42
