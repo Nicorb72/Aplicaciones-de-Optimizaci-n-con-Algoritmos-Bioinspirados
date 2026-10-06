@@ -84,3 +84,36 @@ MPLBACKEND=Agg PYTHONPATH=src python -m visualization.animations --results-dir r
 
 La visualización no vuelve a ejecutar GD. Sus evaluaciones de Rosenbrock sirven
 para dibujar y no se suman a los contadores del experimento.
+
+## Parte 2: Optimización combinatoria (TSP - 47 Capitales de España Peninsular)
+
+Optimización de la ruta cerrada del vendedor viajero que recorre las 47 capitales de provincia de la España peninsular (excluyendo islas, Ceuta y Melilla) mediante **Colonias de Hormigas (ACO)** y **Algoritmos Genéticos (GA)**.
+
+### Datos y reproducibilidad offline
+- Capitales y coordenadas: `data/tsp/spain_capitals.csv` (47 ciudades peninsulares con latitud y longitud).
+- Matrices guardadas (distancias por carretera, tiempos y peajes): `data/tsp/matrices.npz`.
+- Vehículo y precios: `data/tsp/vehicle_specs.yaml` (SEAT León 1.5 TSI 130 CV, consumo 5.4 L/100km WLTP, Gasolina 95 a 1.58 €/L con fuente MITECO).
+- Justificación de datos y estado de autopistas de peaje: `data/tsp/sources_and_notes.md`.
+
+### Ejecución con un solo comando
+
+Para ejecutar **Colonias de Hormigas (ACO)**:
+```bash
+python -m experiments.run_tsp --config configs/tsp_aco.yaml
+```
+
+Para ejecutar **Algoritmos Genéticos (GA)**:
+```bash
+python -m experiments.run_tsp --config configs/tsp_ga.yaml
+```
+
+Para evaluar el impacto de la tarifa horaria del vendedor (`--hourly-rate`) o ejecutar el estudio paramétrico (`--study-hourly-rates`):
+```bash
+python -m experiments.run_tsp --config configs/tsp_aco.yaml --hourly-rate 50.0
+python -m experiments.run_tsp --config configs/tsp_aco.yaml --study-hourly-rates
+```
+
+- Salidas generadas:
+  - Mapa del recorrido estático: `results/tsp/{aco,ga}/spain_optimal_tour.png`.
+  - Animación GIF de la evolución: `results/tsp/{aco,ga}/tour_evolution.gif`.
+  - Resumen numérico y desglose de costos: `results/tsp/{aco,ga}/tsp_summary.json`.

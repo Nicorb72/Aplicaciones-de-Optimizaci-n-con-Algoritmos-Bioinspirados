@@ -1,0 +1,22 @@
+# Especificaciones del vehículo seleccionado y precios de referencia para el TSP peninsular
+vehicle:
+  model: "SEAT León 1.5 TSI 130 CV (Manual 6 vel.)"
+  segment: "Compacto C"
+  homologated_consumption_wltp_l_per_100km: 5.4
+  fuel_type: "Gasolina 95"
+  source: "Ficha técnica oficial SEAT España / Base de datos IDAE (Instituto para la Diversificación y Ahorro de la Energía)"
+  source_url: "https://www.seat.es/coches/leon/especificaciones"
+
+fuel_price:
+  price_eur_per_liter: 1.58
+  fuel_type: "Gasolina 95 E5"
+  query_date: "2026-10-06"
+  source: "Geoportal de Gasolineras del Ministerio para la Transición Ecológica y el Reto Demográfico (MITECO)"
+  source_url: "https://geoportalgasolineras.es/"
+
+seller:
+  default_hourly_rate_eur: 25.0
+  hourly_rate_study_range:
+    min: 0.0
+    max: 100.0
+    step: 5.0

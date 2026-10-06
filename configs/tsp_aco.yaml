@@ -1,0 +1,11 @@
+# Configuración para optimización del TSP con Colonias de Hormigas (ACO)
+method: aco
+hourly_rate: 25.0
+n_ants: 25
+iterations: 80
+alpha: 1.0
+beta: 2.5
+rho: 0.1
+q: 100.0
+seed: 42
+output_dir: results/tsp/aco

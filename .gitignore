@@ -7,6 +7,8 @@ venv/
 results/raw/*
 results/figures/*
 results/animations/*
+results/tsp/*
 !results/raw/.gitkeep
 !results/figures/.gitkeep
 !results/animations/.gitkeep
+!results/tsp/.gitkeep
