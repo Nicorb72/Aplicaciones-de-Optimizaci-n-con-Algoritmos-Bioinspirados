@@ -1,0 +1,48 @@
+id,city,province,region,lat,lon
+0,A Coruña,A Coruña,Galicia,43.3623,-8.4115
+1,Albacete,Albacete,Castilla-La Mancha,38.9943,-1.8585
+2,Alicante,Alicante,Comunidad Valenciana,38.3452,-0.481
+3,Almería,Almería,Andalucía,36.834,-2.4637
+4,Ávila,Ávila,Castilla y León,40.6565,-4.6818
+5,Badajoz,Badajoz,Extremadura,38.8794,-6.9706
+6,Barcelona,Barcelona,Cataluña,41.3851,2.1734
+7,Bilbao,Bizkaia,País Vasco,43.263,-2.935
+8,Burgos,Burgos,Castilla y León,42.344,-3.6969
+9,Cáceres,Cáceres,Extremadura,39.4753,-6.3722
+10,Cádiz,Cádiz,Andalucía,36.5271,-6.2886
+11,Castellón de la Plana,Castellón,Comunidad Valenciana,39.9864,-0.0513
+12,Ciudad Real,Ciudad Real,Castilla-La Mancha,38.9861,-3.9274
+13,Córdoba,Córdoba,Andalucía,37.8882,-4.7794
+14,Cuenca,Cuenca,Castilla-La Mancha,40.0704,-2.1374
+15,Donostia-San Sebastián,Gipuzkoa,País Vasco,43.3183,-1.9812
+16,Girona,Girona,Cataluña,41.9794,2.8214
+17,Granada,Granada,Andalucía,37.1773,-3.5986
+18,Guadalajara,Guadalajara,Castilla-La Mancha,40.6337,-3.1674
+19,Huelva,Huelva,Andalucía,37.2614,-6.9447
+20,Huesca,Huesca,Aragón,42.1362,-0.4087
+21,Jaén,Jaén,Andalucía,37.7796,-3.7849
+22,León,León,Castilla y León,42.5987,-5.5671
+23,Lleida,Lleida,Cataluña,41.6176,0.62
+24,Logroño,La Rioja,La Rioja,42.4658,-2.4499
+25,Lugo,Lugo,Galicia,43.0121,-7.5558
+26,Madrid,Madrid,Comunidad de Madrid,40.4168,-3.7038
+27,Málaga,Málaga,Andalucía,36.7213,-4.4214
+28,Murcia,Murcia,Región de Murcia,37.9922,-1.1307
+29,Ourense,Ourense,Galicia,42.3358,-7.8639
+30,Oviedo,Asturias,Principado de Asturias,43.3619,-5.8494
+31,Palencia,Palencia,Castilla y León,42.0095,-4.5288
+32,Pamplona,Navarra,Comunidad Foral de Navarra,42.8125,-1.6458
+33,Pontevedra,Pontevedra,Galicia,42.4336,-8.6481
+34,Salamanca,Salamanca,Castilla y León,40.9701,-5.6635
+35,Santander,Cantabria,Cantabria,43.4623,-3.8099
+36,Segovia,Segovia,Castilla y León,40.9429,-4.1088
+37,Sevilla,Sevilla,Andalucía,37.3891,-5.9845
+38,Soria,Soria,Castilla y León,41.7666,-2.4688
+39,Tarragona,Tarragona,Cataluña,41.1189,1.2445
+40,Teruel,Teruel,Aragón,40.3456,-1.1072
+41,Toledo,Toledo,Castilla-La Mancha,39.8628,-4.0273
+42,Valencia,Valencia,Comunidad Valenciana,39.4699,-0.3763
+43,Valladolid,Valladolid,Castilla y León,41.6523,-4.7245
+44,Vitoria-Gasteiz,Álava,País Vasco,42.8469,-2.6716
+45,Zamora,Zamora,Castilla y León,41.5034,-5.7446
+46,Zaragoza,Zaragoza,Aragón,41.6488,-0.8891

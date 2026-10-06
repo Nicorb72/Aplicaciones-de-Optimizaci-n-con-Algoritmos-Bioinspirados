@@ -1,0 +1,9 @@
+{
+  "num_cities": 47,
+  "road_factor": 1.25,
+  "avg_speed_kmh": 95.0,
+  "active_toll_pairs_documented": 8,
+  "min_distance_km": 53.6,
+  "max_distance_km": 1238.0,
+  "mean_distance_km": 521.8950971322851
+}
