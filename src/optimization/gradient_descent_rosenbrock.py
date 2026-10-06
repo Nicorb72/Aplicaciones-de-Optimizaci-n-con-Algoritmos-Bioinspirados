@@ -1,13 +1,35 @@
 import numpy as np
 
-from .rosenbrock import rosenbrock
+from .rosenbrock import rosenbrock, rosenbrock_gradient
 
 
 def run_gradient_descent_rosenbrock(initial_point, learning_rate=1e-3, iterations=1000):
     x = np.asarray(initial_point, dtype=float).copy()
+    trajectory = [x.copy()]
+    function_evaluations = 0
+    gradient_evaluations = 0
+    status = "completed"
     for _ in range(iterations):
-        grad = np.zeros_like(x)
-        grad[:-1] += -400 * x[:-1] * (x[1:] - x[:-1] ** 2) - 2 * (1 - x[:-1])
-        grad[1:] += 200 * (x[1:] - x[:-1] ** 2)
-        x -= learning_rate * grad
-    return {"best_solution": x, "best_value": float(rosenbrock(x))}
+        with np.errstate(over="ignore", invalid="ignore"):
+            grad = rosenbrock_gradient(x)
+            gradient_evaluations += 1
+            next_x = x - learning_rate * grad
+        if not np.all(np.isfinite(grad)) or not np.all(np.isfinite(next_x)):
+            status = "diverged"
+            break
+        x = next_x
+        trajectory.append(x.copy())
+    with np.errstate(over="ignore", invalid="ignore"):
+        final_value = float(rosenbrock(x))
+    function_evaluations += 1
+    if not np.isfinite(final_value):
+        status = "diverged"
+    return {
+        "best_solution": x,
+        "best_value": final_value,
+        "trajectory": np.asarray(trajectory),
+        "function_evaluations": function_evaluations,
+        "gradient_evaluations": gradient_evaluations,
+        "status": status,
+        "iterations_completed": len(trajectory) - 1,
+    }
