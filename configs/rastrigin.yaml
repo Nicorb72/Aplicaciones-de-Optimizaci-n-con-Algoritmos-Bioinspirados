@@ -2,5 +2,8 @@ function: rastrigin
 domain:
   lower: -5.12
   upper: 5.12
+dimensions: [2, 3]
+learning_rate: 0.001
 iterations: 10000
 seed: 42
+output_dir: results/animations
