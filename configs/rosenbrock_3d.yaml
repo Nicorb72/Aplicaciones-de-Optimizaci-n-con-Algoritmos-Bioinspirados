@@ -1,0 +1,12 @@
+function: rosenbrock
+dimension: 3
+domain:
+  lower: -2
+  upper: 2
+learning_rate: 0.001
+iterations: 10000
+runs: 30
+success_threshold: 0.0001
+output_dir: results/raw/rosenbrock_gd
+# Cada corrida usa seed + indice, empezando con indice 0.
+seed: 42

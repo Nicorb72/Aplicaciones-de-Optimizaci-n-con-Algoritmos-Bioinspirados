@@ -43,16 +43,11 @@ def run_experiments(config_path):
     return [_run_single(config, config["seed"] + i) for i in range(runs)]
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Ejecuta GD sobre Rosenbrock con inicio aleatorio.")
-    parser.add_argument(
-        "--config", type=Path,
-        default=Path(__file__).resolve().parents[1] / "configs" / "rosenbrock.yaml",
-    )
-    args = parser.parse_args()
-    with open(args.config, encoding="utf-8") as file:
+def run_and_save(config_path):
+    """Ejecuta las corridas, guarda sus archivos e imprime el resumen."""
+    with open(config_path, encoding="utf-8") as file:
         config = yaml.safe_load(file)
-    results = run_experiments(args.config)
+    results = run_experiments(config_path)
     summary = summarize_results(results, config["success_threshold"])
     output_dir = Path(config["output_dir"])
     if not output_dir.is_absolute():
@@ -81,3 +76,14 @@ if __name__ == "__main__":
         f"{summary['successful_runs']}/{summary['runs']} ({summary['success_rate']:.2%})"
     )
     print(f"Archivos guardados en: {output_dir}")
+    return output_dir
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Ejecuta GD sobre Rosenbrock con inicio aleatorio.")
+    parser.add_argument(
+        "--config", type=Path,
+        default=Path(__file__).resolve().parents[1] / "configs" / "rosenbrock.yaml",
+    )
+    args = parser.parse_args()
+    run_and_save(args.config)
