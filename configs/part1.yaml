@@ -3,20 +3,48 @@ runs: 30
 seed: 42
 success_threshold: 0.0001
 output_dir: results/part1
+
 gd_dimensions: [2, 3]
 heuristic_dimensions: [2]
+
 functions:
   rosenbrock:
     domain: {lower: -2, upper: 2}
     learning_rate: 0.001
+
   rastrigin:
     domain: {lower: -5.12, upper: 5.12}
     learning_rate: 0.001
+
 methods:
   gd: {iterations: 10000}
+
   # En 2D: GD usa 1 + 2*2*10000 = 40001 unidades equivalentes.
   # Los tres métodos siguientes hacen exactamente 40000 evaluaciones de f.
-  pso: {particles: 40, iterations: 999, inertia: 0.7, cognitive: 1.4, social: 1.4}
-  evolutionary: {population_size: 40, generations: 1998, mutation_sigma: 0.1}
-  de: {population_size: 40, generations: 999, f: 0.8, cr: 0.7}
-animation: {frames: 30, fps: 10}
+
+  pso:
+    particles: 40
+    iterations: 999
+    inertia: 0.7
+    cognitive: 1.4
+    social: 1.4
+
+  evolutionary:
+    population_size: 40
+    generations: 1998
+    tournament_size: 3
+    crossover_alpha: 0.3
+    mutation_rate: 0.5
+    mutation_sigma: 0.1
+    elite_fraction: 0.5
+    # Evaluaciones = population_size + (population_size - elite_size) * generations
+
+  de:
+    population_size: 40
+    generations: 999
+    f: 0.8
+    cr: 0.7
+
+animation:
+  frames: 30
+  fps: 10
