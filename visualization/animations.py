@@ -12,9 +12,17 @@ from matplotlib.patches import FancyBboxPatch, Rectangle
 import numpy as np
 
 from optimization.rosenbrock import rosenbrock
+from optimization.rastrigin import rastrigin
 
 
-def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fps=10):
+def rosenbrock_isosurface(x1, x2, level):
+    """Despeja x3 en f(x1,x2,x3)=level; devuelve las dos ramas de la superficie."""
+    base = 100 * (x2 - x1 ** 2) ** 2 + (1 - x1) ** 2 + (1 - x2) ** 2
+    offset = np.sqrt(np.maximum(level - base, 0) / 100)
+    return tuple(np.where(base <= level, x2 ** 2 + sign * offset, np.nan) for sign in (-1, 1))
+
+
+def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10):
     """Genera un GIF 2D o 3D; frames limita fotogramas, no iteraciones de GD."""
     if type(frames) is not int or frames < 2:
         raise ValueError("frames debe ser un entero mayor o igual a 2.")
@@ -24,7 +32,11 @@ def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fp
     payload = json.loads((results_dir / "summary.json").read_text(encoding="utf-8"))
     dimension = payload["config"]["dimension"]
     if dimension not in (2, 3):
-        raise ValueError("Esta animación admite únicamente Rosenbrock 2D o 3D.")
+        raise ValueError("Esta animación admite únicamente dimensiones 2D o 3D.")
+    config = payload["config"]
+    name, method = config["function"], config.get("method", "gd")
+    objective = {"rosenbrock": rosenbrock, "rastrigin": rastrigin}[name]
+    minimum = np.ones(dimension) if name == "rosenbrock" else np.zeros(dimension)
     with (results_dir / "runs.csv").open(newline="", encoding="utf-8") as file:
         rows = list(csv.DictReader(file))
     selected = next((row for row in rows if row["run_id"] == run_id), None)
@@ -32,10 +44,15 @@ def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fp
         raise ValueError("run_id debe identificar una corrida completada con valor final finito.")
     with np.load(results_dir / "trajectories.npz", allow_pickle=False) as data:
         trajectory = data[run_id]
+    populations = None
+    if method == "pso":
+        with np.load(results_dir / "populations.npz", allow_pickle=False) as data:
+            populations = data[run_id]
     indices = np.linspace(0, len(trajectory) - 1, min(frames, len(trajectory)), dtype=int)
 
-    lower = np.minimum(trajectory.min(axis=0), 1.0)
-    upper = np.maximum(trajectory.max(axis=0), 1.0)
+    points = trajectory if populations is None else populations.reshape(-1, dimension)
+    lower = np.minimum(points.min(axis=0), minimum)
+    upper = np.maximum(points.max(axis=0), minimum)
     padding = np.maximum(0.15 * (upper - lower), 0.1)
     palette = {
         "background": "#fff7f3", "panel": "#fffcfa", "border": "#e7ccd9",
@@ -51,7 +68,7 @@ def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fp
         x = np.linspace(center[0] - half_size[0], center[0] + half_size[0], 200)
         y = np.linspace(center[1] - half_size[1], center[1] + half_size[1], 200)
         X, Y = np.meshgrid(x, y)
-        Z = np.array([[rosenbrock([xi, yi]) for xi in x] for yi in y])
+        Z = np.array([[objective([xi, yi]) for xi in x] for yi in y])
         levels = np.geomspace(1e-4, Z.max(), 28)
         cmap = LinearSegmentedColormap.from_list("valley", ["#fff8ed", "#f9dce6", "#e4cee9", "#baa5d2"])
         ax.contourf(X, Y, Z, levels=levels, cmap=cmap, norm=LogNorm(), extend="min", zorder=0)
@@ -59,6 +76,17 @@ def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fp
         ax.set_aspect("equal")
     else:
         # Los tres ejes son coordenadas de entrada; f(x) aparece en la tarjeta.
+        if name == "rosenbrock":
+            X, Y = np.meshgrid(np.linspace(lower[0] - padding[0], upper[0] + padding[0], 100),
+                               np.linspace(lower[1] - padding[1], upper[1] + padding[1], 100))
+            for level, color in [(10.0, "#b49bd0"), (1.0, "#ed9bbf")]:
+                for surface in rosenbrock_isosurface(X, Y, level):
+                    surface = np.where((surface >= lower[2] - padding[2]) & (surface <= upper[2] + padding[2]), surface, np.nan)
+                    if np.count_nonzero(np.isfinite(surface)) >= 4:
+                        ax.plot_surface(X, Y, surface, color=color, alpha=0.23, linewidth=0,
+                                        rcount=40, ccount=40, shade=False)
+            ax.text2D(0.01, 0.96, "Superficies: f = 1 (rosa), f = 10 (lavanda)",
+                      transform=ax.transAxes, fontsize=8, color=palette["text"])
         ax.set(xlim=(lower[0] - padding[0], upper[0] + padding[0]),
                ylim=(lower[1] - padding[1], upper[1] + padding[1]),
                zlim=(lower[2] - padding[2], upper[2] + padding[2]), zlabel="$x_3$")
@@ -69,11 +97,14 @@ def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fp
             axis.label.set_color(palette["muted"])
             axis.line.set_color(palette["border"])
     glow, = ax.plot([], [], color=palette["rose"], linewidth=7, alpha=0.12, zorder=3)
-    line, = ax.plot([], [], color=palette["rose"], linewidth=2, label="Recorrido", zorder=4)
+    line, = ax.plot([], [], color=palette["rose"], linewidth=2, label="Recorrido" if method == "gd" else "Mejor conocido", zorder=4)
     halo, = ax.plot([], [], "o", color=palette["rose"], markersize=19, alpha=0.12, zorder=5)
     point, = ax.plot([], [], marker="$\\heartsuit$", color=palette["rose"], markersize=12, markeredgecolor=palette["panel"], markeredgewidth=0.6, label="Punto actual", zorder=6)
     ax.scatter(*trajectory[0], facecolor=palette["panel"], edgecolor=palette["text"], s=40, label="Inicio", zorder=5)
-    ax.scatter(*np.ones(dimension), color=palette["gold"], marker="*", s=150, edgecolor=palette["background"], label="Mínimo global", zorder=5)
+    ax.scatter(*minimum, color=palette["gold"], marker="*", s=150, edgecolor=palette["background"], label="Mínimo global", zorder=5)
+    swarm = None
+    if populations is not None:
+        swarm, = ax.plot([], [], linestyle="None", marker="o", color=palette["lavender"], markersize=4, alpha=0.65)
     ax.set(xlabel="$x_1$", ylabel="$x_2$")
     ax.tick_params(colors=palette["muted"], labelsize=9, length=3)
     ax.xaxis.label.set_color(palette["muted"])
@@ -99,13 +130,16 @@ def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fp
     progress = Rectangle((0.08, 0.25), 0, 0.018, facecolor=palette["rose"])
     panel.add_patch(progress)
     progress_label = panel.text(0.92, 0.17, "", ha="right", color=palette["muted"], fontsize=10)
-    panel.text(0.08, 0.075, f"Tasa de aprendizaje  {payload['config']['learning_rate']:g}", color=palette["muted"], fontsize=9)
+    detail = (f"Tasa de aprendizaje  {config.get('learning_rate', config.get('parameters', {}).get('learning_rate', 0)):g}"
+              if method == "gd" else f"Enjambre: {populations.shape[1]} partículas lavanda" if populations is not None else "Mejor punto conocido")
+    panel.text(0.08, 0.075, detail, color=palette["muted"], fontsize=9)
     for tape_x, angle in [(0.25, 3), (0.75, -3)]:
         fig.add_artist(Rectangle((tape_x, 0.837), 0.09, 0.022, angle=angle, transform=fig.transFigure, facecolor=palette["tape"], alpha=0.65, zorder=10))
-    fig.text(0.07, 0.925, "Rosenbrock", color=palette["rose"], fontsize=30, family="DejaVu Serif", style="italic")
+    fig.text(0.07, 0.925, name.capitalize(), color=palette["rose"], fontsize=30, family="DejaVu Serif", style="italic")
     fig.text(0.355, 0.933, "$\\heartsuit$", color=palette["lavender"], fontsize=20, rotation=12)
     dimension_label = "DOS" if dimension == 2 else "TRES"
-    fig.text(0.072, 0.878, f"DESCENSO POR GRADIENTE  /  {dimension_label} DIMENSIONES", color=palette["muted"], fontsize=9)
+    method_label = {"gd": "DESCENSO POR GRADIENTE", "pso": "ENJAMBRE DE PARTÍCULAS", "evolutionary": "EVOLUTIVO", "de": "EVOLUCIÓN DIFERENCIAL"}[method]
+    fig.text(0.072, 0.878, f"{method_label}  /  {dimension_label} DIMENSIONES", color=palette["muted"], fontsize=9)
     fig.text(0.94, 0.93, f"{run_id.upper()}  ·  SEMILLA {selected['seed']}", ha="right", color=palette["muted"], fontsize=10)
     fig.text(0.94, 0.884, f"Umbral de éxito  {payload['summary']['success_threshold']:g}", ha="right", color=palette["muted"], fontsize=9)
     fig.text(
@@ -126,7 +160,12 @@ def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fp
             glow.set_data_3d(line.get_data_3d())
             point.set_data_3d(trajectory[index:index + 1].T)
             halo.set_data_3d(point.get_data_3d())
-        value = rosenbrock(trajectory[index])
+        if swarm is not None:
+            if dimension == 2:
+                swarm.set_data(populations[index].T)
+            else:
+                swarm.set_data_3d(populations[index].T)
+        value = objective(trajectory[index])
         value_label.set_text(f"{value:.3e}")
         title.set_text(f"{index:,} / {len(trajectory) - 1:,}".replace(",", " "))
         fraction = index / (len(trajectory) - 1) if len(trajectory) > 1 else 1.0
@@ -136,7 +175,8 @@ def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fp
             state.set_text("Umbral alcanzado" if value <= payload["summary"]["success_threshold"] else "Recorrido completo")
         else:
             state.set_text("En progreso")
-        return line, point, title, glow, halo, value_label, progress, progress_label, state
+        artists = (line, point, title, glow, halo, value_label, progress, progress_label, state)
+        return artists + (swarm,) if swarm is not None else artists
 
     output_dir = Path(output_dir) / f"{dimension}d"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -147,6 +187,11 @@ def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fp
     finally:
         plt.close(fig)
     return path
+
+
+def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fps=10):
+    """Nombre conservado para los comandos y pruebas anteriores de Persona 1."""
+    return animate_saved(results_dir, output_dir, run_id, frames, fps)
 
 
 if __name__ == "__main__":

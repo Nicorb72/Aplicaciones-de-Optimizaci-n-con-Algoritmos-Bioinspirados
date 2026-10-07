@@ -1,6 +1,15 @@
-from optimization.gradient_descent_rastrigin import run_gradient_descent_rastrigin
-from results.animations.rastrigin_animation import animate_trajectory
 from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(ROOT / "src"))
+
+from optimization.gradient_descent_rastrigin import run_gradient_descent_rastrigin
+from optimization.benchmark import run_configuration
+from optimization.result_storage import save_results
+from visualization.animations import animate_saved
+from visualization.plot_benchmark import plot_configuration, select_run
 import argparse
 import numpy as np
 import yaml
@@ -42,7 +51,13 @@ if __name__ == "__main__":
         "--config", type=Path,
         default=Path(__file__).resolve().parents[1] / "configs" / "rastrigin.yaml",
     )
+    parser.add_argument("--frames", type=int, default=30)
+    parser.add_argument("--fps", type=int, default=10)
+    parser.add_argument("--figures-dir", type=Path, default=ROOT / "results/figures/rastrigin_gd")
+    parser.add_argument("--animations-dir", type=Path, default=ROOT / "results/animations/rastrigin_gd")
     args = parser.parse_args()
+    if args.frames < 2 or not 1 <= args.fps <= 100:
+        parser.error("Se requiere frames >= 2 y fps entre 1 y 100.")
     with open(args.config, encoding="utf-8") as file:
         config = yaml.safe_load(file)
 
@@ -52,16 +67,15 @@ if __name__ == "__main__":
     output_dir.mkdir(parents=True, exist_ok=True)
 
     for dimension in config["dimensions"]:
-        result = _run_single(config, dimension)
-        gif_path = output_dir / f"rastrigin_gd_{dimension}d.gif"
-        last_move = animate_trajectory(result["trajectory"], config["domain"], gif_path)
-        print(
-            f"[{dimension}D] seed={result['seed']}, status={result['status']}, "
-            f"x0={np.round(result['initial_point'], 4)}"
-        )
-        print(
-            f"      x_final={np.round(result['best_solution'], 4)}, "
-            f"f_final={result['best_value']:.6g}, "
-            f"iteraciones={result['iterations_completed']} (convergió hacia la iteración {last_move})"
-        )
-        print(f"      GIF guardado en: {gif_path}")
+        experiment = {"function": config["function"], "method": "gd", "dimension": dimension,
+                      "domain": config["domain"], "runs": config["runs"], "seed": config["seed"],
+                      "success_threshold": config["success_threshold"],
+                      "parameters": {"learning_rate": config["learning_rate"], "iterations": config["iterations"]}}
+        results, summary = run_configuration(experiment)
+        raw = save_results(results, summary, experiment, output_dir / f"{dimension}d")
+        plot_configuration(raw, args.figures_dir / f"{dimension}d")
+        run_id = select_run(raw)
+        if run_id:
+            gif_path = animate_saved(raw, args.animations_dir, run_id, args.frames, args.fps)
+            print(f"GIF guardado en: {gif_path}", flush=True)
+        print(f"Rastrigin {dimension}D: {summary}", flush=True)

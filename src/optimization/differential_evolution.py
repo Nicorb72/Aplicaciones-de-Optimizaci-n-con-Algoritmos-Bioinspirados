@@ -1,13 +1,18 @@
 import numpy as np
 
+from .population_utils import population_result, validate_population
+
 
 def run_differential_evolution(objective, bounds, population_size=20, generations=50, f=0.8, cr=0.7, seed=0):
+    low, high = validate_population(bounds, population_size, generations, minimum=4)
+    if not np.isfinite(f) or f <= 0 or not np.isfinite(cr) or not 0 <= cr <= 1:
+        raise ValueError("DE requiere f > 0 y 0 <= cr <= 1, ambos finitos.")
     rng = np.random.default_rng(seed)
     dim = len(bounds)
-    low = np.array([b[0] for b in bounds], dtype=float)
-    high = np.array([b[1] for b in bounds], dtype=float)
     pop = rng.uniform(low, high, size=(population_size, dim))
     scores = np.array([objective(ind) for ind in pop])
+    best = int(np.argmin(scores))
+    trajectory, values, evaluations = [pop[best].copy()], [scores[best]], [population_size]
 
     for i in range(generations):
         for j in range(population_size):
@@ -22,6 +27,9 @@ def run_differential_evolution(objective, bounds, population_size=20, generation
             if trial_score < scores[j]:
                 pop[j] = trial
                 scores[j] = trial_score
+        best = int(np.argmin(scores))
+        trajectory.append(pop[best].copy())
+        values.append(scores[best])
+        evaluations.append(evaluations[-1] + population_size)
 
-    best_idx = int(np.argmin(scores))
-    return {"best_solution": pop[best_idx], "best_value": float(scores[best_idx])}
+    return population_result(trajectory, values, evaluations)

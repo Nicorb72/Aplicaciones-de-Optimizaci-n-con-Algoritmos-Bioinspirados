@@ -1,7 +1,5 @@
-from optimization.evolutionary import run_evolutionary
-from optimization.rastrigin import rastrigin
+from .run_part1 import main
 
 
 if __name__ == "__main__":
-    result = run_evolutionary(rastrigin, [(-5.12, 5.12), (-5.12, 5.12)])
-    print(result)
+    main(default_method="evolutionary")

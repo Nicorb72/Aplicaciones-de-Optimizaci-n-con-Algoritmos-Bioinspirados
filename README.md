@@ -34,6 +34,90 @@ python --version
 MPLBACKEND=Agg python -m pytest -q
 ```
 
+## Parte 1 completa: un comando
+
+Con el entorno activado, desde la raíz del repositorio:
+
+```bash
+MPLBACKEND=Agg python -m experiments.run_part1
+```
+
+Ejecuta **300 corridas**: GD sobre Rosenbrock y Rastrigin en 2D y 3D, y PSO,
+evolutivo y DE sobre ambas funciones en 2D; 30 corridas por configuración.
+Los parámetros están en `configs/part1.yaml`, incluidas las semillas 42–71,
+el umbral de éxito, los tamaños de población y los coeficientes de los algoritmos.
+
+Genera en `results/part1/`:
+
+- `raw/{función}/{método}/{dimensión}/`: CSV de corridas, JSON con configuración,
+  estadísticas y costos; trayectorias NPZ y, para PSO, posiciones del enjambre.
+- `figures/`: convergencia y trayectoria por configuración.
+- `animations/`: GIF de GD 2D/3D y PSO 2D para ambas funciones.
+- `comparisons/all/report.md`: tablas y discusión de resultados y costos.
+- `comparisons/all/comparison.csv`, `comparison.json` y `environment.json`:
+  datos de la comparación y versiones utilizadas.
+
+El costo equivalente es `N_f + 2*d*N_grad`: una convención basada en diferencias
+centrales, aunque GD usa derivadas analíticas. Los experimentos principales 2D
+usan 40001 unidades para GD completado y 40000 para cada heurístico. Se informan
+también los contadores por separado. Los resultados 3D de GD se analizan aparte.
+
+Consulta la [metodología y guía de sustentación](docs/parte1_metodologia.md) y la
+[copia de los resultados verificados](docs/resultados/report.md). El reporte no
+afirma superioridad universal de un método ni confunde el costo equivalente con
+el tiempo de ejecución.
+La [verificación de esta entrega](docs/verificacion_parte1.md) registra las pruebas
+y la demostración: 84 pruebas aprobadas y 31,32 segundos para la demo en esta máquina.
+
+### Demostración corta
+
+```bash
+MPLBACKEND=Agg python -m experiments.run_part1 --config configs/part1_demo.yaml
+```
+
+Mantiene 30 corridas por configuración, con un presupuesto de búsqueda menor y
+ocho fotogramas por GIF. Escribe en `results/part1_demo/`, sin reemplazar los
+resultados principales. El experimento completo puede tardar varios minutos;
+la demostración es la que se debe cronometrar en la máquina de sustentación.
+
+### Selección y regeneración
+
+```bash
+# Ejecutar solamente un método sobre las dos funciones:
+MPLBACKEND=Agg python -m experiments.run_pso
+MPLBACKEND=Agg python -m experiments.run_evolutionary
+MPLBACKEND=Agg python -m experiments.run_differential_evolution
+
+# Elegir una función, método y dimensión:
+MPLBACKEND=Agg python -m experiments.run_part1 --function rastrigin --method gd --dimension 3
+
+# Rehacer las figuras y GIF, sin volver a optimizar:
+MPLBACKEND=Agg python -m experiments.run_part1 --render-only
+
+# Ejecutar solo cálculos y tablas, o cambiar el destino/fotogramas:
+MPLBACKEND=Agg python -m experiments.run_part1 --no-visuals
+MPLBACKEND=Agg python -m experiments.run_part1 --output-dir /tmp/parte1 --frames 60
+```
+
+`--render-only` exige resultados guardados con la misma configuración.
+Cada selección escribe su comparación en un subdirectorio propio para no
+sobrescribir la tabla completa. Las rutas de salida relativas se resuelven desde
+la raíz del repositorio. Repetir una configuración reemplaza sus archivos de salida.
+`--frames` limita los fotogramas, no las iteraciones ni los puntos guardados.
+En PSO, la línea representa los mejores puntos conocidos y los puntos lavanda
+representan las partículas reales. La corrida ilustrada es la primera exitosa,
+o la primera completada con valor finito cuando no hay éxitos.
+
+El comando independiente de Rastrigin también quedó reparado:
+
+```bash
+MPLBACKEND=Agg python -m experiments.run_rastrigin_gd
+```
+
+Usa `configs/rastrigin.yaml`: 30 corridas por dimensión, estadísticas, gráficas y
+GIF. Sus archivos van a `results/raw/rastrigin_gd`, `results/figures/rastrigin_gd`
+y `results/animations/rastrigin_gd`.
+
 ## Persona 1: Rosenbrock + descenso por gradiente
 
 Desde la raíz del repositorio y con las dependencias instaladas en el entorno
@@ -75,6 +159,9 @@ Los ejes son las tres variables de entrada `x1`, `x2`, `x3`; la estrella indica
 el mínimo global `(1, 1, 1)`. El corazón recorre los puntos guardados por GD y la
 tarjeta muestra `f(x1, x2, x3)`. El tercer eje **no** es el valor de la función.
 La cámara y los límites permanecen fijos para facilitar la lectura del movimiento.
+Las superficies transparentes rosa y lavanda representan **f=1 y f=10**,
+respectivamente: ilustran el valle de la función de tres variables. Se calculan
+despejando x3 en la ecuación f(x1,x2,x3)=c; no son una superficie de Rosenbrock 2D.
 
 Para regenerar solo el GIF 3D desde los resultados guardados:
 

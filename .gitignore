@@ -8,6 +8,8 @@ results/raw/*
 results/figures/*
 results/animations/*
 results/tsp/*
+results/part1/
+results/part1_demo/
 !results/raw/.gitkeep
 !results/figures/.gitkeep
 !results/animations/.gitkeep
