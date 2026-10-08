@@ -126,3 +126,64 @@ def test_rastrigin_command_no_longer_depends_on_ignored_code(tmp_path):
         assert data['summary']['mean_gradient_evaluations'] == 3
         with Image.open(tmp_path / f'animations/{dimension}d/trajectory_run_001.gif') as gif:
             assert gif.n_frames == 2
+
+
+@pytest.mark.parametrize('name', ['rosenbrock', 'rastrigin'])
+@pytest.mark.parametrize('kwargs', [
+    {'iterations': -1}, {'iterations': 1.5}, {'iterations': True},
+    {'learning_rate': 0}, {'learning_rate': float('nan')}, {'learning_rate': True},
+    {'initial_point': [[1, 1]]}, {'initial_point': [1]}, {'initial_point': [1, float('inf')]},
+])
+def test_gd_rejects_invalid_direct_calls(name, kwargs):
+    from optimization.benchmark import GD
+    arguments = dict(initial_point=[1., 1.], iterations=0, learning_rate=.001)
+    arguments.update(kwargs)
+    with pytest.raises(ValueError):
+        GD[name](**arguments)
+
+
+def test_html_report_preserves_data_and_resolves_figures(tmp_path):
+    from html.parser import HTMLParser
+    from urllib.parse import unquote
+    from optimization.comparison import write_comparison
+    from optimization.result_storage import save_results
+
+    config = next(configurations(short_suite(tmp_path)))
+    results, summary = run_configuration(config)
+    relative = Path(config['function']) / config['method'] / '2d'
+    save_results(results, summary, config, tmp_path / 'raw' / relative)
+    figures = tmp_path / 'figures' / relative
+    figures.mkdir(parents=True)
+    Image.new('RGB', (10, 10)).save(figures / 'convergence.png')
+    rows = [{'config': config, 'summary': summary}]
+    output = tmp_path / 'comparisons'
+    write_comparison(rows, output, tmp_path)
+
+    class ReportParser(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.images = []
+            self.cells = []
+            self.in_cell = False
+        def handle_starttag(self, tag, attrs):
+            if tag == 'img':
+                self.images.append(dict(attrs)['src'])
+            if tag == 'td':
+                self.in_cell = True
+        def handle_endtag(self, tag):
+            if tag == 'td':
+                self.in_cell = False
+        def handle_data(self, data):
+            if self.in_cell:
+                self.cells.append(data)
+
+    page = (output / 'report.html').read_text()
+    parser = ReportParser()
+    parser.feed(page)
+    assert len(parser.images) == 1
+    assert all((output / unquote(url)).is_file() for url in parser.images)
+    assert parser.cells[:4] == ['rosenbrock', '2', 'gd', '30']
+    assert f"{summary['mean_value']:.6g}" in parser.cells
+    assert '40001' not in page
+    assert '3 iteraciones' in page
+    assert json.loads((output / 'comparison.json').read_text()) == rows

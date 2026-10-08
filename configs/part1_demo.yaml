@@ -1,5 +1,5 @@
 # Demostración, no reemplaza los resultados del experimento principal.
-# Conserva 30 corridas; reduce el presupuesto de búsqueda y los fotogramas.
+# Conserva 30 corridas; reduce el presupuesto de búsqueda. GIF de 12 segundos.
 runs: 30
 seed: 42
 success_threshold: 0.0001
@@ -18,4 +18,4 @@ methods:
   pso: {particles: 10, iterations: 39, inertia: 0.7, cognitive: 1.4, social: 1.4}
   evolutionary: {population_size: 10, generations: 78, mutation_sigma: 0.1}
   de: {population_size: 10, generations: 39, f: 0.8, cr: 0.7}
-animation: {frames: 8, fps: 5}
+animation: {frames: 48, fps: 4, pacing: movement}

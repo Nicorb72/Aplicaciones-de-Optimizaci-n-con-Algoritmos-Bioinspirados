@@ -27,7 +27,7 @@ GD entrega el valor de su último punto; los heurísticos entregan el mejor cono
 
 ## Tabla 2. Costo medio por corrida
 
-Se cuentan las llamadas de optimización a f y al gradiente por separado. Las evaluaciones para dibujar quedan fuera. Definimos C = N_f + 2d N_grad: diferencias centrales necesitarían 2d llamadas a f por gradiente. Es una convención de equivalencia, NO el tiempo real ni el costo medido del gradiente analítico implementado. Con la configuración principal 2D, GD completado usa 40001 unidades y cada heurístico 40000. La diferencia de una unidad es la evaluación final de GD. En 3D, GD completado usa 60001; los resultados 3D se analizan por separado y no se usan para ordenar métodos 2D.
+Se cuentan las llamadas de optimización a f y al gradiente por separado. Las evaluaciones para dibujar quedan fuera. Definimos C = N_f + 2d N_grad: diferencias centrales necesitarían 2d llamadas a f por gradiente. Es una convención de equivalencia, NO el tiempo real ni el costo medido del gradiente analítico implementado. Los presupuestos dependen de los parámetros guardados en comparison.json. GD cuenta una llamada final a f además de sus gradientes. Los resultados 3D se analizan por separado y no se usan para ordenar métodos 2D.
 
 | Función | Dim. | Método | N_f medio | N_grad medio | C medio |
 |---|---:|---|---:|---:|---:|
@@ -42,7 +42,7 @@ Se cuentan las llamadas de optimización a f y al gradiente por separado. Las ev
 | rastrigin | 2 | evolutionary | 40000 | 0 | 40000 |
 | rastrigin | 2 | de | 40000 | 0 | 40000 |
 
-Las divergencias pueden reducir el costo medio de GD porque detienen la corrida: ese menor costo no representa una mejora. Si se cambian los parámetros o se usa la configuración de demostración, los presupuestos anteriores ya no tienen por qué coincidir; la Tabla 2 siempre muestra los costos realmente contados bajo la convención elegida.
+Las divergencias pueden reducir el costo medio de GD porque detienen la corrida: ese menor costo no representa una mejora. La demostración usa un presupuesto menor que el experimento principal; la Tabla 2 siempre muestra los costos realmente contados bajo la convención elegida.
 
 ## Discusión
 
@@ -60,7 +60,7 @@ No se realizaron pruebas de significancia ni un barrido de hiperparámetros. Las
 
 ## Figuras y animaciones
 
-Las curvas muestran corridas completadas y finitas. La trayectoria ilustrada es la primera exitosa o, si no hay éxitos, la primera completada. Es una selección explícita para ilustrar, no una corrida representativa de toda la distribución. En heurísticos, la línea une mejores puntos conocidos: no es la trayectoria de una partícula individual. En PSO, los puntos lavanda del GIF sí muestran las posiciones guardadas de todas las partículas.
+Las curvas muestran corridas completadas y finitas. La trayectoria ilustrada es la primera exitosa o, si no hay éxitos, la primera completada. Es una selección explícita para ilustrar, no una corrida representativa de toda la distribución. En heurísticos, la línea une mejores puntos conocidos: no es la trayectoria de una partícula individual. En PSO, los puntos lavanda animan las posiciones guardadas de todas las partículas. En modo movement se interpola entre estados consecutivos y se reparte el tiempo por desplazamiento; el pie del GIF lo indica. Los puntos intermedios son visuales, no nuevas iteraciones ni resultados del optimizador.
 
 La [Figura 1](../../results/part1/figures/rosenbrock/gd/2d/convergence.png) muestra convergencia de rosenbrock 2D con GD. Fuente: elaboración propia.
 

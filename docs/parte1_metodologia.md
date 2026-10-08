@@ -57,6 +57,34 @@ propuestas a ellos. GD no tiene proyección. Esta diferencia se declara como una
 limitación de la comparación; no se afirma que los cuatro algoritmos impongan
 exactamente las mismas restricciones.
 
+## Geometría: convexidad local y condicionamiento
+
+En Rosenbrock 2D, ∂f/∂x2=0 exige x2=x1². Sustituirlo en ∂f/∂x1=0
+exige x1=1. Por tanto, su único punto estacionario, y único mínimo local,
+es (1,1). No es globalmente convexa: por ejemplo, en (0,1) su Hessiana
+tiene una entrada diagonal negativa. En el óptimo la Hessiana es:
+
+\[
+H(1,1)=\begin{pmatrix}802&-400\\-400&200\end{pmatrix}.
+\]
+
+Sus autovalores son aproximadamente 1001.60064 y 0.39936, ambos positivos:
+hay convexidad estricta en un entorno del óptimo. El cociente es aproximadamente
+2508, un condicionamiento alto: la curvatura transversal al valle es mucho
+mayor que la longitudinal. Un paso que evita oscilaciones transversales avanza
+lentamente por el valle. Para la aproximación cuadrática local, GD es estable
+si 0<α<2/λmáx≈0.001997. Esto explica la elección α=0.001 cerca del mínimo,
+pero **no garantiza convergencia desde todos los puntos iniciales** de Rosenbrock.
+Estos valores se obtienen de la Hessiana anterior, no de ajustar los resultados.
+
+En Rastrigin, la Hessiana es diagonal con entradas 2+40π² cos(2πxi).
+En el óptimo todas valen 2+40π²: es localmente estrictamente convexa y su
+condicionamiento allí es 1. Lejos del óptimo las entradas pueden ser negativas.
+Los numerosos mínimos locales, no un mal condicionamiento en el origen,
+explican por qué GD puede terminar con gradiente pequeño y f>0. No contamos
+exhaustivamente esos mínimos en este experimento. Una población explora varias
+regiones, aunque eso no constituye una garantía de hallar el mínimo global.
+
 ## Algoritmos implementados
 
 **GD.** Actualiza x^(t+1)=x^t−α∇f(x^t), con α=0.001 y 10000 iteraciones.
@@ -133,6 +161,15 @@ La tasa de éxito usa todas las corridas. Media, desviación muestral, mejor y
 peor consideran solo finales completados y finitos. Cada tabla informa cuántos
 se excluyeron. Con cero finales válidos se usa N/D; con uno, la desviación es N/D.
 Los costos medios incluyen todas las corridas, incluidas las divergentes.
+
+Los GIF de `run_part1` distribuyen el 90% del tiempo según la distancia recorrida
+y el 10% según las iteraciones. Interpolan linealmente entre puntos consecutivos
+solo para dibujar; esos puntos no son iteraciones adicionales ni alteran f final,
+los contadores o las estadísticas. El pie del GIF lo indica y el panel usa `≈`
+para iteraciones fraccionarias. Para PSO se interpola también el enjambre guardado;
+el ritmo usa su desplazamiento conjunto. La línea del mejor conocido puede pasar
+entre soluciones distintas: no representa una partícula física. El modo
+`--pacing iterations` permite visualizar únicamente estados reales seleccionados.
 
 La animación elige la primera corrida exitosa o, si no hay éxitos, la primera
 completada. No pretende representar la mediana de las 30 corridas. La estrella

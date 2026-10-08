@@ -43,6 +43,7 @@ def main(default_method=None):
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--frames", type=int)
     parser.add_argument("--fps", type=int)
+    parser.add_argument("--pacing", choices=["iterations", "movement"], help="Ritmo por iteraciones o por movimiento con interpolación visual.")
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--no-visuals", action="store_true", help="Ejecuta y guarda experimentos y tabla, sin renderizar.")
     mode.add_argument("--render-only", action="store_true", help="Regenera gráficos/GIF/tabla desde resultados existentes de la misma configuración.")
@@ -55,6 +56,7 @@ def main(default_method=None):
     fps = args.fps if args.fps is not None else suite["animation"]["fps"]
     if frames < 2 or not 1 <= fps <= 100:
         parser.error("Se requiere frames >= 2 y fps entre 1 y 100.")
+    pacing = args.pacing or suite["animation"].get("pacing", "iterations")
     rows = []
     for config in configurations(suite, args.method, args.function, args.dimension):
         relative = Path(config["function"]) / config["method"] / f"{config['dimension']}d"
@@ -74,7 +76,7 @@ def main(default_method=None):
             plot_configuration(raw, output / "figures" / relative)
             run_id = select_run(raw)
             if run_id and config["method"] in ("gd", "pso"):
-                path = animate_saved(raw, output / "animations" / relative.parent, run_id, frames, fps)
+                path = animate_saved(raw, output / "animations" / relative.parent, run_id, frames, fps, pacing)
                 print(f"  GIF: {path}", flush=True)
     if not rows:
         parser.error("Los filtros no seleccionaron ninguna configuración.")
@@ -83,6 +85,7 @@ def main(default_method=None):
     report_dir = output / "comparisons" / (tag or "all")
     write_comparison(rows, report_dir, output, include_figures=not args.no_visuals)
     print(f"Comparación: {report_dir / 'report.md'}", flush=True)
+    print(f"Informe visual: {report_dir / 'report.html'}", flush=True)
 
 
 if __name__ == "__main__":

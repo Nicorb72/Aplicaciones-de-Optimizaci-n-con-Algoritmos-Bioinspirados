@@ -19,4 +19,4 @@ methods:
   pso: {particles: 40, iterations: 999, inertia: 0.7, cognitive: 1.4, social: 1.4}
   evolutionary: {population_size: 40, generations: 1998, mutation_sigma: 0.1}
   de: {population_size: 40, generations: 999, f: 0.8, cr: 0.7}
-animation: {frames: 30, fps: 10}
+animation: {frames: 60, fps: 5, pacing: movement}

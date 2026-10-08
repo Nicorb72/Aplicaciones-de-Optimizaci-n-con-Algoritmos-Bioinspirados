@@ -22,7 +22,39 @@ def rosenbrock_isosurface(x1, x2, level):
     return tuple(np.where(base <= level, x2 ** 2 + sign * offset, np.nan) for sign in (-1, 1))
 
 
-def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10):
+def animation_positions(trajectory, frames, pacing="iterations", populations=None):
+    """Devuelve tiempos de la trayectoria, fraccionarios solo en modo movement.
+
+    El 90% del tiempo visual sigue la distancia recorrida y el 10% las
+    iteraciones. Así los tramos casi inmóviles no monopolizan la animación.
+    En PSO se mide el desplazamiento conjunto de las partículas reales.
+    """
+    if pacing not in ("iterations", "movement"):
+        raise ValueError("pacing debe ser iterations o movement.")
+    last = len(trajectory) - 1
+    if pacing == "iterations" or last == 0:
+        return np.linspace(0, last, min(frames, last + 1), dtype=int)
+    points = trajectory if populations is None else populations
+    steps = np.diff(points, axis=0).reshape(last, -1)
+    distances = np.linalg.norm(steps, axis=1)
+    total = distances.sum()
+    weights = 0.9 * distances / total + 0.1 / last if total > 0 else np.full(last, 1 / last)
+    clock = np.concatenate(([0.], np.cumsum(weights)))
+    positions = np.interp(np.linspace(0, clock[-1], frames), clock, np.arange(last + 1))
+    positions[0], positions[-1] = 0, last
+    return positions
+
+
+def interpolate_position(points, position):
+    """Interpola solo entre dos estados consecutivos; no ejecuta el algoritmo."""
+    left = int(position)
+    fraction = position - left
+    if fraction == 0:
+        return points[left].copy()
+    return points[left] + fraction * (points[left + 1] - points[left])
+
+
+def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10, pacing="iterations"):
     """Genera un GIF 2D o 3D; frames limita fotogramas, no iteraciones de GD."""
     if type(frames) is not int or frames < 2:
         raise ValueError("frames debe ser un entero mayor o igual a 2.")
@@ -48,7 +80,7 @@ def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10)
     if method == "pso":
         with np.load(results_dir / "populations.npz", allow_pickle=False) as data:
             populations = data[run_id]
-    indices = np.linspace(0, len(trajectory) - 1, min(frames, len(trajectory)), dtype=int)
+    indices = animation_positions(trajectory, frames, pacing, populations)
 
     points = trajectory if populations is None else populations.reshape(-1, dimension)
     lower = np.minimum(points.min(axis=0), minimum)
@@ -122,7 +154,7 @@ def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10)
         panel.axhline(ruled_y, xmin=0.04, xmax=0.96, color=palette["border"], linewidth=0.6, alpha=0.45, zorder=1)
     panel.text(0.08, 0.92, "notas del recorrido", color=palette["lavender"], fontsize=14, family="DejaVu Serif", style="italic")
     state = panel.text(0.08, 0.81, "En progreso", color=palette["rose"], fontsize=15, weight="bold")
-    panel.text(0.08, 0.66, "VALOR DE LA FUNCIÓN", color=palette["muted"], fontsize=9)
+    panel.text(0.08, 0.66, "VALOR EN EL PUNTO DIBUJADO" if pacing == "movement" else "VALOR DE LA FUNCIÓN", color=palette["muted"], fontsize=9)
     value_label = panel.text(0.08, 0.55, "", color=palette["text"], fontsize=25, family="DejaVu Sans Mono")
     panel.text(0.08, 0.42, "ITERACIÓN", color=palette["muted"], fontsize=9)
     title = panel.text(0.08, 0.34, "", color=palette["text"], fontsize=16, family="DejaVu Sans Mono")
@@ -145,32 +177,40 @@ def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10)
     fig.text(
         0.07, 0.028,
         f"{len(indices)} fotogramas · {len(trajectory)} puntos guardados · {fps} fps · El recorrido conserva todos los puntos.\n"
-        "Fuente: elaboración propia. El tiempo de reproducción no representa el tiempo de cómputo.",
+        + ("Fuente: elaboración propia. Interpolación visual entre iteraciones; tiempo repartido por movimiento."
+         if pacing == "movement" else "Fuente: elaboración propia. El tiempo de reproducción no representa el tiempo de cómputo."),
         fontsize=8, color=palette["muted"], linespacing=1.6,
     )
 
-    def update(index):
+    def update(position):
+        index = int(position)
+        current = interpolate_position(trajectory, position)
+        trail = trajectory[:index + 1]
+        if position != index:
+            trail = np.vstack((trail, current))
         if dimension == 2:
-            line.set_data(trajectory[:index + 1].T)
+            line.set_data(trail.T)
             glow.set_data(line.get_data())
-            point.set_data(trajectory[index:index + 1].T)
+            point.set_data(current[:, None])
             halo.set_data(point.get_data())
         else:
-            line.set_data_3d(trajectory[:index + 1].T)
+            line.set_data_3d(trail.T)
             glow.set_data_3d(line.get_data_3d())
-            point.set_data_3d(trajectory[index:index + 1].T)
+            point.set_data_3d(current[:, None])
             halo.set_data_3d(point.get_data_3d())
         if swarm is not None:
+            population = interpolate_position(populations, position)
             if dimension == 2:
-                swarm.set_data(populations[index].T)
+                swarm.set_data(population.T)
             else:
-                swarm.set_data_3d(populations[index].T)
-        value = objective(trajectory[index])
+                swarm.set_data_3d(population.T)
+        value = objective(current)
         value_label.set_text(f"{value:.3e}")
-        title.set_text(f"{index:,} / {len(trajectory) - 1:,}".replace(",", " "))
-        fraction = index / (len(trajectory) - 1) if len(trajectory) > 1 else 1.0
+        iteration_label = f"≈ {position:.1f}" if position != index else str(index)
+        title.set_text(f"{iteration_label} / {len(trajectory) - 1}")
+        fraction = position / (len(trajectory) - 1) if len(trajectory) > 1 else 1.0
         progress.set_width(0.84 * fraction)
-        progress_label.set_text(f"{fraction:.0%} del recorrido")
+        progress_label.set_text(f"{fraction:.0%} de las iteraciones")
         if index == len(trajectory) - 1:
             state.set_text("Umbral alcanzado" if value <= payload["summary"]["success_threshold"] else "Recorrido completo")
         else:
@@ -189,9 +229,9 @@ def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10)
     return path
 
 
-def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fps=10):
+def animate_rosenbrock(results_dir, output_dir, run_id="run_001", frames=120, fps=10, pacing="iterations"):
     """Nombre conservado para los comandos y pruebas anteriores de Persona 1."""
-    return animate_saved(results_dir, output_dir, run_id, frames, fps)
+    return animate_saved(results_dir, output_dir, run_id, frames, fps, pacing)
 
 
 if __name__ == "__main__":
@@ -202,6 +242,7 @@ if __name__ == "__main__":
     parser.add_argument("--run-id", default="run_001")
     parser.add_argument("--frames", type=int, default=120, help="Máximo de fotogramas; incluye inicio y final.")
     parser.add_argument("--fps", type=int, default=10, help="Fotogramas por segundo (1 a 100).")
+    parser.add_argument("--pacing", choices=["iterations", "movement"], default="iterations")
     args = parser.parse_args()
-    path = animate_rosenbrock(args.results_dir, args.output_dir, args.run_id, args.frames, args.fps)
+    path = animate_rosenbrock(args.results_dir, args.output_dir, args.run_id, args.frames, args.fps, args.pacing)
     print(f"GIF guardado en: {path}")

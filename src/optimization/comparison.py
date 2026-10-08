@@ -6,6 +6,8 @@ import os
 from pathlib import Path
 import sys
 
+from .html_report import write_html_report
+
 
 def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
     output_dir, artifacts_dir = Path(output_dir), Path(artifacts_dir)
@@ -48,9 +50,9 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
               "Se cuentan las llamadas de optimización a f y al gradiente por separado. Las evaluaciones para dibujar quedan fuera. "
               "Definimos C = N_f + 2d N_grad: diferencias centrales necesitarían 2d llamadas a f por gradiente. "
               "Es una convención de equivalencia, NO el tiempo real ni el costo medido del gradiente analítico implementado. "
-              "Con la configuración principal 2D, GD completado usa 40001 unidades y cada heurístico 40000. "
-              "La diferencia de una unidad es la evaluación final de GD. En 3D, GD completado usa 60001; "
-              "los resultados 3D se analizan por separado y no se usan para ordenar métodos 2D.", "",
+              "Los presupuestos dependen de los parámetros guardados en comparison.json. "
+              "GD cuenta una llamada final a f además de sus gradientes. "
+              "Los resultados 3D se analizan por separado y no se usan para ordenar métodos 2D.", "",
               "| Función | Dim. | Método | N_f medio | N_grad medio | C medio |",
               "|---|---:|---|---:|---:|---:|"]
     for row in rows:
@@ -58,7 +60,7 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
         lines.append(f"| {c['function']} | {c['dimension']} | {c['method']} | {number(s['mean_function_evaluations'])} | "
                      f"{number(s['mean_gradient_evaluations'])} | {number(s['mean_equivalent_evaluations'])} |")
     lines += ["", "Las divergencias pueden reducir el costo medio de GD porque detienen la corrida: ese menor costo no representa una mejora. "
-              "Si se cambian los parámetros o se usa la configuración de demostración, los presupuestos anteriores ya no tienen por qué coincidir; "
+              "La demostración usa un presupuesto menor que el experimento principal; "
               "la Tabla 2 siempre muestra los costos realmente contados bajo la convención elegida.", "", "## Discusión", ""]
     for name in sorted({r["config"]["function"] for r in rows}):
         group = [r for r in rows if r["config"]["function"] == name and r["config"]["dimension"] == 2]
@@ -92,7 +94,9 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
               "Las curvas muestran corridas completadas y finitas. La trayectoria ilustrada es la primera exitosa o, si no hay éxitos, "
               "la primera completada. Es una selección explícita para ilustrar, no una corrida representativa de toda la distribución. "
               "En heurísticos, la línea une mejores puntos conocidos: no es la trayectoria de una partícula individual. "
-              "En PSO, los puntos lavanda del GIF sí muestran las posiciones guardadas de todas las partículas.", ""]
+              "En PSO, los puntos lavanda animan las posiciones guardadas de todas las partículas. "
+              "En modo movement se interpola entre estados consecutivos y se reparte el tiempo por desplazamiento; "
+              "el pie del GIF lo indica. Los puntos intermedios son visuales, no nuevas iteraciones ni resultados del optimizador.", ""]
     index = 1
     for row in rows if include_figures else []:
         c = row["config"]
@@ -114,3 +118,4 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
     theory = Path(__file__).resolve().parents[2] / "docs/parte1_metodologia.md"
     lines += ["", f"[Fundamentación matemática, ecuaciones y referencias]({Path(os.path.relpath(theory, output_dir)).as_posix()})."]
     (output_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    write_html_report("\n".join(lines), rows, output_dir / "report.html", artifacts_dir.name)

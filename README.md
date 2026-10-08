@@ -54,6 +54,7 @@ Genera en `results/part1/`:
 - `figures/`: convergencia y trayectoria por configuración.
 - `animations/`: GIF de GD 2D/3D y PSO 2D para ambas funciones.
 - `comparisons/all/report.md`: tablas y discusión de resultados y costos.
+- `comparisons/all/report.html`: informe visual offline, con tablas, gráficas y GIF integrados.
 - `comparisons/all/comparison.csv`, `comparison.json` y `environment.json`:
   datos de la comparación y versiones utilizadas.
 
@@ -67,7 +68,7 @@ Consulta la [metodología y guía de sustentación](docs/parte1_metodologia.md) 
 afirma superioridad universal de un método ni confunde el costo equivalente con
 el tiempo de ejecución.
 La [verificación de esta entrega](docs/verificacion_parte1.md) registra las pruebas
-y la demostración: 84 pruebas aprobadas y 31,32 segundos para la demo en esta máquina.
+y la demostración, junto con los límites de lo que se ha comprobado.
 
 ### Demostración corta
 
@@ -76,9 +77,31 @@ MPLBACKEND=Agg python -m experiments.run_part1 --config configs/part1_demo.yaml
 ```
 
 Mantiene 30 corridas por configuración, con un presupuesto de búsqueda menor y
-ocho fotogramas por GIF. Escribe en `results/part1_demo/`, sin reemplazar los
+GIF de 48 fotogramas a 4 fps (12 segundos), con ritmo por movimiento. Escribe en `results/part1_demo/`, sin reemplazar los
 resultados principales. El experimento completo puede tardar varios minutos;
 la demostración es la que se debe cronometrar en la máquina de sustentación.
+
+### Mostrar el informe en pantalla
+
+Abre `results/part1/comparisons/all/report.html` con el navegador para presentar
+los resultados principales. La demo tiene su propio informe en
+`results/part1_demo/comparisons/all/report.html` y se identifica como demostración.
+Los informes se generan automáticamente con el comando de experimentos.
+
+En Linux, desde la raíz del repositorio:
+
+```bash
+xdg-open results/part1/comparisons/all/report.html
+```
+
+La página funciona sin conexión y muestra imágenes y GIF sin instalar nada.
+Conserva la carpeta de resultados completa: las imágenes son archivos enlazados.
+Para imprimir o guardar un PDF usa Ctrl+P; en el PDF los GIF serán estáticos.
+Para ver el Markdown dentro de VS Code, abre `report.md` y pulsa Ctrl+Shift+V.
+
+Antes de entregar, revisa [uso de IA y verificaciones](docs/uso_ia_y_verificaciones.md)
+y los [pendientes de entrega](docs/verificacion_parte1.md#entregables-externos).
+Repositorio: https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados
 
 ### Selección y regeneración
 
@@ -103,7 +126,24 @@ MPLBACKEND=Agg python -m experiments.run_part1 --output-dir /tmp/parte1 --frames
 Cada selección escribe su comparación en un subdirectorio propio para no
 sobrescribir la tabla completa. Las rutas de salida relativas se resuelven desde
 la raíz del repositorio. Repetir una configuración reemplaza sus archivos de salida.
-`--frames` limita los fotogramas, no las iteraciones ni los puntos guardados.
+`--frames` controla los fotogramas, no las iteraciones ni los puntos guardados.
+Con `pacing: movement` (predeterminado en ambos YAML), el 90% del tiempo visual
+se reparte según la distancia y el 10% según las iteraciones. Se interpolan
+posiciones entre estados consecutivos para mostrar los desplazamientos grandes
+con más calma; el GIF lo indica y muestra la iteración aproximada con `≈`.
+El valor de f en ese punto intermedio es solo visual, no un resultado nuevo.
+En PSO, el ritmo usa el movimiento de todas las partículas, no solo del mejor.
+Con `--pacing iterations` se recupera la selección original de iteraciones reales.
+
+Para regenerar la demo con el nuevo ritmo, sin recalcular las corridas:
+
+```bash
+MPLBACKEND=Agg python -m experiments.run_part1 --config configs/part1_demo.yaml --render-only
+```
+
+Para una reproducción más fluida de la misma duración, puedes agregar
+`--frames 120 --fps 10`; requiere más tiempo de renderizado. Recarga el informe
+con Ctrl+Shift+R para evitar que el navegador conserve los GIF anteriores.
 En PSO, la línea representa los mejores puntos conocidos y los puntos lavanda
 representan las partículas reales. La corrida ilustrada es la primera exitosa,
 o la primera completada con valor finito cuando no hay éxitos.
