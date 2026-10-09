@@ -101,6 +101,8 @@ Para ver el Markdown dentro de VS Code, abre `report.md` y pulsa Ctrl+Shift+V.
 
 Antes de entregar, revisa [uso de IA y verificaciones](docs/uso_ia_y_verificaciones.md)
 y los [pendientes de entrega](docs/verificacion_parte1.md#entregables-externos).
+El registro de IA incluye los prompts de Sara para Rosenbrock/GD y dos
+verificaciones reproducibles: representación 3D y conteo de evaluaciones.
 Repositorio: https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados
 
 ### Selección y regeneración
