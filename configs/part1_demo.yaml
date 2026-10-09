@@ -16,6 +16,13 @@ functions:
 methods:
   gd: {iterations: 100}
   pso: {particles: 10, iterations: 39, inertia: 0.7, cognitive: 1.4, social: 1.4}
-  evolutionary: {population_size: 10, generations: 78, mutation_sigma: 0.1}
+  evolutionary:
+  population_size: 10
+  generations: 78
+  tournament_size: 3
+  crossover_alpha: 0.3
+  mutation_rate: 0.5
+  mutation_sigma: 0.1
+  elite_fraction: 0.5
   de: {population_size: 10, generations: 39, f: 0.8, cr: 0.7}
 animation: {frames: 48, fps: 4, pacing: movement}
