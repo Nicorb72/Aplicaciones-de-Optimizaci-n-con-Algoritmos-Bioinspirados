@@ -52,12 +52,20 @@ def run_single_tsp(config, hourly_rate=None):
     return result
 
 
+def tour_edges(tour):
+    """Aristas del ciclo, sin importar la ciudad de partida ni el sentido del recorrido."""
+    n = len(tour)
+    return {frozenset((int(tour[i]), int(tour[(i + 1) % n]))) for i in range(n)}
+
+
 def main():
     root = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description="Ejecución de optimización TSP en España peninsular.")
     parser.add_argument("--config", type=Path, default=root / "configs/tsp_aco.yaml", help="Archivo YAML de configuración.")
     parser.add_argument("--hourly-rate", type=float, default=None, help="Sobrescribe el valor de la hora del vendedor (€/h).")
     parser.add_argument("--study-hourly-rates", action="store_true", help="Realiza barrido paramétrico sobre el valor de la hora.")
+    parser.add_argument("--rates", type=float, nargs="+", default=[0.0, 10.0, 25.0, 50.0, 75.0, 100.0], help="Valores de la hora (€/h) para el estudio paramétrico.")
+    parser.add_argument("--study-seeds", type=int, default=1, help="Semillas por valor de la hora en el estudio (se conserva la mejor ruta).")
     parser.add_argument("--no-gif", action="store_true", help="Omite la generación del GIF de evolución para corridas ultrarrápidas.")
     args = parser.parse_args()
 
@@ -71,19 +79,41 @@ def main():
 
     if args.study_hourly_rates:
         print("\n=== Estudio paramétrico: Variación del valor de la hora del vendedor ===", flush=True)
-        rates = [0.0, 10.0, 25.0, 50.0, 75.0, 100.0]
+        rates = args.rates
+        base_seed = int(config.get("seed", 42))
         study_results = []
+        previous_edges = None
+        first_change = None
         for rate in rates:
-            res = run_single_tsp(config, hourly_rate=rate)
+            # Con varias semillas se conserva la mejor ruta, para no confundir azar con efecto real.
+            res = None
+            for k in range(args.study_seeds):
+                candidate = run_single_tsp(dict(config, seed=base_seed + k), hourly_rate=rate)
+                if res is None or candidate["best_cost"] < res["best_cost"]:
+                    res = candidate
             bd = res["breakdown"]
             print(f"Valor hora: {rate:5.1f} €/h | Costo total: {bd['total_cost_eur']:8.2f} € | Distancia: {bd['total_distance_km']:7.1f} km | Tiempo: {bd['total_time_hours']:5.1f} h", flush=True)
+            edges = tour_edges(res["best_tour"])
+            changed = None if previous_edges is None else len(edges - previous_edges)
+            if changed is not None:
+                print(f"    Ruta frente al valor anterior: {changed} aristas distintas", flush=True)
+                if changed and first_change is None:
+                    first_change = rate
+            previous_edges = edges
             study_results.append({
                 "hourly_rate": rate,
                 "total_cost_eur": bd["total_cost_eur"],
                 "distance_km": bd["total_distance_km"],
                 "time_hours": bd["total_time_hours"],
                 "tour": [int(x) for x in res["best_tour"]],
+                "edges_changed_vs_previous": changed,
             })
+        if first_change is None:
+            print("La ruta no cambió en el rango estudiado.", flush=True)
+        else:
+            print(f"La ruta cambió por primera vez al pasar al valor de {first_change:g} €/h.", flush=True)
+        if args.study_seeds == 1:
+            print("Nota: con una sola semilla un cambio puede deberse al azar; use --study-seeds 5 o más para confirmar.", flush=True)
         study_path = output_dir / "hourly_rate_study.json"
         study_path.write_text(json.dumps(study_results, indent=2), encoding="utf-8")
         print(f"Resultados del estudio guardados en: {study_path}", flush=True)
