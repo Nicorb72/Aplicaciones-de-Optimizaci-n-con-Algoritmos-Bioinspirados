@@ -1,5 +1,9 @@
 # Parte 1: comparación de costos y resultados
 
+> Este reporte versionado conserva una corrida anterior. Para el alcance
+> actualizado (los cuatro métodos en 2D y 3D), regenéralo con
+> `python -m experiments.run_part1 --config configs/part1.yaml`.
+
 Fuente de las tablas y figuras: elaboración propia. Este informe se genera desde las corridas, no desde números escritos a mano.
 
 Umbral(es) de éxito: **0.0001**. Intervalo(s) de semillas: **42–71**.

@@ -107,6 +107,22 @@ def print_evolutionary_config(config):
     )
 
 
+def saved_rows(output):
+    """Carga todas las configuraciones ya guardadas para el informe global."""
+    rows = []
+    for summary_path in sorted(
+        output.glob("raw/*/*/*/summary.json")
+    ):
+        saved = json.loads(summary_path.read_text(encoding="utf-8"))
+        rows.append(
+            {
+                "config": saved["config"],
+                "summary": saved["summary"],
+            }
+        )
+    return rows
+
+
 def main(default_method=None):
     parser = argparse.ArgumentParser(description=__doc__)
 
@@ -320,7 +336,7 @@ def main(default_method=None):
 
             if (
                 run_id
-                and config["method"] in ("gd", "pso")
+                and config["method"] in ("gd", "pso", "evolutionary", "de")
             ):
                 path = animate_saved(
                     raw,
@@ -365,6 +381,19 @@ def main(default_method=None):
         output,
         include_figures=not args.no_visuals,
     )
+
+    # Una ejecución filtrada también actualiza el informe global. Así, por
+    # ejemplo, una corrida de --dimension 3 no deja los resultados 3D solo
+    # en comparisons/3 mientras comparisons/all conserva datos antiguos.
+    if report_dir != output / "comparisons" / "all":
+        all_rows = saved_rows(output)
+        if all_rows:
+            write_comparison(
+                all_rows,
+                output / "comparisons" / "all",
+                output,
+                include_figures=not args.no_visuals,
+            )
 
     print(
         f"Comparación: {report_dir / 'report.md'}",

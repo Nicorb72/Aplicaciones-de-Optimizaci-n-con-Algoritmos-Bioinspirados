@@ -42,8 +42,8 @@ Con el entorno activado, desde la raíz del repositorio:
 MPLBACKEND=Agg python -m experiments.run_part1
 ```
 
-Ejecuta **300 corridas**: GD sobre Rosenbrock y Rastrigin en 2D y 3D, y PSO,
-evolutivo y DE sobre ambas funciones en 2D; 30 corridas por configuración.
+Ejecuta **480 corridas**: GD, PSO, evolutivo y DE sobre Rosenbrock y Rastrigin
+en 2D y 3D; 30 corridas por configuración.
 Los parámetros están en `configs/part1.yaml`, incluidas las semillas 42–71,
 el umbral de éxito, los tamaños de población y los coeficientes de los algoritmos.
 
@@ -52,7 +52,7 @@ Genera en `results/part1/`:
 - `raw/{función}/{método}/{dimensión}/`: CSV de corridas, JSON con configuración,
   estadísticas y costos; trayectorias NPZ y, para PSO, posiciones del enjambre.
 - `figures/`: convergencia y trayectoria por configuración.
-- `animations/`: GIF de GD 2D/3D y PSO 2D para ambas funciones.
+- `animations/`: GIF de los cuatro métodos en 2D y 3D para ambas funciones.
 - `comparisons/all/report.md`: tablas y discusión de resultados y costos.
 - `comparisons/all/report.html`: informe visual offline, con tablas, gráficas y GIF integrados.
 - `comparisons/all/comparison.csv`, `comparison.json` y `environment.json`:
@@ -61,7 +61,7 @@ Genera en `results/part1/`:
 El costo equivalente es `N_f + 2*d*N_grad`: una convención basada en diferencias
 centrales, aunque GD usa derivadas analíticas. Los experimentos principales 2D
 usan 40001 unidades para GD completado y 40000 para cada heurístico. Se informan
-también los contadores por separado. Los resultados 3D de GD se analizan aparte.
+también los contadores por separado. Los resultados 2D y 3D se analizan por separado para no mezclar paisajes ni costos.
 
 Consulta la [metodología y guía de sustentación](docs/parte1_metodologia.md) y la
 [copia de los resultados verificados](docs/resultados/report.md). El reporte no
