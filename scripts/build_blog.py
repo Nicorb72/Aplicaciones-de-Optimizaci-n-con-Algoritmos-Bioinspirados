@@ -210,6 +210,25 @@ def generar_parte2():
 # GENERADOR PRINCIPAL DEL BLOG
 # ============================================================
 
+
+
+# ============================================================
+# ESTUDIO DE SENSIBILIDAD DEL TSP
+# ============================================================
+
+def generar_sensibilidad_tsp():
+    """Publica resultados nuevos de ACO y GA sin fijar cifras en el HTML."""
+    sensibilidad = {}
+    for metodo in ("aco", "ga"):
+        ruta = TSP / metodo / "hourly_rate_study.json"
+        sensibilidad[metodo] = cargar_json(ruta)
+
+    destino = DOCS / "datos" / "sensibilidad_tsp.json"
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    with destino.open("w", encoding="utf-8") as archivo:
+        json.dump(sensibilidad, archivo, ensure_ascii=False, indent=2, allow_nan=False)
+    print(f"Sensibilidad TSP actualizada: {destino}")
+
 def main():
 
     print("=== GENERADOR DEL BLOG ===")
@@ -251,6 +270,8 @@ def main():
     print(
         f"Archivo JSON actualizado: {SALIDA}"
     )
+
+    generar_sensibilidad_tsp()
 
     # Sincronizar todas las gráficas y animaciones
     sincronizar_imagenes()
