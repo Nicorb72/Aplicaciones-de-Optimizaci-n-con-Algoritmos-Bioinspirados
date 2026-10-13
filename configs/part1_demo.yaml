@@ -19,18 +19,18 @@ functions:
 
 methods:
   gd:
-    iterations: 100
+    iterations: 50
 
   pso:
     particles: 10
-    iterations: 39
+    iterations: 19
     inertia: 0.7
     cognitive: 1.4
     social: 1.4
 
   evolutionary:
     population_size: 10
-    generations: 78
+    generations: 39
     tournament_size: 3
     crossover_alpha: 0.3
     mutation_rate: 0.5
@@ -39,7 +39,7 @@ methods:
 
   de:
     population_size: 10
-    generations: 39
+    generations: 19
     f: 0.8
     cr: 0.7
 
