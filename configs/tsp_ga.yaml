@@ -3,8 +3,8 @@ method: ga
 hourly_rate: 25.0
 population_size: 100
 generations: 250
-mutation_rate: 0.25
-tournament_size: 4
+mutation_rate: 0.5
+tournament_size: 6
 elite_size: 2
 seed: 42
 output_dir: results/tsp/ga

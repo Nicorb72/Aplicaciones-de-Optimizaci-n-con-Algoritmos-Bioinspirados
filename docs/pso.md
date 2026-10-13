@@ -1,6 +1,6 @@
-# PSO 
+# PSO
 
-Autor: Sebastián Cataño 
+Autor: Sebastián Cataño
 
 Implementación: `src/optimization/pso.py` (función `run_pso`). Se ejecuta con `experiments/run_pso.py`, que llama a `run_part1.main` con el método `pso`.
 
@@ -45,13 +45,13 @@ Ejemplo en 1D: con `x = 2`, `v = 1`, `p_best = 3`, `g_best = 5`, `inertia = 0.7`
 
 ## Parámetros en `configs/part1.yaml`
 
-| Parámetro | Valor |
-|---|---|
-| `particles` | 40 |
-| `iterations` | 999 |
-| `inertia` | 0.7 |
-| `cognitive` | 1.4 |
-| `social` | 1.4 |
+| Parámetro     | Valor |
+| -------------- | ----- |
+| `particles`  | 40    |
+| `iterations` | 999   |
+| `inertia`    | 0.7   |
+| `cognitive`  | 1.4   |
+| `social`     | 1.0   |
 
 Los valores se cambian en el archivo de configuración, sin tocar el código.
 
