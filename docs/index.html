@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Reporte técnico del Trabajo 1: optimización numérica, metaheurística y combinatoria.">
+  <title>Trabajo 1 | Optimización numérica y bioinspirada</title>
+  <style>
+    :root { --fondo:#f8f9fb; --blanco:#fff; --texto:#202938; --suave:#526174; --azul:#254c74; --borde:#dbe2ea; --alerta:#fff4dd; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; font:16px/1.7 system-ui,-apple-system,Segoe UI,sans-serif; color:var(--texto); background:var(--fondo); }
+    header { background:#17334e; color:#fff; padding:58px 20px 42px; }
+    .contenedor { max-width:1060px; margin:auto; }
+    h1 { font-size:clamp(27px,4vw,43px); line-height:1.18; max-width:850px; margin:10px 0 18px; }
+    header p { color:#dbe8f5; max-width:850px; }
+    nav { padding:14px 0; display:flex; flex-wrap:wrap; gap:16px; }
+    nav a { color:#e8f4ff; text-decoration:none; }
+    nav a:hover { text-decoration:underline; }
+    main { padding:24px 18px 64px; }
+    section { background:var(--blanco); margin:20px 0; padding:26px 30px; border:1px solid var(--borde); border-radius:12px; }
+    h2 { color:var(--azul); margin-top:0; font-size:27px; }
+    h3 { color:var(--azul); font-size:19px; margin-top:28px; }
+    a { color:#135a92; }
+    .nota { background:var(--alerta); padding:14px 18px; border-left:4px solid #bd8b2c; border-radius:4px; }
+    .ecuacion { background:#f1f5f9; padding:13px; overflow-x:auto; white-space:nowrap; border-radius:8px; font-family:Georgia,serif; text-align:center; font-size:18px; }
+    .tabla { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:14px; min-width:690px; }
+    th,td { border-bottom:1px solid var(--borde); padding:10px; text-align:left; }
+    th { background:#eaf1f8; }
+    tbody tr:nth-child(even) { background:#f8fafc; }
+    figure { margin:22px 0; }
+    figcaption,.fuente { color:var(--suave); font-size:13px; }
+    .enlace { display:inline-block; border:1px solid #b3c7d9; padding:8px 13px; border-radius:8px; margin:5px 8px 5px 0; text-decoration:none; }
+    .enlace:hover { background:#edf5ff; }
+    footer { text-align:center; padding:25px; color:var(--suave); }
+    @media(max-width:600px) { section { padding:20px 16px; } }
+  </style>
+</head>
+<body>
+<header>
+  <div class="contenedor">
+    <p>Universidad Nacional de Colombia · Facultad de Minas · Semestre 2026-02</p>
+    <h1>De los gradientes a las colonias de hormigas</h1>
+    <p>Trabajo 1: Optimización numérica, metaheurística y combinatoria · Curso de Redes neuronales y algoritmos bioinspirados</p>
+    <nav aria-label="Secciones del informe">
+      <a href="#introduccion">Introducción</a><a href="#parte1">Parte 1</a><a href="#parte2">Parte 2</a>
+      <a href="#ia">Uso de IA</a><a href="#conclusiones">Conclusiones</a><a href="#referencias">Referencias</a>
+    </nav>
+  </div>
+</header>
+<main class="contenedor">
+  <section id="introduccion">
+    <h2>1. Introducción</h2>
+    <p>En este trabajo se comparan técnicas basadas en gradientes y métodos metaheurísticos para minimizar funciones continuas. Además, se implementan algoritmos combinatorios para buscar recorridos de bajo costo por las 47 capitales de provincia de la España peninsular, regresando a la ciudad de partida.</p>
+    <p>El análisis considera el valor final de la función objetivo, las evaluaciones empleadas, las tasas de éxito y las limitaciones de los datos utilizados.</p>
+    <p class="nota"><strong>Estado del reporte:</strong> borrador técnico. La comparación de heurísticos 3D, la validación completa de los datos viales, el estudio del valor de la hora y la cacería de alucinaciones requieren cierre antes de la entrega final.</p>
+  </section>
+
+  <section id="parte1">
+    <h2>2. Parte 1: optimización numérica</h2>
+    <h3>2.1. Funciones de prueba</h3>
+    <p><strong>Rosenbrock.</strong> Es una función con un valle curvo y estrecho. En dimensión <em>d</em>:</p>
+    <p class="ecuacion">f(x) = ∑<sub>i=1</sub><sup>d−1</sup> [100(x<sub>i+1</sub> − x<sub>i</sub><sup>2</sup>)<sup>2</sup> + (1 − x<sub>i</sub>)<sup>2</sup>]</p>
+    <p>Su mínimo global es 0 en el punto (1, …, 1).</p>
+    <p><strong>Rastrigin.</strong> Posee numerosos mínimos locales, lo que dificulta la búsqueda global:</p>
+    <p class="ecuacion">f(x) = 10d + ∑<sub>i=1</sub><sup>d</sup> [x<sub>i</sub><sup>2</sup> − 10 cos(2πx<sub>i</sub>)]</p>
+    <p>Su mínimo global es 0 en el origen. Ambas funciones están definidas sobre ℝ<sup>d</sup>. Los intervalos utilizados para inicializar las soluciones están indicados en las configuraciones del proyecto.</p>
+
+    <h3>2.2. Algoritmos implementados</h3>
+    <p><strong>Descenso por gradiente (GD):</strong> actualiza la solución mediante x<sub>t+1</sub> = x<sub>t</sub> − η∇f(x<sub>t</sub>).</p>
+    <p><strong>Optimización por enjambre de partículas (PSO):</strong> combina la mejor posición individual y la mejor posición conocida por el enjambre para actualizar velocidad y posición.</p>
+    <p class="ecuacion">v ← wv + c₁r₁(p − x) + c₂r₂(g − x)</p>
+    <p><strong>Algoritmo evolutivo:</strong> utiliza torneos de tamaño 3, cruce BLX-alfa (α = 0,3), mutación gaussiana (probabilidad 0,5 por coordenada y σ = 0,1) y elitismo del 50 %.</p>
+    <p><strong>Evolución diferencial (DE):</strong> genera un candidato con diferencias entre miembros de la población, realiza cruce y conserva la solución si mejora la función objetivo.</p>
+    <p class="ecuacion">v = a + F(b − c)</p>
+
+    <h3>2.3. Comparación justa</h3>
+    <p>Se registraron 30 corridas independientes por configuración, con semillas de 42 a 71 y umbral de éxito de 0,0001. Se contabilizan por separado evaluaciones de la función y evaluaciones del gradiente.</p>
+    <p class="ecuacion">Costo equivalente C = N<sub>f</sub> + 2d · N<sub>∇f</sub></p>
+    <p>La equivalencia utiliza como referencia el costo aproximado de un gradiente por diferencias centrales. No representa el tiempo real de ejecución.</p>
+    <h3>2.4. Resultados de las configuraciones registradas</h3>
+    <div class="tabla"><table>
+      <thead><tr><th>Función</th><th>Dimensión</th><th>Método</th><th>Éxito</th><th>Media final</th><th>Costo equivalente medio</th></tr></thead>
+      <tbody>
+        <tr><td>Rosenbrock</td><td>2D</td><td>GD</td><td>100 %</td><td>0,0000279564</td><td>40.001</td></tr>
+        <tr><td>Rosenbrock</td><td>3D</td><td>GD</td><td>90 %</td><td>0,0000116142</td><td>54.006</td></tr>
+        <tr><td>Rosenbrock</td><td>2D</td><td>PSO</td><td>100 %</td><td>0</td><td>40.000</td></tr>
+        <tr><td>Rosenbrock</td><td>2D</td><td>Evolutivo</td><td>100 %</td><td>0,0000050962</td><td>40.000</td></tr>
+        <tr><td>Rosenbrock</td><td>2D</td><td>DE</td><td>100 %</td><td>0</td><td>40.000</td></tr>
+        <tr><td>Rastrigin</td><td>2D</td><td>GD</td><td>0 %</td><td>15,8197</td><td>40.001</td></tr>
+        <tr><td>Rastrigin</td><td>3D</td><td>GD</td><td>0 %</td><td>24,4758</td><td>60.001</td></tr>
+        <tr><td>Rastrigin</td><td>2D</td><td>PSO</td><td>100 %</td><td>0</td><td>40.000</td></tr>
+        <tr><td>Rastrigin</td><td>2D</td><td>Evolutivo</td><td>53,3 % (16/30)</td><td>0,630141</td><td>40.000</td></tr>
+        <tr><td>Rastrigin</td><td>2D</td><td>DE</td><td>100 %</td><td>0</td><td>40.000</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fuente">Tabla 1. Resultados de los experimentos registrados. Fuente: elaboración propia, archivos CSV y JSON del proyecto. Antes de la publicación final, cotejar las cifras con la última ejecución.</p>
+    <p>En Rosenbrock 2D los cuatro métodos alcanzaron el umbral en las 30 corridas. En Rastrigin 2D, GD no obtuvo éxitos; PSO y DE lograron 30/30, mientras que el evolutivo obtuvo 16/30. Esto muestra que la multimodalidad de Rastrigin plantea mayores dificultades bajo algunas configuraciones.</p>
+    <p class="nota"><strong>Alcance:</strong> el conjunto revisado comprende 10 configuraciones y 300 corridas. Faltan integrar los resultados 3D de PSO, evolutivo y DE para ambas funciones.</p>
+    <p><a class="enlace" href="resultados/report.html">Ver reporte estadístico detallado</a> <a class="enlace" href="resultados/comparison.csv">Consultar datos CSV</a></p>
+  </section>
+
+  <section id="parte2">
+    <h2>3. Parte 2: optimización combinatoria en España</h2>
+    <p>Se busca una ruta cerrada que recorra las 47 capitales de provincia de la España peninsular y minimice el costo de transporte.</p>
+    <p class="ecuacion">Costo por tramo = h · tiempo + peajes + distancia · (consumo / 100) · precio del combustible</p>
+    <p>El valor <em>h</em> representa el costo de una hora de trabajo del vendedor. Se implementaron colonia de hormigas (ACO) y algoritmo genético (GA).</p>
+    <p><strong>ACO:</strong> construye rutas a partir de probabilidades asociadas con feromonas y características de las conexiones. Después actualiza las feromonas, considerando evaporación y refuerzo.</p>
+    <p><strong>GA:</strong> trabaja con una población de rutas representadas como permutaciones válidas, a las que aplica selección, cruce y mutación.</p>
+    <h3>3.1. Resultados almacenados para h = 25 €/h</h3>
+    <div class="tabla"><table><thead><tr><th>Método</th><th>Costo (€)</th><th>Distancia (km)</th><th>Tiempo (h)</th><th>Combustible (€)</th><th>Peajes (€)</th></tr></thead><tbody>
+      <tr><td>ACO</td><td>2.267,05</td><td>6.411,8</td><td>67,50</td><td>547,05</td><td>32,50</td></tr>
+      <tr><td>GA</td><td>2.357,47</td><td>6.633,5</td><td>69,86</td><td>565,97</td><td>45,00</td></tr>
+    </tbody></table></div>
+    <p class="fuente">Tabla 2. Resultados TSP almacenados. Fuente: elaboración propia a partir de los resúmenes de ACO y GA del repositorio.</p>
+    <p>En las ejecuciones registradas ACO obtuvo un costo 90,42 € menor que GA. Esta comparación no demuestra optimalidad global.</p>
+    <p class="nota"><strong>Limitación de los datos:</strong> la matriz emplea distancias geográficas escaladas por 1,25 y tiempos calculados a partir de 95 km/h. Es indispensable verificar distancias por carretera, peajes, tarifas de combustible y fuentes con fecha de consulta.</p>
+    <h3>3.2. Sensibilidad al valor de la hora</h3>
+    <p>El programa permite modificar el valor de la hora del vendedor. Queda pendiente incorporar una tabla de experimentos que identifique si cambia la ruta encontrada, para qué valores y con qué diferencias de costo.</p>
+    <h3>3.3. Figuras y animaciones</h3>
+    <p>Las rutas, gráficas de convergencia y animaciones se generan desde el código. Una vez verificadas las imágenes finales, deben publicarse dentro de <code>docs/</code> y citarse como figuras numeradas en el cuerpo del texto.</p>
+  </section>
+
+  <section id="ia">
+    <h2>4. Uso de inteligencia artificial y verificación</h2>
+    <p>Se utilizaron herramientas de IA como apoyo para explicar algoritmos, explorar implementaciones, depurar código y preparar la documentación. Cada propuesta requiere validación mediante pruebas y contraste con resultados o fuentes verificables.</p>
+    <h3>4.1. Cacería de la alucinación</h3>
+    <p class="nota"><strong>Pendiente de completar con evidencia del equipo.</strong> El trabajo exige cinco hallazgos genuinos que cubran al menos tres categorías, o verificaciones auténticas cuando no se hayan detectado cinco errores reales. Para cada caso debe incluirse: prompt literal, respuesta relevante, motivo de sospecha, evidencia, corrección y lección aprendida. No deben inventarse prompts ni errores.</p>
+    <p><a class="enlace" href="uso_ia_y_verificaciones.md">Consultar registro de IA y verificaciones</a></p>
+  </section>
+
+  <section id="reproducibilidad">
+    <h2>5. Reproducibilidad</h2>
+    <p>El código, las configuraciones, las semillas y los conjuntos de datos utilizados se conservan en el repositorio. La entrega final debe comprobarse desde un clon limpio, con instalaciones y ejecuciones documentadas y una demostración inferior a dos minutos.</p>
+    <p><a class="enlace" href="https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados" target="_blank" rel="noopener noreferrer">Abrir repositorio GitHub</a></p>
+  </section>
+
+  <section id="conclusiones">
+    <h2>6. Conclusiones</h2>
+    <ol>
+      <li>Las tasas de éxito dependen tanto de la geometría de la función como de la configuración y el mecanismo de búsqueda de cada método.</li>
+      <li>El presupuesto equivalente permite una comparación sistemática de evaluaciones, pero no sustituye la medición del tiempo real ni constituye garantía de convergencia.</li>
+      <li>Para el TSP, la utilidad práctica de una ruta depende de la precisión de las distancias, tiempos, peajes y costos del vehículo.</li>
+    </ol>
+  </section>
+
+  <section id="referencias">
+    <h2>7. Referencias</h2>
+    <p>Eshelman, L. J., &amp; Schaffer, J. D. (1993). Real-coded genetic algorithms and interval-schemata. En <em>Foundations of Genetic Algorithms</em> (Vol. 2, pp. 187–202). Elsevier. <a href="https://doi.org/10.1016/B978-0-08-094832-4.50018-0">https://doi.org/10.1016/B978-0-08-094832-4.50018-0</a></p>
+    <p>Goldberg, D. E., &amp; Deb, K. (1991). A comparative analysis of selection schemes used in genetic algorithms. En <em>Foundations of Genetic Algorithms</em> (Vol. 1, pp. 69–93). Elsevier. <a href="https://doi.org/10.1016/B978-0-08-050684-5.50008-2">https://doi.org/10.1016/B978-0-08-050684-5.50008-2</a></p>
+    <p>Simon Fraser University. (s. f.). <em>Rastrigin function</em>. <a href="https://www.sfu.ca/~ssurjano/rastr.html">https://www.sfu.ca/~ssurjano/rastr.html</a></p>
+    <p>Simon Fraser University. (s. f.). <em>Rosenbrock function</em>. <a href="https://www.sfu.ca/~ssurjano/rosen.html">https://www.sfu.ca/~ssurjano/rosen.html</a></p>
+    <p>Storn, R., &amp; Price, K. (1997). Differential evolution—A simple and efficient heuristic for global optimization over continuous spaces. <em>Journal of Global Optimization, 11</em>, 341–359. <a href="https://doi.org/10.1023/A:1008202821328">https://doi.org/10.1023/A:1008202821328</a></p>
+    <p class="nota"><strong>Antes de publicar como entrega final:</strong> verificar los metadatos de todas las referencias, insertar citas en el cuerpo del texto y añadir las fuentes primarias del TSP con fechas de consulta.</p>
+  </section>
+</main>
+<footer>Trabajo 1 · Redes neuronales y algoritmos bioinspirados · Universidad Nacional de Colombia</footer>
+</body>
+</html>
