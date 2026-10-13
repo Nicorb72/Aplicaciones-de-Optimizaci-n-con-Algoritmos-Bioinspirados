@@ -53,6 +53,7 @@ Por tanto, la función objetivo considera simultáneamente el costo asociado al 
 
 La versión actual del proyecto utiliza distancias y duraciones estimadas **por carretera** para las 47 capitales, obtenidas mediante la matriz de **openrouteservice** (perfil `driving-car`). La consulta registrada se hizo el **13 de octubre de 2026, a las 01:05:54 UTC**, con el servicio:
 
+`https://api.openrouteservice.org/v2/matrix/driving-car`
 
 Las distancias se expresan en **km** y las duraciones en **horas**. El origen, el perfil, la fecha, las coordenadas consultadas y otros metadatos están documentados en `data/tsp/matrices_ors_metadata.json`.
 
