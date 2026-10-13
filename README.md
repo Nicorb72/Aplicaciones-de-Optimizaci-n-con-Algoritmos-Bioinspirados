@@ -5,21 +5,80 @@ Proyecto base para experimentos de optimización con funciones benchmark
 
 ## Instalación del entorno
 
-Entorno probado: Linux y Python **3.11.16**. Las versiones de las dependencias
-directas e indirectas están fijadas con `==` en `requirements.txt`.
-`.python-version` indica a `uv` qué versión de Python utilizar.
+Las versiones de las dependencias directas e indirectas están fijadas con `==`
+en `requirements.txt`. El proyecto requiere Python **3.11 o posterior**;
+`.python-version` indica a `uv` que use Python **3.11.16**.
 
-Desde la raíz del repositorio, con `uv` instalado, crea el entorno una vez:
+### Windows (PowerShell)
+
+Abre PowerShell en la carpeta raíz del repositorio. Comprueba que tienes Python
+3.11 instalado:
+
+```powershell
+py -3.11 --version
+```
+
+Crea y activa un entorno virtual e instala las dependencias:
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Si PowerShell impide activar el entorno por la política de ejecución de scripts,
+permite la activación solo en la terminal actual y vuelve a activarlo:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+La instalación requiere internet si Python o los paquetes no están disponibles
+localmente. En cada terminal nueva, vuelve a la raíz del repositorio y ejecuta:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+$env:MPLBACKEND = "Agg"
+```
+
+Comprueba la instalación y ejecuta las pruebas:
+
+```powershell
+python --version
+python -m pytest -q
+```
+
+Ejecuta el experimento principal (480 corridas; puede tardar varios minutos):
+
+```powershell
+python -m experiments.run_part1
+```
+
+Para probar primero la demostración corta:
+
+```powershell
+python -m experiments.run_part1 --config configs/part1_demo.yaml
+```
+
+Los resultados se guardan en `results/part1/` para el experimento principal y
+en `results/part1_demo/` para la demostración. El informe generado está en
+`comparisons/all/report.html` dentro de la carpeta correspondiente; puedes
+abrirlo desde el Explorador de archivos o con:
+
+```powershell
+Start-Process results\part1\comparisons\all\report.html
+```
+
+### Linux y macOS
+
+Desde la raíz del repositorio, con `uv` instalado, crea el entorno:
 
 ```bash
 uv venv
 uv pip sync requirements.txt
 ```
-
-La instalación requiere acceso a internet si Python o los paquetes no están
-disponibles en la caché local. Los experimentos posteriores funcionan sin conexión.
-`uv pip sync` instala las versiones del archivo y retira del entorno los paquetes
-que no figuren en él. `.venv/` está excluido de Git; cada integrante crea el suyo.
 
 Activa el entorno en cada terminal nueva:
 
@@ -27,12 +86,7 @@ Activa el entorno en cada terminal nueva:
 source .venv/bin/activate
 ```
 
-Para comprobarlo:
-
-```bash
-python --version
-MPLBACKEND=Agg python -m pytest -q
-```
+`.venv/` está excluido de Git; cada integrante crea su propio entorno.
 
 ## Parte 1 completa: un comando
 
@@ -42,8 +96,8 @@ Con el entorno activado, desde la raíz del repositorio:
 MPLBACKEND=Agg python -m experiments.run_part1
 ```
 
-Ejecuta **300 corridas**: GD sobre Rosenbrock y Rastrigin en 2D y 3D, y PSO,
-evolutivo y DE sobre ambas funciones en 2D; 30 corridas por configuración.
+Ejecuta **480 corridas**: GD, PSO, evolutivo y DE sobre Rosenbrock y Rastrigin
+en 2D y 3D; 30 corridas por configuración.
 Los parámetros están en `configs/part1.yaml`, incluidas las semillas 42–71,
 el umbral de éxito, los tamaños de población y los coeficientes de los algoritmos.
 
@@ -52,7 +106,7 @@ Genera en `results/part1/`:
 - `raw/{función}/{método}/{dimensión}/`: CSV de corridas, JSON con configuración,
   estadísticas y costos; trayectorias NPZ y, para PSO, posiciones del enjambre.
 - `figures/`: convergencia y trayectoria por configuración.
-- `animations/`: GIF de GD 2D/3D y PSO 2D para ambas funciones.
+- `animations/`: GIF de los cuatro métodos en 2D y 3D para ambas funciones.
 - `comparisons/all/report.md`: tablas y discusión de resultados y costos.
 - `comparisons/all/report.html`: informe visual offline, con tablas, gráficas y GIF integrados.
 - `comparisons/all/comparison.csv`, `comparison.json` y `environment.json`:
@@ -61,7 +115,7 @@ Genera en `results/part1/`:
 El costo equivalente es `N_f + 2*d*N_grad`: una convención basada en diferencias
 centrales, aunque GD usa derivadas analíticas. Los experimentos principales 2D
 usan 40001 unidades para GD completado y 40000 para cada heurístico. Se informan
-también los contadores por separado. Los resultados 3D de GD se analizan aparte.
+también los contadores por separado. Los resultados 2D y 3D se analizan por separado para no mezclar paisajes ni costos.
 
 Consulta la [metodología y guía de sustentación](docs/parte1_metodologia.md) y la
 [copia de los resultados verificados](docs/resultados/report.md). El reporte no

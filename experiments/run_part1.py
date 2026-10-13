@@ -80,7 +80,14 @@ def print_evolutionary_config(config):
     parameters = config["parameters"]
 
     population_size = parameters["population_size"]
-    elite_fraction = parameters["elite_fraction"]
+    elite_fraction = parameters.get("elite_fraction", 0.5)
+    tournament_size = parameters.get("tournament_size", 3)
+    crossover_alpha = parameters.get("crossover_alpha", 0.3)
+    mutation_rate = parameters.get(
+        "mutation_rate",
+        1.0 / config["dimension"],
+    )
+    mutation_sigma = parameters.get("mutation_sigma", 0.1)
 
     elite_size = max(
         1,
@@ -97,14 +104,30 @@ def print_evolutionary_config(config):
         "  Evolutivo: "
         f"población={population_size}, "
         f"generaciones={parameters['generations']}, "
-        f"torneo={parameters['tournament_size']}, "
-        f"alpha={parameters['crossover_alpha']}, "
-        f"mutación={parameters['mutation_rate']}, "
-        f"sigma={parameters['mutation_sigma']}, "
+        f"torneo={tournament_size}, "
+        f"alpha={crossover_alpha}, "
+        f"mutación={mutation_rate}, "
+        f"sigma={mutation_sigma}, "
         f"élite={elite_size} de {population_size}, "
         f"evaluaciones={evaluations}",
         flush=True,
     )
+
+
+def saved_rows(output):
+    """Carga todas las configuraciones ya guardadas para el informe global."""
+    rows = []
+    for summary_path in sorted(
+        output.glob("raw/*/*/*/summary.json")
+    ):
+        saved = json.loads(summary_path.read_text(encoding="utf-8"))
+        rows.append(
+            {
+                "config": saved["config"],
+                "summary": saved["summary"],
+            }
+        )
+    return rows
 
 
 def main(default_method=None):
@@ -320,7 +343,7 @@ def main(default_method=None):
 
             if (
                 run_id
-                and config["method"] in ("gd", "pso")
+                and config["method"] in ("gd", "pso", "evolutionary", "de")
             ):
                 path = animate_saved(
                     raw,
@@ -366,9 +389,26 @@ def main(default_method=None):
         include_figures=not args.no_visuals,
     )
 
+    # Una ejecución filtrada también actualiza el informe global. Así, por
+    # ejemplo, una corrida de --dimension 3 no deja los resultados 3D solo
+    # en comparisons/3 mientras comparisons/all conserva datos antiguos.
+    if report_dir != output / "comparisons" / "all":
+        all_rows = saved_rows(output)
+        if all_rows:
+            write_comparison(
+                all_rows,
+                output / "comparisons" / "all",
+                output,
+                include_figures=not args.no_visuals,
+            )
+
     # Publicar también el informe general con rutas relativas correctas.
     # No sobrescribirlo desde experimentos filtrados o configuraciones demo.
-    if not tag and args.config.resolve() == (ROOT / "configs" / "part1.yaml").resolve():
+    if (
+        not tag
+        and args.config.resolve()
+        == (ROOT / "configs" / "part1.yaml").resolve()
+    ):
         docs_dir = ROOT / "docs" / "resultados"
         write_comparison(
             rows,

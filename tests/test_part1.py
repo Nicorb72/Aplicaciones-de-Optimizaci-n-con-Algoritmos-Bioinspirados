@@ -62,7 +62,11 @@ def short_suite(tmp_path):
 def test_suite_covers_requirements_and_equivalent_budget():
     suite = yaml.safe_load(Path("configs/part1.yaml").read_text())
     configs = list(configurations(suite))
-    assert len(configs) == 10
+    expected_count = len(suite["functions"]) * (
+        len(suite["gd_dimensions"])
+        + (len(suite["methods"]) - 1) * len(suite["heuristic_dimensions"])
+    )
+    assert len(configs) == expected_count == 16
     assert all(c["runs"] >= 30 for c in configs)
     assert {(c["function"], c["method"]) for c in configs} == {(f, m) for f in FUNCTIONS for m in ["gd", *METHODS]}
     methods = suite["methods"]
@@ -93,7 +97,9 @@ def test_cli_runs_and_renders_pso_from_saved_data(tmp_path):
     p = subprocess.run(base + ["--no-visuals"], env=env, capture_output=True, text=True, timeout=60)
     assert p.returncode == 0, p.stdout + p.stderr
     output = Path(config["output_dir"])
-    assert len(json.loads((output / "comparisons/all/comparison.json").read_text())) == 10
+    assert len(json.loads((output / "comparisons/all/comparison.json").read_text())) == len(
+        list(configurations(config))
+    )
     originals = {p: p.read_bytes() for p in (output / "raw").rglob('*') if p.is_file()}
     p = subprocess.run(base + ["--render-only", "--method", "pso", "--function", "rastrigin"], env=env, capture_output=True, text=True, timeout=60)
     assert p.returncode == 0, p.stdout + p.stderr

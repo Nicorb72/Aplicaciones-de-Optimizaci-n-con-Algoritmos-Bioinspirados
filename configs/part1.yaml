@@ -5,7 +5,7 @@ success_threshold: 0.0001
 output_dir: results/part1
 
 gd_dimensions: [2, 3]
-heuristic_dimensions: [2]
+heuristic_dimensions: [2, 3]
 
 functions:
   rosenbrock:
@@ -20,7 +20,9 @@ methods:
   gd: {iterations: 10000}
 
   # En 2D: GD usa 1 + 2*2*10000 = 40001 unidades equivalentes.
-  # Los tres métodos siguientes hacen exactamente 40000 evaluaciones de f.
+  # En 3D: GD usa 1 + 2*3*10000 = 60001 unidades equivalentes.
+  # Los tres métodos poblacionales hacen exactamente 40000 evaluaciones de f
+  # en ambas dimensiones; el costo equivalente de GD depende de d.
 
   pso:
     particles: 40
@@ -47,4 +49,5 @@ methods:
 
 animation:
   frames: 30
-  fps: 10
+  # Reproducción lenta para apreciar los paisajes y recorridos rápidos.
+  fps: 4

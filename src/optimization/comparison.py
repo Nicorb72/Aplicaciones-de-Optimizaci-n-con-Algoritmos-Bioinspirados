@@ -13,6 +13,15 @@ from .html_report import write_html_report
 def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
     output_dir, artifacts_dir = Path(output_dir), Path(artifacts_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    rows = sorted(
+        rows,
+        key=lambda row: (
+            row["config"]["function"],
+            row["config"]["dimension"],
+            row["config"]["method"],
+        ),
+    )
+    configurations_count = len(rows)
 
     (output_dir / "comparison.json").write_text(
         json.dumps(rows, indent=2, ensure_ascii=False, allow_nan=False) + "\n",
@@ -94,6 +103,11 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
         "",
         "## Tabla 1. Valores finales y éxito",
         "",
+        (
+            f"Esta tabla contiene **{configurations_count} configuraciones** "
+            "(una fila por función, dimensión y método)."
+        ),
+        "",
         "| Función | Dim. | Método | Corridas | Media | Desv. muestral | Mejor | Peor | Éxito | Excluidas |",
         "|---|---:|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
@@ -139,17 +153,20 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
         "",
         "## Tabla 2. Costo medio por corrida",
         "",
+        (
+            f"Esta tabla contiene **{configurations_count} configuraciones**, "
+            "las mismas de la Tabla 1."
+        ),
+        "",
         "Se cuentan las llamadas de optimización a f y al gradiente por separado. "
         "Las evaluaciones para dibujar quedan fuera. "
         "Definimos C = N_f + 2d N_grad: diferencias centrales necesitarían "
         "2d llamadas a f por gradiente. "
         "Es una convención de equivalencia, NO el tiempo real ni el costo medido "
         "del gradiente analítico implementado. "
-        "Con la configuración principal 2D, GD completado usa 40001 unidades "
-        "y cada heurístico 40000. "
-        "La diferencia de una unidad es la evaluación final de GD. "
-        "En 3D, GD completado usa 60001; los resultados 3D se analizan "
-        "por separado y no se usan para ordenar métodos 2D.",
+        "La Tabla 2 muestra los contadores medios obtenidos con los parámetros "
+        "guardados en comparison.json. GD incluye la evaluación final de f; "
+        "los resultados de cada dimensión se analizan por separado.",
         "",
         "| Función | Dim. | Método | N_f medio | N_grad medio | C medio |",
         "|---|---:|---|---:|---:|---:|",
@@ -183,80 +200,73 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
             for r in rows
         }
     ):
-        group = [
-            r
-            for r in rows
-            if r["config"]["function"] == name
-            and r["config"]["dimension"] == 2
-        ]
-
-        if not group:
-            continue
-
-        lines.append(
-            f"**{name.capitalize()} 2D.** "
-            + "; ".join(
-                f"{r['config']['method'].upper()}: "
-                f"{r['summary']['successful_runs']}/"
-                f"{r['summary']['runs']} éxitos, "
-                f"media {number(r['summary']['mean_value'])}"
-                for r in group
-            )
-            + "."
-        )
-
-        finite = [
-            r
-            for r in group
-            if r["summary"]["mean_value"] is not None
-        ]
-
-        if finite:
-            best_value = min(
-                r["summary"]["mean_value"]
-                for r in finite
-            )
-
-            best_names = ", ".join(
-                r["config"]["method"].upper()
-                for r in finite
-                if r["summary"]["mean_value"] == best_value
-            )
+        for dimension in sorted(
+            {
+                r["config"]["dimension"]
+                for r in rows
+                if r["config"]["function"] == name
+            }
+        ):
+            group = [
+                r
+                for r in rows
+                if r["config"]["function"] == name
+                and r["config"]["dimension"] == dimension
+            ]
 
             lines.append(
-                f"El menor promedio observado entre las configuraciones mostradas "
-                f"corresponde a {best_names}. "
-                "Es una descripción de esta muestra y estos parámetros, "
-                "no una garantía de superioridad general."
+                f"**{name.capitalize()} {dimension}D.** "
+                + "; ".join(
+                    f"{r['config']['method'].upper()}: "
+                    f"{r['summary']['successful_runs']}/"
+                    f"{r['summary']['runs']} éxitos, "
+                    f"media {number(r['summary']['mean_value'])}"
+                    for r in group
+                )
+                + "."
             )
 
-        if name == "rosenbrock":
-            lines.append(
-                "Rosenbrock tiene un valle curvo y estrecho: GD aprovecha el gradiente, "
-                "pero un paso fijo puede avanzar lentamente por el valle o divergir "
-                "desde algunos inicios. PSO, DE y el evolutivo exploran mediante "
-                "poblaciones sin calcular derivadas; su precisión final depende "
-                "de sus actualizaciones y parámetros."
-            )
-        else:
-            lines.append(
-                "Rastrigin tiene muchos mínimos locales. GD es un método local: "
-                "una corrida puede estabilizarse lejos del mínimo global. "
-                "La exploración poblacional permite comparar distintas regiones, "
-                "aunque no garantiza llegar siempre al óptimo. "
-                "La dispersión y la tasa de éxito de la Tabla 1 permiten valorar "
-                "esa diferencia."
-            )
+            finite = [
+                r for r in group
+                if r["summary"]["mean_value"] is not None
+            ]
+            if finite:
+                best_value = min(
+                    r["summary"]["mean_value"] for r in finite
+                )
+                best_names = ", ".join(
+                    r["config"]["method"].upper()
+                    for r in finite
+                    if r["summary"]["mean_value"] == best_value
+                )
+                lines.append(
+                    "El menor promedio observado entre las configuraciones "
+                    f"mostradas corresponde a {best_names}. "
+                    "Es una descripción de esta muestra y estos parámetros, "
+                    "no una garantía de superioridad general."
+                )
 
-        lines.append("")
+            if name == "rosenbrock":
+                lines.append(
+                    "Rosenbrock tiene un valle curvo y estrecho: GD aprovecha "
+                    "el gradiente, pero un paso fijo puede avanzar lentamente "
+                    "por el valle o divergir. PSO, DE y el evolutivo exploran "
+                    "mediante poblaciones sin calcular derivadas."
+                )
+            else:
+                lines.append(
+                    "Rastrigin tiene muchos mínimos locales. GD es un método "
+                    "local, mientras que la exploración poblacional permite "
+                    "comparar distintas regiones sin garantizar el mínimo global."
+                )
+            lines.append("")
 
     lines += [
         (
-            "El evolutivo conserva una fracción de élite del 50 %, "
-            "selecciona padres mediante torneos de tamaño 3 sin reemplazo "
-            "dentro de cada torneo y genera descendencia con cruce BLX-alpha. "
-            "Después aplica mutación gaussiana con probabilidad 0.5 y "
-            "desviación estándar 0.1, recortando los hijos al dominio permitido. "
+            "El evolutivo conserva soluciones mediante elitismo, selecciona "
+            "padres por torneo, genera descendencia con cruce BLX-alpha y "
+            "aplica mutación gaussiana con recorte al dominio permitido. "
+            "Los parámetros exactos se conservan en comparison.json. "
             "Estos mecanismos combinan conservación de buenas soluciones "
             "y exploración, aunque no garantizan alcanzar el mínimo global "
             "en todas las corridas. PSO combina memoria individual y colectiva. "
@@ -268,8 +278,8 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
         (
             "No se realizaron pruebas de significancia ni un barrido de hiperparámetros. "
             "Las conclusiones se limitan a estas funciones, dimensiones, semillas, "
-            "umbral y presupuestos. Los experimentos GD 3D de la configuración principal "
-            "son adicionales, no una comparación contra heurísticos 3D. "
+            "umbral y presupuestos. La configuración principal compara los cuatro "
+            "métodos en 2D y 3D; cada dimensión se interpreta por separado. "
             "Un valor calculado como cero refleja precisión finita; "
             "no demuestra que todas las coordenadas sean exactamente el óptimo "
             "en aritmética real."
@@ -356,7 +366,7 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
 
         if (
             selected
-            and c["method"] in ("gd", "pso")
+            and c["method"] in ("gd", "pso", "evolutionary", "de")
         ):
             path = (
                 artifacts_dir
@@ -392,8 +402,8 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
     )
 
     write_html_report(
-    "\n".join(lines) + "\n",
-    rows,
-    output_dir / "report.html",
-    output_dir.name,
-)
+        "\n".join(lines) + "\n",
+        rows,
+        output_dir / "report.html",
+        output_dir.name,
+    )

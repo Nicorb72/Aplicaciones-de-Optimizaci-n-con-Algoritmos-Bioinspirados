@@ -1,21 +1,22 @@
+
 # Verificación de la Parte 1
 
 Fecha: 7 de octubre de 2026. Python 3.11.16, dependencias de `requirements.txt`,
 backend gráfico Agg. Comprobaciones realizadas sobre los cambios de esta entrega.
 
-| Comprobación | Resultado observado |
-|---|---|
-| Experimento principal, `configs/part1.yaml` | 10 configuraciones, 30 corridas cada una: 300 corridas. |
-| Resultados persistidos | CSV por corrida, resumen/configuración JSON y trayectorias NPZ. |
-| Historiales heurísticos | Valores, evaluaciones y, en PSO, posiciones del enjambre guardados. |
-| Visualizaciones principales | 20 PNG y 6 GIF de 30 fotogramas, 1000×650 píxeles. |
-| GIF 3D de Rosenbrock | Superficies f=1 y f=10 junto a la trayectoria; sustitución numérica f=c verificada. |
-| Rastrigin independiente | Comando probado en 2D/3D, 30 corridas cortas por dimensión, gráficas y GIF en directorios temporales. |
-| Contadores | Contrastados con un objetivo instrumentado que cuenta llamadas reales en los tres heurísticos. |
-| Semillas | Corridas 42–71, sin reutilizar el estado del generador entre corridas. |
-| Suite de pruebas | 84 pruebas aprobadas en el entorno del proyecto. |
-| Copia limpia del código y entorno reconstruido | 84 pruebas aprobadas; instalación offline desde caché con las 16 versiones fijadas. |
-| Demostración completa | 31,32 segundos en esta máquina; exit code 0. |
+| Comprobación                                   | Resultado observado                                                                                     |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Experimento principal,`configs/part1.yaml`    | 16 configuraciones, 30 corridas cada una: 480 corridas.                                                 |
+| Resultados persistidos                          | CSV por corrida, resumen/configuración JSON y trayectorias NPZ.                                        |
+| Historiales heurísticos                        | Valores, evaluaciones y, en PSO, posiciones del enjambre guardados.                                     |
+| Visualizaciones principales                     | 32 PNG y 16 GIF de 30 fotogramas, 1000×650 píxeles.                                                   |
+| GIF 3D de Rosenbrock                            | Superficies f=1 y f=10 junto a la trayectoria; sustitución numérica f=c verificada.                   |
+| Rastrigin independiente                         | Comando probado en 2D/3D, 30 corridas cortas por dimensión, gráficas y GIF en directorios temporales. |
+| Contadores                                      | Contrastados con un objetivo instrumentado que cuenta llamadas reales en los tres heurísticos.         |
+| Semillas                                        | Corridas 42–71, sin reutilizar el estado del generador entre corridas.                                 |
+| Suite de pruebas                                | 84 pruebas aprobadas en el entorno del proyecto.                                                        |
+| Copia limpia del código y entorno reconstruido | 84 pruebas aprobadas; instalación offline desde caché con las 16 versiones fijadas.                   |
+| Demostración completa                          | 31,32 segundos en esta máquina; exit code 0.                                                           |
 
 La copia limpia incluyó los archivos versionados y los nuevos archivos de estos
 cambios, sin los resultados previos ni el entorno original. No es una prueba
@@ -56,7 +57,7 @@ cambios antes de compartirlos; los resultados pesados se regeneran por comando.
 
 Revisión posterior a la entrega registrada arriba:
 
-- Se contrastaron las 300 corridas principales guardadas: semillas 42–71,
+- Se contrastaron las 480 corridas principales guardadas: semillas 42–71,
   coordenadas finales frente a trayectorias, f final, estadísticas y equivalencia
   de costos. Las comprobaciones fueron satisfactorias.
 - La suite ampliada pasó **103 pruebas en 40,02 s** con los `RuntimeWarning`
@@ -64,11 +65,10 @@ Revisión posterior a la entrega registrada arriba:
   de Rastrigin frente a diferencias centrales en 2D/3D (el archivo de Rastrigin:
   2 pruebas aprobadas, una preexistente y una nueva). Total actual: 104 pruebas.
 - La demo completa se volvió a ejecutar mediante su comando único: **36,19 s**,
-  código de salida 0, 300 corridas, gráficas, GIF e informes Markdown y HTML.
+  código de salida 0, 480 corridas, gráficas, GIF e informes Markdown y HTML.
   El tiempo es local y no acredita rendimiento en otros equipos.
-- Se generaron `report.html` para el estudio principal, la demo y la copia
-  `docs/resultados/`. Se comprobaron los 26 archivos visuales enlazados del
-  informe principal: 20 PNG y 6 GIF legibles.
+- Se generaron `report.html` para el estudio principal y la demo. El informe
+  principal actualizado enlaza 48 archivos visuales: 32 PNG y 16 GIF legibles.
 - Se validan parámetros en las llamadas directas a ambos GD: entero no negativo
   de iteraciones, tasa finita positiva y vector inicial finito con al menos dos
   coordenadas. Cero iteraciones sigue siendo válido para evaluar el inicio.

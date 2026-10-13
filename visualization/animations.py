@@ -22,6 +22,15 @@ def rosenbrock_isosurface(x1, x2, level):
     return tuple(np.where(base <= level, x2 ** 2 + sign * offset, np.nan) for sign in (-1, 1))
 
 
+def sample_3d_landscape(objective, domain, samples=12):
+    """Muestra el paisaje 3D como puntos coloreados por el valor de f."""
+    axis = np.linspace(domain["lower"], domain["upper"], samples)
+    x1, x2, x3 = np.meshgrid(axis, axis, axis, indexing="ij")
+    points = np.column_stack((x1.ravel(), x2.ravel(), x3.ravel()))
+    values = np.asarray([objective(point) for point in points])
+    return points, values
+
+
 def animation_positions(trajectory, frames, pacing="iterations", populations=None):
     """Devuelve tiempos de la trayectoria, fraccionarios solo en modo movement.
 
@@ -54,7 +63,7 @@ def interpolate_position(points, position):
     return points[left] + fraction * (points[left + 1] - points[left])
 
 
-def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10, pacing="iterations"):
+def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=4, pacing="iterations"):
     """Genera un GIF 2D o 3D; frames limita fotogramas, no iteraciones de GD."""
     if type(frames) is not int or frames < 2:
         raise ValueError("frames debe ser un entero mayor o igual a 2.")
@@ -83,8 +92,17 @@ def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10,
     indices = animation_positions(trajectory, frames, pacing, populations)
 
     points = trajectory if populations is None else populations.reshape(-1, dimension)
-    lower = np.minimum(points.min(axis=0), minimum)
-    upper = np.maximum(points.max(axis=0), minimum)
+    domain = config["domain"]
+    lower = np.minimum(
+        points.min(axis=0),
+        np.full(dimension, domain["lower"]),
+    )
+    lower = np.minimum(lower, minimum)
+    upper = np.maximum(
+        points.max(axis=0),
+        np.full(dimension, domain["upper"]),
+    )
+    upper = np.maximum(upper, minimum)
     padding = np.maximum(0.15 * (upper - lower), 0.1)
     palette = {
         "background": "#fff7f3", "panel": "#fffcfa", "border": "#e7ccd9",
@@ -92,7 +110,13 @@ def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10,
         "lavender": "#8260aa", "gold": "#b8883d", "tape": "#f3bbd1",
     }
     fig = plt.figure(figsize=(10, 6.5), facecolor=palette["background"])
-    ax = fig.add_axes([0.07, 0.205, 0.50, 0.64], projection="3d" if dimension == 3 else None, facecolor=palette["panel"])
+    if dimension == 3:
+        axes_rect = (0.06, 0.27, 0.56, 0.59)
+        panel_rect = (0.68, 0.27, 0.27, 0.59)
+    else:
+        axes_rect = (0.07, 0.205, 0.50, 0.64)
+        panel_rect = (0.64, 0.205, 0.30, 0.64)
+    ax = fig.add_axes(axes_rect, projection="3d" if dimension == 3 else None, facecolor=palette["panel"])
     if dimension == 2:
         center = (lower + upper) / 2
         height = max(upper[1] - lower[1] + 2 * padding[1], (upper[0] - lower[0] + 2 * padding[0]) / 1.2)
@@ -107,18 +131,34 @@ def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10,
         ax.contour(X, Y, Z, levels=levels[::2], colors=palette["lavender"], alpha=0.4, linewidths=0.6, zorder=1)
         ax.set_aspect("equal")
     else:
-        # Los tres ejes son coordenadas de entrada; f(x) aparece en la tarjeta.
-        if name == "rosenbrock":
-            X, Y = np.meshgrid(np.linspace(lower[0] - padding[0], upper[0] + padding[0], 100),
-                               np.linspace(lower[1] - padding[1], upper[1] + padding[1], 100))
-            for level, color in [(10.0, "#b49bd0"), (1.0, "#ed9bbf")]:
-                for surface in rosenbrock_isosurface(X, Y, level):
-                    surface = np.where((surface >= lower[2] - padding[2]) & (surface <= upper[2] + padding[2]), surface, np.nan)
-                    if np.count_nonzero(np.isfinite(surface)) >= 4:
-                        ax.plot_surface(X, Y, surface, color=color, alpha=0.23, linewidth=0,
-                                        rcount=40, ccount=40, shade=False)
-            ax.text2D(0.01, 0.96, "Superficies: f = 1 (rosa), f = 10 (lavanda)",
-                      transform=ax.transAxes, fontsize=8, color=palette["text"])
+        # Los tres ejes son coordenadas de entrada; el color muestra f(x).
+        landscape_points, landscape_values = sample_3d_landscape(
+            objective,
+            config["domain"],
+        )
+        ax.scatter(
+            landscape_points[:, 0],
+            landscape_points[:, 1],
+            landscape_points[:, 2],
+            c=np.maximum(landscape_values, 1e-8),
+            cmap="magma_r",
+            norm=LogNorm(
+                vmin=max(float(np.min(landscape_values[landscape_values > 0])), 1e-8),
+                vmax=max(float(np.max(landscape_values)), 1e-7),
+            ),
+            s=12,
+            alpha=0.16,
+            linewidths=0,
+            label="Paisaje f(x1,x2,x3)",
+        )
+        ax.text2D(
+            0.01,
+            0.96,
+            "Color y densidad: valor de f(x1,x2,x3)",
+            transform=ax.transAxes,
+            fontsize=8,
+            color=palette["text"],
+        )
         ax.set(xlim=(lower[0] - padding[0], upper[0] + padding[0]),
                ylim=(lower[1] - padding[1], upper[1] + padding[1]),
                zlim=(lower[2] - padding[2], upper[2] + padding[2]), zlabel="$x_3$")
@@ -138,15 +178,41 @@ def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10,
     if populations is not None:
         swarm, = ax.plot([], [], linestyle="None", marker="o", color=palette["lavender"], markersize=4, alpha=0.65)
     ax.set(xlabel="$x_1$", ylabel="$x_2$")
+    if dimension == 3:
+        ax.set_zlabel("$x_3$")
+        ax.set_xlabel("$x_1$", labelpad=8)
+        ax.set_ylabel("$x_2$", labelpad=8)
+        ax.set_zlabel("$x_3$", labelpad=8)
     ax.tick_params(colors=palette["muted"], labelsize=9, length=3)
     ax.xaxis.label.set_color(palette["muted"])
     ax.yaxis.label.set_color(palette["muted"])
     for spine in ax.spines.values():
         spine.set_color(palette["border"])
-    ax.legend(loc="upper left", bbox_to_anchor=(0, -0.13), ncol=4, frameon=False, labelcolor=palette["text"], fontsize=9, handlelength=1.6, columnspacing=1.1)
+    if dimension == 3:
+        ax.legend(
+            loc="upper left",
+            bbox_to_anchor=(0.01, -0.16),
+            ncol=2,
+            frameon=False,
+            labelcolor=palette["text"],
+            fontsize=8,
+            handlelength=1.4,
+            columnspacing=1.0,
+        )
+    else:
+        ax.legend(
+            loc="upper left",
+            bbox_to_anchor=(0, -0.13),
+            ncol=4,
+            frameon=False,
+            labelcolor=palette["text"],
+            fontsize=9,
+            handlelength=1.6,
+            columnspacing=1.1,
+        )
 
     # Una tarjeta de libreta: papel redondeado, renglones y cinta decorativa.
-    panel = fig.add_axes([0.64, 0.205, 0.30, 0.64])
+    panel = fig.add_axes(panel_rect)
     panel.set(xlim=(0, 1), ylim=(0, 1), xticks=[], yticks=[])
     panel.set_axis_off()
     panel.add_patch(FancyBboxPatch((0, 0), 1, 1, boxstyle="round,pad=0.015,rounding_size=0.04", facecolor=palette["panel"], edgecolor=palette["border"], clip_on=False, zorder=0))
@@ -174,13 +240,11 @@ def animate_saved(results_dir, output_dir, run_id="run_001", frames=120, fps=10,
     fig.text(0.072, 0.878, f"{method_label}  /  {dimension_label} DIMENSIONES", color=palette["muted"], fontsize=9)
     fig.text(0.94, 0.93, f"{run_id.upper()}  ·  SEMILLA {selected['seed']}", ha="right", color=palette["muted"], fontsize=10)
     fig.text(0.94, 0.884, f"Umbral de éxito  {payload['summary']['success_threshold']:g}", ha="right", color=palette["muted"], fontsize=9)
-    fig.text(
-        0.07, 0.028,
-        f"{len(indices)} fotogramas · {len(trajectory)} puntos guardados · {fps} fps · El recorrido conserva todos los puntos.\n"
-        + ("Fuente: elaboración propia. Interpolación visual entre iteraciones; tiempo repartido por movimiento."
-         if pacing == "movement" else "Fuente: elaboración propia. El tiempo de reproducción no representa el tiempo de cómputo."),
-        fontsize=8, color=palette["muted"], linespacing=1.6,
+    footer = (
+        f"{len(indices)} fotogramas · {len(trajectory)} puntos · {fps} fps"
+        + (" · interpolación visual por movimiento" if pacing == "movement" else "")
     )
+    fig.text(0.5, 0.025, footer, ha="center", fontsize=8, color=palette["muted"])
 
     def update(position):
         index = int(position)
@@ -241,7 +305,7 @@ if __name__ == "__main__":
     parser.add_argument("--output-dir", type=Path, default=root / "results/animations/rosenbrock_gd")
     parser.add_argument("--run-id", default="run_001")
     parser.add_argument("--frames", type=int, default=120, help="Máximo de fotogramas; incluye inicio y final.")
-    parser.add_argument("--fps", type=int, default=10, help="Fotogramas por segundo (1 a 100).")
+    parser.add_argument("--fps", type=int, default=4, help="Fotogramas por segundo (1 a 100).")
     parser.add_argument("--pacing", choices=["iterations", "movement"], default="iterations")
     args = parser.parse_args()
     path = animate_rosenbrock(args.results_dir, args.output_dir, args.run_id, args.frames, args.fps, args.pacing)

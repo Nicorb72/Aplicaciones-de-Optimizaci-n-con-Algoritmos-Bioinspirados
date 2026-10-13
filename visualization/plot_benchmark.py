@@ -9,6 +9,15 @@ import numpy as np
 from optimization.benchmark import FUNCTIONS
 
 
+def sample_3d_landscape(objective, domain, samples=18):
+    """Muestra el paisaje 3D como puntos coloreados por f(x1, x2, x3)."""
+    axis = np.linspace(domain["lower"], domain["upper"], samples)
+    X, Y, Z = np.meshgrid(axis, axis, axis, indexing="ij")
+    points = np.column_stack((X.ravel(), Y.ravel(), Z.ravel()))
+    values = np.asarray([objective(point) for point in points])
+    return points, values
+
+
 def select_run(results_dir):
     with (Path(results_dir) / "runs.csv").open(newline="", encoding="utf-8") as file:
         rows = [r for r in csv.DictReader(file) if r["status"] == "completed" and np.isfinite(float(r["final_value"]))]
@@ -61,13 +70,43 @@ def plot_configuration(results_dir, output_dir):
         ax.contour(X, Y, Z, levels=np.geomspace(1e-3, max(Z.max(), 1), 20), colors="#b49bd0", linewidths=0.6)
         ax.set_aspect("equal")
     else:
+        points, values = sample_3d_landscape(
+            objective,
+            config["domain"],
+        )
+        positive = np.maximum(values, 1e-8)
+        scatter = ax.scatter(
+            points[:, 0],
+            points[:, 1],
+            points[:, 2],
+            c=positive,
+            cmap="magma_r",
+            norm=plt.Normalize(vmin=positive.min(), vmax=positive.max()),
+            s=9,
+            alpha=0.18,
+            linewidths=0,
+            label="Paisaje f(x1,x2,x3)",
+        )
+        fig.colorbar(
+            scatter,
+            ax=ax,
+            pad=0.08,
+            shrink=0.7,
+            label="Valor de la función",
+        )
         ax.set_zlabel("x3")
     ax.plot(*trajectory.T, color="#b83b76", label="GD" if method == "gd" else "Mejor conocido (no un individuo)")
     ax.scatter(*trajectory[0], color="#8260aa", label="Inicio")
     ax.scatter(*trajectory[-1], color="#b83b76", label="Final")
     minimum = np.ones(dimension) if name == "rosenbrock" else np.zeros(dimension)
     ax.scatter(*minimum, marker="*", s=120, color="#b8883d", label="Mínimo global")
-    ax.set(xlabel="x1", ylabel="x2", title=f"Trayectoria · {name.capitalize()} {dimension}D · {method.upper()}")
+    ax.set(
+        xlabel="x1",
+        ylabel="x2",
+        title=f"Trayectoria · {name.capitalize()} {dimension}D · {method.upper()}",
+    )
+    if dimension == 3:
+        ax.set_zlabel("x3")
     ax.legend(fontsize=8)
     fig.text(0.02, 0.02, f"Fuente: elaboración propia. Corrida {selected}; selección: primera exitosa, o primera completada si no hay éxitos.", fontsize=8)
     fig.savefig(output_dir / "trajectory.png", dpi=120)

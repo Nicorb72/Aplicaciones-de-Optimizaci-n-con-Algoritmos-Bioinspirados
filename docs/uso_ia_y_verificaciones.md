@@ -39,8 +39,8 @@ produjo la IA en respuesta a este mensaje.
 
 Impacto: adaptación visual de las animaciones a una paleta rosa y lavanda.
 La estética no cambia las trayectorias guardadas ni los contadores del algoritmo.
-El enunciado pide animar GD y al menos un heurístico; no exige expresamente un
-GIF separado para cada dimensión. El proyecto incluye también GD 3D.
+El enunciado inicial pedía animar GD y al menos un heurístico; la configuración
+actual genera un GIF para cada método y cada dimensión, incluido 3D.
 
 Evidencia relacionada: [animaciones](../visualization/animations.py) y
 [pruebas de fidelidad de la visualización](../tests/test_animations.py).
@@ -50,7 +50,7 @@ variables: hay que distinguir `z = f(x1,x2)` de los ejes `x1,x2,x3`.
 
 #### R03. Ilustración de Rosenbrock de tres variables
 
-> ene l gif 3d me gustaria ver tambien la función ilustrada , no solo el recorrido y termina esto : **El orden que recomiendo ahora:** reparar el comando de Rastrigin; completar sus 30 corridas y estadísticas; integrar ambos problemas en los heurísticos con contadores y resultados; añadir una animación heurística; y redactar la comparación de costos y resultados.
+> en el gif 3d me gustaria ver tambien la función ilustrada , no solo el recorrido y termina esto : **El orden que recomiendo ahora:** reparar el comando de Rastrigin; completar sus 30 corridas y estadísticas; integrar ambos problemas en los heurísticos con contadores y resultados; añadir una animación heurística; y redactar la comparación de costos y resultados.
 
 Se conserva el mensaje completo para no alterar la evidencia. El aporte
 documentado aquí se limita a la primera solicitud: representar la función de
@@ -151,10 +151,10 @@ Fuente: ejecución de `docs/evidencias_ia/verificar_rosenbrock.py`,
 9 de octubre de 2026; resultados en
 [rosenbrock_verificaciones.json](evidencias_ia/rosenbrock_verificaciones.json).
 
-| Dimensión | Punto inicial | Iteraciones | Llamadas reales a f | Llamadas reales al gradiente | Costo equivalente |
-|---|---|---:|---:|---:|---:|
-| 2 | `(-1.2, 1.0)` | 10 | 1 | 10 | 41 |
-| 3 | `(-1.2, 1.0, 0.5)` | 10 | 1 | 10 | 61 |
+| Dimensión | Punto inicial        | Iteraciones | Llamadas reales a f | Llamadas reales al gradiente | Costo equivalente |
+| ---------- | -------------------- | ----------: | ------------------: | ---------------------------: | ----------------: |
+| 2          | `(-1.2, 1.0)`      |          10 |                   1 |                           10 |                41 |
+| 3          | `(-1.2, 1.0, 0.5)` |          10 |                   1 |                           10 |                61 |
 
 5. **Conclusión e interpretación correcta:** GD evalúa `f` una vez al final
    y utiliza diez evaluaciones de su gradiente analítico en estos ejemplos.
@@ -175,7 +175,7 @@ MPLBACKEND=Agg .venv/bin/python docs/evidencias_ia/verificar_rosenbrock.py
 ```
 
 El script verifica ambos casos y guarda los resultados en
-`docs/evidencias_ia/rosenbrock_verificaciones.json`, junto con fecha y hashes
+`docs/evidencias_ia/rosenbrock_verificaciones.json`, junto con fecha y hashese
 de los archivos utilizados. No modifica algoritmos ni resultados principales.
 
 Como contraste adicional, se ejecutó:
@@ -195,14 +195,14 @@ La siguiente tabla conserva el registro previo del equipo; V01 y V02 amplían
 dos de sus controles para la parte de Sara. Las menciones a pruebas o arreglos
 en este registro histórico no certifican el estado actual de todos los métodos.
 
-| Categoría | Afirmación puesta a prueba | Evidencia y resultado | Lección |
-|---|---|---|---|
-| Matemáticas | El gradiente implementado corresponde a cada función. | Las pruebas de funciones contrastan derivadas analíticas con diferencias finitas en 2D/3D. Pasan en la suite. | Comprobar derivadas numéricamente además de derivarlas. |
-| Matemáticas | La superficie del GIF representa Rosenbrock de tres variables. | `test_isosurfaces_are_actual_rosenbrock_level_sets` sustituye sus puntos y verifica f=1 y f=10. | En tres variables, z no debe confundirse con f; hay que indicar qué representan los ejes. |
-| Código | Los contadores reflejan llamadas realmente ejecutadas. | `test_population_counts_history_and_reproducibility` instrumenta el objetivo; las pruebas de GD comprueban sus contadores separados. | Contar llamadas dentro del optimizador, no deducirlas de una gráfica. |
-| Código | La visualización reproduce los datos guardados. | `test_gif_preserves_endpoints_and_saved_data` compara cada punto animado y verifica que no se alteren archivos de resultados. | Separar cálculo, persistencia y visualización. |
-| Conceptos | Completar iteraciones equivale a encontrar el mínimo global. | No: GD Rastrigin principal completa corridas pero obtiene 0/30 éxitos en cada dimensión al umbral 0.0001. Ver `resultados/comparison.json`. | Separar `completed` de éxito, informar f final y umbral. |
-| Conceptos | C=N_f+2dN_grad mide tiempo real. | No: es una equivalencia justificada por diferencias centrales; el código usa gradientes analíticos. Ver metodología y contadores. | Declarar la convención y no interpretarla como un cronómetro. |
+| Categoría   | Afirmación puesta a prueba                                    | Evidencia y resultado                                                                                                                          | Lección                                                                                   |
+| ------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Matemáticas | El gradiente implementado corresponde a cada función.         | Las pruebas de funciones contrastan derivadas analíticas con diferencias finitas en 2D/3D. Pasan en la suite.                                 | Comprobar derivadas numéricamente además de derivarlas.                                  |
+| Matemáticas | La superficie del GIF representa Rosenbrock de tres variables. | `test_isosurfaces_are_actual_rosenbrock_level_sets` sustituye sus puntos y verifica f=1 y f=10.                                              | En tres variables, z no debe confundirse con f; hay que indicar qué representan los ejes. |
+| Código      | Los contadores reflejan llamadas realmente ejecutadas.         | `test_population_counts_history_and_reproducibility` instrumenta el objetivo; las pruebas de GD comprueban sus contadores separados.         | Contar llamadas dentro del optimizador, no deducirlas de una gráfica.                     |
+| Código      | La visualización reproduce los datos guardados.               | `test_gif_preserves_endpoints_and_saved_data` compara cada punto animado y verifica que no se alteren archivos de resultados.                | Separar cálculo, persistencia y visualización.                                           |
+| Conceptos    | Completar iteraciones equivale a encontrar el mínimo global.  | No: GD Rastrigin principal completa corridas pero obtiene 0/30 éxitos en cada dimensión al umbral 0.0001. Ver`resultados/comparison.json`. | Separar`completed` de éxito, informar f final y umbral.                                 |
+| Conceptos    | C=N_f+2dN_grad mide tiempo real.                               | No: es una equivalencia justificada por diferencias centrales; el código usa gradientes analíticos. Ver metodología y contadores.           | Declarar la convención y no interpretarla como un cronómetro.                            |
 
 En la auditoría también se encontraron parámetros inválidos aceptados por las
 llamadas directas de GD (iteraciones negativas o tasa cero) y una explicación

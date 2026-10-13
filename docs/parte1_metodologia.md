@@ -2,7 +2,7 @@
 
 ## Qué se compara
 
-Se estudian Rosenbrock y Rastrigin. GD se ejecuta en 2D y 3D; los cuatro métodos se comparan en 2D. Son diez configuraciones, con 30 corridas cada una: 300 corridas.
+Se estudian Rosenbrock y Rastrigin. Los cuatro métodos se ejecutan y comparan en 2D y 3D. Son dieciséis configuraciones, con 30 corridas cada una: 480 corridas.
 
 El archivo `configs/part1.yaml` conserva todos los parámetros. Las semillas son 42 a 71. Cada corrida construye su propio generador `default_rng(seed)`.
 
@@ -91,7 +91,7 @@ x\leftarrow\operatorname{clip}(x+v,l,u).
 
 Los vectores r1 y r2 tienen componentes uniformes independientes en [0,1). Usamos w=0.7 y c1=c2=1.4. Las velocidades iniciales son cero. Se evalúan las 40 posiciones iniciales y 40 posiciones en cada una de las 999 iteraciones. Se conservan el mejor valor ya calculado y el historial completo del enjambre; no se vuelve a evaluar g al retornar. La descripción conceptual del enjambre puede consultarse en [IEEE Technology Navigator](https://technav.ieee.org/topic/particle-swarm-optimization/).
 
-**Evolutivo.** Se aplica en 2D sobre las funciones definidas en la sección anterior. La población inicial se genera aleatoriamente dentro del dominio. Los padres se seleccionan mediante torneos de tamaño 3, sin reemplazo dentro de cada torneo, escogiendo el individuo con menor valor de la función objetivo (Goldberg & Deb, 1991). El cruce es BLX-\(\alpha\), con \(\alpha=0.3\) (Eshelman & Schaffer, 1993):
+**Evolutivo.** Se aplica en 2D y 3D sobre las funciones definidas en la sección anterior. La población inicial se genera aleatoriamente dentro del dominio. Los padres se seleccionan mediante torneos de tamaño 3, sin reemplazo dentro de cada torneo, escogiendo el individuo con menor valor de la función objetivo (Goldberg & Deb, 1991). El cruce es BLX-\(\alpha\), con \(\alpha=0.3\) (Eshelman & Schaffer, 1993):
 
 \[
 [\min(p_1,p_2)-\alpha d,\ \max(p_1,p_2)+\alpha d],
@@ -113,7 +113,7 @@ N_f=P+(P-E)G,
 
 por lo que con \(P=40\), \(E=20\) y \(G=1998\) se realizan exactamente \(40000\) evaluaciones de \(f\).
 
-**DE.** Se eligen tres individuos distintos a, b y c, excluyendo al individuo objetivo. El donante es v=clip(a+F(b−c),l,u), con F=0.8. Cada componente del candidato toma el donante con probabilidad CR=0.7; si ninguna fue elegida, se fuerza una componente aleatoria. Se acepta el candidato si mejora al objetivo. Las sustituciones son inmediatas: pueden influir en las propuestas posteriores de la misma generación. Es la variante concreta usada aquí, basada en el principio de evolución diferencial de [Storn y Price (1997)](https://doi.org/10.1023/A:1008202821328). Hace 40 evaluaciones iniciales y 40 en cada una de las 999 generaciones.
+**DE.** Se eligen tres individuos distintos a, b y c, excluyendo al individuo objetivo. El donante es v=clip(a+F(b−c),l,u), con F=0.8. Cada componente del candidato toma el donante con probabilidad CR=0.7; si ninguna fue elegida, se fuerza una componente aleatoria. Se acepta el candidato si mejora al objetivo. La población nueva se construye de forma generacional a partir de la población anterior; las sustituciones de una generación no influyen en las propuestas restantes de esa misma generación. Es la variante concreta usada aquí, basada en el principio de evolución diferencial de [Storn y Price (1997)](https://doi.org/10.1023/A:1008202821328). Hace 40 evaluaciones iniciales y 40 en cada una de las 999 generaciones.
 
 ## Qué significa comparar costos
 
@@ -132,9 +132,9 @@ La motivación son las diferencias centrales:
 
 Hay dos llamadas a f por coordenada: 2d para el vector completo. Esta es la convención sugerida en el enunciado. **El código usa gradientes analíticos**: no ejecuta esas 2d llamadas. Por eso C es un costo equivalente para comparar, no tiempo real ni una medición del costo interno de la derivada.
 
-En 2D, GD completado cuesta 1+4·10000=40001. Los tres heurísticos cuestan 40000 llamadas reales a f y cero al gradiente. La diferencia es una unidad.
+En 2D, GD completado cuesta 1+4·10000=40001. En 3D cuesta 1+6·10000=60001. Los tres métodos poblacionales cuestan 40000 llamadas reales a f y cero al gradiente en ambas dimensiones. La diferencia depende de la dimensión por el costo equivalente del gradiente.
 
-GD 3D completado cuesta 60001 y se analiza aparte. Si GD diverge antes, se incluyen sus intentos efectivamente ejecutados en el conteo; el menor costo no compensa que haya fracasado. Las llamadas de las visualizaciones no forman parte del optimizador y no alteran sus contadores.
+Los resultados 3D se analizan aparte de los 2D para no mezclar paisajes ni costos. Si GD diverge antes, se incluyen sus intentos efectivamente ejecutados en el conteo; el menor costo no compensa que haya fracasado. Las llamadas de las visualizaciones no forman parte del optimizador y no alteran sus  contadores.
 
 ## Estadísticas y selección visual
 
