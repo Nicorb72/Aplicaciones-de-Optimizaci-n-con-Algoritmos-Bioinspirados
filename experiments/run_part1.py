@@ -366,6 +366,18 @@ def main(default_method=None):
         include_figures=not args.no_visuals,
     )
 
+    # Publicar también el informe general con rutas relativas correctas.
+    # No sobrescribirlo desde experimentos filtrados o configuraciones demo.
+    if not tag and args.config.resolve() == (ROOT / "configs" / "part1.yaml").resolve():
+        docs_dir = ROOT / "docs" / "resultados"
+        write_comparison(
+            rows,
+            docs_dir,
+            output,
+            include_figures=not args.no_visuals,
+        )
+        print(f"Reporte publicado: {docs_dir / 'report.html'}", flush=True)
+
     print(
         f"Comparación: {report_dir / 'report.md'}",
         flush=True,

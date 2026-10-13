@@ -390,3 +390,10 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
         "\n".join(lines) + "\n",
         encoding="utf-8",
     )
+
+    write_html_report(
+    "\n".join(lines) + "\n",
+    rows,
+    output_dir / "report.html",
+    output_dir.name,
+)
