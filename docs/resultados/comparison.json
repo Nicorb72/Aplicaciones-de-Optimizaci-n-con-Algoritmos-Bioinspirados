@@ -11,8 +11,8 @@
       "parameters": {
         "population_size": 40,
         "generations": 999,
-        "f": 0.8,
-        "cr": 0.7
+        "f": 0.7,
+        "cr": 0.5
       },
       "runs": 30,
       "seed": 42,
@@ -50,10 +50,9 @@
         "population_size": 40,
         "generations": 1998,
         "tournament_size": 3,
-        "crossover_alpha": 0.3,
+        "crossover_alpha": 0.6,
         "mutation_rate": 0.5,
-        "mutation_sigma": 0.1,
-        "elite_fraction": 0.5
+        "elite_fraction": 0.2
       },
       "runs": 30,
       "seed": 42,
@@ -68,13 +67,13 @@
       "success_threshold": 0.0001,
       "successful_runs": 16,
       "success_rate": 0.5333333333333333,
-      "mean_value": 0.630140573054596,
-      "std_value": 0.8854313027947414,
+      "mean_value": 0.49747952854921373,
+      "std_value": 0.5694662803840395,
       "best_value": 0.0,
-      "worst_value": 3.979831190554094,
-      "mean_function_evaluations": 40000.0,
+      "worst_value": 1.9899181141865796,
+      "mean_function_evaluations": 63976.0,
       "mean_gradient_evaluations": 0.0,
-      "mean_equivalent_evaluations": 40000.0,
+      "mean_equivalent_evaluations": 63976.0,
       "gradient_equivalence_factor": 4
     }
   },
@@ -128,7 +127,7 @@
         "iterations": 999,
         "inertia": 0.7,
         "cognitive": 1.4,
-        "social": 1.4
+        "social": 1.0
       },
       "runs": 30,
       "seed": 42,
@@ -165,8 +164,8 @@
       "parameters": {
         "population_size": 40,
         "generations": 999,
-        "f": 0.8,
-        "cr": 0.7
+        "f": 0.7,
+        "cr": 0.5
       },
       "runs": 30,
       "seed": 42,
@@ -204,10 +203,9 @@
         "population_size": 40,
         "generations": 1998,
         "tournament_size": 3,
-        "crossover_alpha": 0.3,
+        "crossover_alpha": 0.6,
         "mutation_rate": 0.5,
-        "mutation_sigma": 0.1,
-        "elite_fraction": 0.5
+        "elite_fraction": 0.2
       },
       "runs": 30,
       "seed": 42,
@@ -220,15 +218,15 @@
       "included_runs": 30,
       "excluded_runs": 0,
       "success_threshold": 0.0001,
-      "successful_runs": 9,
-      "success_rate": 0.3,
-      "mean_value": 1.0612895518202075,
-      "std_value": 1.042975850779442,
-      "best_value": 9.391030175720516e-10,
-      "worst_value": 4.974790247678865,
-      "mean_function_evaluations": 40000.0,
+      "successful_runs": 7,
+      "success_rate": 0.23333333333333334,
+      "mean_value": 1.6582637691914723,
+      "std_value": 1.9784438813535121,
+      "best_value": 1.1297629498585593e-12,
+      "worst_value": 9.949560326324224,
+      "mean_function_evaluations": 63976.0,
       "mean_gradient_evaluations": 0.0,
-      "mean_equivalent_evaluations": 40000.0,
+      "mean_equivalent_evaluations": 63976.0,
       "gradient_equivalence_factor": 6
     }
   },
@@ -282,7 +280,7 @@
         "iterations": 999,
         "inertia": 0.7,
         "cognitive": 1.4,
-        "social": 1.4
+        "social": 1.0
       },
       "runs": 30,
       "seed": 42,
@@ -295,12 +293,12 @@
       "included_runs": 30,
       "excluded_runs": 0,
       "success_threshold": 0.0001,
-      "successful_runs": 25,
-      "success_rate": 0.8333333333333334,
+      "successful_runs": 26,
+      "success_rate": 0.8666666666666667,
       "mean_value": 0.1658265095155483,
-      "std_value": 0.3771382573117668,
+      "std_value": 0.45880849206359675,
       "best_value": 0.0,
-      "worst_value": 0.9949590570932898,
+      "worst_value": 1.9899181141865796,
       "mean_function_evaluations": 40000.0,
       "mean_gradient_evaluations": 0.0,
       "mean_equivalent_evaluations": 40000.0,
@@ -319,8 +317,8 @@
       "parameters": {
         "population_size": 40,
         "generations": 999,
-        "f": 0.8,
-        "cr": 0.7
+        "f": 0.7,
+        "cr": 0.5
       },
       "runs": 30,
       "seed": 42,
@@ -358,10 +356,9 @@
         "population_size": 40,
         "generations": 1998,
         "tournament_size": 3,
-        "crossover_alpha": 0.3,
+        "crossover_alpha": 0.6,
         "mutation_rate": 0.5,
-        "mutation_sigma": 0.1,
-        "elite_fraction": 0.5
+        "elite_fraction": 0.2
       },
       "runs": 30,
       "seed": 42,
@@ -376,13 +373,13 @@
       "success_threshold": 0.0001,
       "successful_runs": 30,
       "success_rate": 1.0,
-      "mean_value": 1.9721617436165487e-06,
-      "std_value": 2.0713780012497213e-06,
-      "best_value": 2.5580871072777643e-09,
-      "worst_value": 7.778062370391862e-06,
-      "mean_function_evaluations": 40000.0,
+      "mean_value": 5.185198885274211e-08,
+      "std_value": 6.75591039365331e-08,
+      "best_value": 3.694470485706e-11,
+      "worst_value": 2.239489395582151e-07,
+      "mean_function_evaluations": 63976.0,
       "mean_gradient_evaluations": 0.0,
-      "mean_equivalent_evaluations": 40000.0,
+      "mean_equivalent_evaluations": 63976.0,
       "gradient_equivalence_factor": 4
     }
   },
@@ -436,7 +433,7 @@
         "iterations": 999,
         "inertia": 0.7,
         "cognitive": 1.4,
-        "social": 1.4
+        "social": 1.0
       },
       "runs": 30,
       "seed": 42,
@@ -473,8 +470,8 @@
       "parameters": {
         "population_size": 40,
         "generations": 999,
-        "f": 0.8,
-        "cr": 0.7
+        "f": 0.7,
+        "cr": 0.5
       },
       "runs": 30,
       "seed": 42,
@@ -489,10 +486,10 @@
       "success_threshold": 0.0001,
       "successful_runs": 30,
       "success_rate": 1.0,
-      "mean_value": 0.0,
-      "std_value": 0.0,
-      "best_value": 0.0,
-      "worst_value": 0.0,
+      "mean_value": 1.4324799225346507e-19,
+      "std_value": 3.024532743332266e-19,
+      "best_value": 7.133504443498212e-22,
+      "worst_value": 1.4938013918117318e-18,
       "mean_function_evaluations": 40000.0,
       "mean_gradient_evaluations": 0.0,
       "mean_equivalent_evaluations": 40000.0,
@@ -512,10 +509,9 @@
         "population_size": 40,
         "generations": 1998,
         "tournament_size": 3,
-        "crossover_alpha": 0.3,
+        "crossover_alpha": 0.6,
         "mutation_rate": 0.5,
-        "mutation_sigma": 0.1,
-        "elite_fraction": 0.5
+        "elite_fraction": 0.2
       },
       "runs": 30,
       "seed": 42,
@@ -528,15 +524,15 @@
       "included_runs": 30,
       "excluded_runs": 0,
       "success_threshold": 0.0001,
-      "successful_runs": 0,
-      "success_rate": 0.0,
-      "mean_value": 0.007034498152614101,
-      "std_value": 0.006256425335401718,
-      "best_value": 0.0001312130969822375,
-      "worst_value": 0.025101041934497807,
-      "mean_function_evaluations": 40000.0,
+      "successful_runs": 12,
+      "success_rate": 0.4,
+      "mean_value": 0.00046255247454680026,
+      "std_value": 0.0010044226509693794,
+      "best_value": 2.7901760347105573e-07,
+      "worst_value": 0.005364605808400289,
+      "mean_function_evaluations": 63976.0,
       "mean_gradient_evaluations": 0.0,
-      "mean_equivalent_evaluations": 40000.0,
+      "mean_equivalent_evaluations": 63976.0,
       "gradient_equivalence_factor": 6
     }
   },
@@ -590,7 +586,7 @@
         "iterations": 999,
         "inertia": 0.7,
         "cognitive": 1.4,
-        "social": 1.4
+        "social": 1.0
       },
       "runs": 30,
       "seed": 42,
@@ -605,10 +601,10 @@
       "success_threshold": 0.0001,
       "successful_runs": 30,
       "success_rate": 1.0,
-      "mean_value": 3.1500625200870233e-07,
-      "std_value": 3.1747001405182703e-07,
-      "best_value": 2.1075339633139858e-11,
-      "worst_value": 1.076906273012916e-06,
+      "mean_value": 4.461074132487771e-08,
+      "std_value": 4.887797142446708e-08,
+      "best_value": 1.8635727399194895e-10,
+      "worst_value": 1.7613918946269215e-07,
       "mean_function_evaluations": 40000.0,
       "mean_gradient_evaluations": 0.0,
       "mean_equivalent_evaluations": 40000.0,

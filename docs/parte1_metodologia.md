@@ -82,38 +82,62 @@ regiones, aunque eso no constituye una garantía de hallar el mínimo global.
 
 **GD.** Actualiza x^(t+1)=x^t−α∇f(x^t), con α=0.001 y 10000 iteraciones. Calcula el gradiente analítico una vez por intento y f una sola vez al final. Guarda el punto inicial y cada punto aceptado. Si el gradiente, el candidato o el valor final dejan de ser finitos, registra `diverged`. `completed` significa que terminó el presupuesto; el éxito se evalúa aparte mediante f≤0.0001. El campo histórico `best_value` de GD contiene el valor FINAL, no un mínimo buscado a lo largo de toda la trayectoria. Las tablas lo identifican como tal.
 
-**PSO.** Para cada partícula se mantienen posición x, velocidad v, mejor posición individual p y mejor posición colectiva g. Se actualiza:
+**PSO.** Para cada partícula se mantienen posición \(x\), velocidad \(v\),
+mejor posición individual \(p\) y mejor posición colectiva \(g\). Se actualiza:
 
 \[
 v\leftarrow wv+c_1r_1(p-x)+c_2r_2(g-x),\quad
 x\leftarrow\operatorname{clip}(x+v,l,u).
 \]
 
-Los vectores r1 y r2 tienen componentes uniformes independientes en [0,1). Usamos w=0.7 y c1=c2=1.4. Las velocidades iniciales son cero. Se evalúan las 40 posiciones iniciales y 40 posiciones en cada una de las 999 iteraciones. Se conservan el mejor valor ya calculado y el historial completo del enjambre; no se vuelve a evaluar g al retornar. La descripción conceptual del enjambre puede consultarse en [IEEE Technology Navigator](https://technav.ieee.org/topic/particle-swarm-optimization/).
+Los vectores \(r_1\) y \(r_2\) tienen componentes uniformes independientes en
+\([0,1)\). Usamos \(w=0.7\), \(c_1=1.4\) y \(c_2=1.0\). Las velocidades
+iniciales son cero. Se evalúan las 40 posiciones iniciales y 40 posiciones en
+cada una de las 999 iteraciones, para 40 000 evaluaciones de \(f\). Se conserva
+el mejor valor ya calculado y el historial completo del enjambre; no se vuelve
+a evaluar \(g\) al retornar. La descripción conceptual del enjambre puede
+consultarse en [IEEE Technology Navigator](https://technav.ieee.org/topic/particle-swarm-optimization/).
 
-**Evolutivo.** Se aplica en 2D y 3D sobre las funciones definidas en la sección anterior. La población inicial se genera aleatoriamente dentro del dominio. Los padres se seleccionan mediante torneos de tamaño 3, sin reemplazo dentro de cada torneo, escogiendo el individuo con menor valor de la función objetivo (Goldberg & Deb, 1991). El cruce es BLX-\(\alpha\), con \(\alpha=0.3\) (Eshelman & Schaffer, 1993):
+**Evolutivo.** Se aplica en 2D y 3D sobre las funciones definidas en la sección anterior. La población inicial se genera aleatoriamente dentro del dominio. Los padres se seleccionan mediante torneos de tamaño 3, sin reemplazo dentro de cada torneo, escogiendo el individuo con menor valor de la función objetivo (Goldberg & Deb, 1991). El cruce es BLX-\(\alpha\), con \(\alpha=0.6\) (Eshelman & Schaffer, 1993):
 
 \[
 [\min(p_1,p_2)-\alpha d,\ \max(p_1,p_2)+\alpha d],
 \qquad d=|p_2-p_1|.
 \]
 
-Después se aplica mutación gaussiana a cada variable con probabilidad \(p_m=0.5\):
+Después se aplica mutación gaussiana a cada variable con probabilidad
+\(p_m=0.5\):
 
 \[
 x'_i=x_i+\mathcal{N}(0,\sigma^2),
 \qquad \sigma=0.1.
 \]
 
-Las soluciones se recortan al dominio permitido. Se conserva una fracción de élite de 0.5, calculada como \(E=\max(1,\operatorname{round}(P\cdot0.5))\), verificando que \(E<P\). Con \(P=40\), se conservan 20 individuos y se generan 20 hijos por generación. El presupuesto es
+Las soluciones se recortan al dominio permitido. Se conserva una fracción de
+élite de 0.2, calculada como
+\(E=\max(1,\operatorname{round}(P\cdot0.2))\), verificando que \(E<P\).
+Con \(P=40\), se conservan 8 individuos y se generan 32 hijos por generación.
+El presupuesto es
 
 \[
 N_f=P+(P-E)G,
 \]
 
-por lo que con \(P=40\), \(E=20\) y \(G=1998\) se realizan exactamente \(40000\) evaluaciones de \(f\).
+por lo que con \(P=40\), \(E=8\) y \(G=1998\) se realizan exactamente
+\(40+32\cdot1998=63\,976\) evaluaciones de \(f\). Por tanto, el evolutivo no
+comparte el mismo presupuesto de evaluaciones que PSO y DE en la configuración
+actual; esta diferencia debe considerarse al interpretar la comparación.
 
-**DE.** Se eligen tres individuos distintos a, b y c, excluyendo al individuo objetivo. El donante es v=clip(a+F(b−c),l,u), con F=0.8. Cada componente del candidato toma el donante con probabilidad CR=0.7; si ninguna fue elegida, se fuerza una componente aleatoria. Se acepta el candidato si mejora al objetivo. La población nueva se construye de forma generacional a partir de la población anterior; las sustituciones de una generación no influyen en las propuestas restantes de esa misma generación. Es la variante concreta usada aquí, basada en el principio de evolución diferencial de [Storn y Price (1997)](https://doi.org/10.1023/A:1008202821328). Hace 40 evaluaciones iniciales y 40 en cada una de las 999 generaciones.
+**DE.** Se eligen tres individuos distintos a, b y c, excluyendo al individuo objetivo. El donante es \(v=\operatorname{clip}(a+F(b-c),l,u)\), con \(F=0.7\).
+Cada componente del candidato toma el donante con probabilidad \(CR=0.5\); si
+ninguna fue elegida, se fuerza una componente aleatoria. Se acepta el candidato
+si mejora al objetivo. La población nueva se construye de forma generacional a
+partir de la población anterior; las sustituciones de una generación no
+influyen en las propuestas restantes de esa misma generación. Es la variante
+concreta usada aquí, basada en el principio de evolución diferencial de
+[Storn y Price (1997)](https://doi.org/10.1023/A:1008202821328). Hace 40
+evaluaciones iniciales y 40 en cada una de las 999 generaciones, para 40 000
+evaluaciones de \(f\).
 
 ## Qué significa comparar costos
 
@@ -132,9 +156,37 @@ La motivación son las diferencias centrales:
 
 Hay dos llamadas a f por coordenada: 2d para el vector completo. Esta es la convención sugerida en el enunciado. **El código usa gradientes analíticos**: no ejecuta esas 2d llamadas. Por eso C es un costo equivalente para comparar, no tiempo real ni una medición del costo interno de la derivada.
 
-En 2D, GD completado cuesta 1+4·10000=40001. En 3D cuesta 1+6·10000=60001. Los tres métodos poblacionales cuestan 40000 llamadas reales a f y cero al gradiente en ambas dimensiones. La diferencia depende de la dimensión por el costo equivalente del gradiente.
+En 2D, GD completado cuesta \(1+4\cdot10000=40\,001\). En 3D cuesta
+\(1+6\cdot10000=60\,001\). PSO y DE cuestan 40 000 llamadas reales a \(f\)
+en ambas dimensiones. El evolutivo cuesta 63 976 llamadas con la fracción de
+élite actual. Por tanto, la comparación de rendimiento debe considerar que el
+presupuesto del evolutivo es mayor.
 
-Los resultados 3D se analizan aparte de los 2D para no mezclar paisajes ni costos. Si GD diverge antes, se incluyen sus intentos efectivamente ejecutados en el conteo; el menor costo no compensa que haya fracasado. Las llamadas de las visualizaciones no forman parte del optimizador y no alteran sus  contadores.
+Los resultados 3D se analizan aparte de los 2D para no mezclar paisajes ni costos. Si GD diverge antes, se incluyen sus intentos efectivamente ejecutados en el conteo; el menor costo no compensa que haya fracasado. Las llamadas de las visualizaciones no forman parte del optimizador y no
+alteran sus contadores.
+
+## Selección de hiperparámetros
+
+Antes del experimento principal se realizó un Grid Search exploratorio en
+`Nootebooks/Optimización.ipynb`, con Rosenbrock y Rastrigin en 3D, semillas
+42, 43 y 44 y un presupuesto reducido de 10 000 evaluaciones de \(f\) por
+configuración. Se mantuvo fijo el presupuesto de cada algoritmo y se compararon
+combinaciones discretas de sus hiperparámetros mediante la media, la
+desviación y la tasa de éxito.
+
+Después se seleccionaron configuraciones prometedoras y se validaron con
+30 corridas y semillas 42–71 en la configuración principal. Los valores
+efectivos usados en esta entrega son los de `configs/part1.yaml`: PSO usa
+\(w=0.7,c_1=1.4,c_2=1.0\); el evolutivo usa torneo 3,
+\(\alpha=0.6\), mutación 0.5, \(\sigma=0.1\) y élite 0.2; DE usa
+\(F=0.7\) y \(CR=0.5\). No se presentan como óptimos universales: son la
+selección consolidada para comparar ambas funciones en 2D y 3D.
+
+La elección de Grid Search se justifica por el número reducido de parámetros y
+por su reproducibilidad. Bergstra y Bengio (2012) lo describen como el método
+estándar y muestran que Random Search puede ser más eficiente cuando solo unos
+pocos hiperparámetros son realmente influyentes. Esta limitación se reconoce:
+un estudio futuro podría usar Random Search o búsqueda bayesiana.
 
 ## Estadísticas y selección visual
 
@@ -186,7 +238,10 @@ Los módulos de `optimization/` están dentro de `src/`. Para inspeccionar una c
 
 ## Reproducibilidad y límites de la entrega
 
-`configs/part1_demo.yaml` mantiene 30 corridas y reduce el presupuesto; sus resultados van a `results/part1_demo`, separados de los principales. La demostración sirve para mostrar el flujo, no para sustituir el estudio principal.
+`configs/part1_demo.yaml` mantiene 30 corridas y reduce el presupuesto; sus
+resultados van a `results/part1_demo`, separados de los principales. La
+demostración sirve para mostrar el flujo, no para sustituir el estudio
+principal.
 
 `--render-only` evita recalcular los experimentos y verifica que la configuración guardada coincida. Las figuras se pueden regenerar sin conexión a internet.
 

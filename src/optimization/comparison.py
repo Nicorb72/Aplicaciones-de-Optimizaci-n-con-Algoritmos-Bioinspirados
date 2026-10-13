@@ -158,15 +158,17 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
             "las mismas de la Tabla 1."
         ),
         "",
-        "Se cuentan las llamadas de optimización a f y al gradiente por separado. "
+        "Se cuentan las llamadas de optimización a $f$ y al gradiente por separado. "
         "Las evaluaciones para dibujar quedan fuera. "
-        "Definimos C = N_f + 2d N_grad: diferencias centrales necesitarían "
-        "2d llamadas a f por gradiente. "
+        "Definimos $C = N_f + 2dN_{\\mathrm{grad}}$: diferencias centrales "
+        "necesitarían $2d$ llamadas a $f$ por gradiente. "
         "Es una convención de equivalencia, NO el tiempo real ni el costo medido "
         "del gradiente analítico implementado. "
         "La Tabla 2 muestra los contadores medios obtenidos con los parámetros "
-        "guardados en comparison.json. GD incluye la evaluación final de f; "
-        "los resultados de cada dimensión se analizan por separado.",
+        "guardados en comparison.json. GD incluye la evaluación final de $f$. "
+        "PSO y DE usan 40000 evaluaciones de $f$; el evolutivo usa 63976 porque "
+        "conserva el 20% de una población de 40 y genera 32 hijos durante 1998 "
+        "generaciones. Los resultados de cada dimensión se analizan por separado.",
         "",
         "| Función | Dim. | Método | N_f medio | N_grad medio | C medio |",
         "|---|---:|---|---:|---:|---:|",
@@ -276,13 +278,51 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
         ),
         "",
         (
-            "No se realizaron pruebas de significancia ni un barrido de hiperparámetros. "
-            "Las conclusiones se limitan a estas funciones, dimensiones, semillas, "
-            "umbral y presupuestos. La configuración principal compara los cuatro "
-            "métodos en 2D y 3D; cada dimensión se interpreta por separado. "
+            "Antes del experimento principal se realizó un Grid Search exploratorio "
+            "en 3D con tres semillas y 10000 evaluaciones por configuración. "
+            "Después se seleccionaron configuraciones prometedoras y se validaron "
+            "con 30 corridas y semillas 42–71. No se realizaron pruebas de "
+            "significancia. Las conclusiones se limitan a estas funciones, "
+            "dimensiones, semillas, umbral y presupuestos. La configuración "
+            "principal compara los cuatro métodos en 2D y 3D; cada dimensión "
+            "se interpreta por separado. "
             "Un valor calculado como cero refleja precisión finita; "
             "no demuestra que todas las coordenadas sean exactamente el óptimo "
             "en aritmética real."
+        ),
+        "",
+        (
+            "La selección mediante Grid Search se justifica por el número reducido "
+            "de hiperparámetros y su reproducibilidad. Bergstra y Bengio (2012) "
+            "señalan que Random Search puede ser más eficiente cuando solo algunos "
+            "hiperparámetros son influyentes; por ello los valores elegidos no "
+            "se presentan como óptimos universales."
+        ),
+        "",
+        "## Parámetros seleccionados",
+        "",
+        (
+            "Los valores de esta tabla son la configuración consolidada después "
+            "del Grid Search exploratorio y la validación final. Se aplican a "
+            "Rosenbrock y Rastrigin en ambas dimensiones."
+        ),
+        "",
+        "| Método | Parámetros usados |",
+        "|---|---|",
+        "| PSO | partículas=40, iteraciones=999, w=0.7, c1=1.4, c2=1.0 |",
+        (
+            "| Evolutivo | población=40, generaciones=1998, torneo=3, "
+            "alpha=0.6, mutación=0.5, sigma=0.1, élite=0.2 (8 individuos) |"
+        ),
+        "| DE | población=40, generaciones=999, F=0.7, CR=0.5 |",
+        "| GD | iteraciones=10000, tasa de aprendizaje según configuración |",
+        "",
+        (
+            "La selección se documenta con mayor detalle en "
+            "[Justificacion de parametros](../Justificacion%20de%20parametros.md). "
+            "La referencia empleada es Bergstra, J., & Bengio, Y. (2012). "
+            "*Random Search for Hyper-Parameter Optimization*. JMLR, 13, "
+            "281–305."
         ),
         "",
         "## Figuras y animaciones",
