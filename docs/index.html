@@ -143,6 +143,25 @@ tr.destacado{background:#f9e9f2!important}
 <p><strong>Propósito:</strong> comprender las etapas del evolutivo y organizar su implementación en Python. <strong>Nota de trazabilidad:</strong> N01 es un ejemplo reconstruido de consulta, no un prompt histórico literalmente verificado. No acredita una respuesta concreta de IA.</p>
 <p><strong>Evidencia relacionada:</strong> <a href="https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados/blob/main/src/optimization/evolutionary.py" target="_blank" rel="noopener noreferrer">implementación</a>, <a href="https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados/blob/main/configs/part1.yaml" target="_blank" rel="noopener noreferrer">configuración</a> y <a href="https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados/blob/main/tests/test_evolutionary.py" target="_blank" rel="noopener noreferrer">pruebas del algoritmo</a>.</p>
 <h3>4.3. Cacería de la alucinación y verificaciones</h3>
+<article id="sara-v01">
+<h4>V01. Confundir una superficie 2D con Rosenbrock de tres variables — Sara Acevedo Maya</h4>
+<p><strong>Categoría:</strong> matemáticas y visualización. <strong>Clasificación:</strong> verificación técnica; no se conserva una respuesta literal incorrecta de IA.</p>
+<p><strong>Prompt relacionado:</strong> R03 solicita mostrar la función en el GIF 3D, además del recorrido. El mensaje completo se conserva en el registro de prompts.</p>
+<p><strong>Afirmación sometida a prueba, no cita de IA:</strong> dibujar <code>z=f(x1,x2)</code> sería suficiente para mostrar Rosenbrock de tres variables. Se cuestiona porque la altura de esa superficie es el valor de una función de dos variables, mientras que <code>x3</code> es una entrada independiente en el problema tridimensional.</p>
+<p><strong>Evidencia:</strong> <code>f(-1.2,1)=24.2</code>, pero <code>f(-1.2,1,0.5)=49.2</code>. En las superficies de nivel implementadas, los puntos <code>(1,1,0.9)</code> y <code>(1,1,1.1)</code> satisfacen <code>f≈1</code>. Se comprueban también puntos del nivel <code>f=10</code>.</p>
+<p><strong>Interpretación correcta:</strong> el GIF 3D utiliza los ejes <code>x1,x2,x3</code>, superficies de nivel <code>f=1</code> y <code>f=10</code>, y muestra el valor objetivo aparte. Esta representación ya está implementada; no se atribuye a una corrección de IA sin respaldo.</p>
+<p><strong>Lección:</strong> identificar las variables de cada eje y sustituir puntos de la visualización en la función original.</p>
+</article>
+<article id="sara-v02">
+<h4>V02. Confundir costo equivalente con llamadas reales — Sara Acevedo Maya</h4>
+<p><strong>Categoría:</strong> código y comparación de costos. <strong>Clasificación:</strong> verificación técnica; no se conserva una respuesta literal incorrecta de IA.</p>
+<p><strong>Prompt de contexto:</strong> R01 solicita desarrollar y comprobar paso a paso Rosenbrock/GD. No se conserva una consulta específica que contenga la afirmación sobre costos.</p>
+<p><strong>Afirmación sometida a prueba, no cita de IA:</strong> <code>C=N_f+2d·N_grad</code> sería el número real de llamadas a la función. Se cuestiona porque GD utiliza un gradiente analítico, mientras que el factor <code>2d</code> procede de una equivalencia con diferencias centrales.</p>
+<p><strong>Evidencia:</strong> instrumentando diez iteraciones de GD se obtiene una llamada real a <code>f</code> y diez al gradiente, tanto en 2D como en 3D. Los costos equivalentes son 41 y 61, respectivamente; no son 41 y 61 llamadas ejecutadas a <code>f</code>.</p>
+<p><strong>Interpretación correcta:</strong> reportar los contadores por separado y justificar la equivalencia. El costo equivalente tampoco mide segundos de ejecución.</p>
+<p><strong>Lección:</strong> comprobar llamadas reales mediante instrumentación y distinguirlas de una convención de comparación.</p>
+</article>
+<p class="fuente">Evidencia de Sara, comprobada nuevamente el 13 de octubre de 2026: <a href="evidencias_ia/rosenbrock_verificaciones.json">resultados numéricos</a> y <a href="evidencias_ia/verificar_rosenbrock.py">script reproducible</a>. Estas fichas se acogen a la alternativa del enunciado de documentar verificaciones; no se contabilizan como dos alucinaciones de IA demostradas.</p>
 <h4>V03. Interpretación apresurada de la mejora del algoritmo evolutivo — Nicole Guaranguay</h4>
 <p><strong>Categoría:</strong> interpretación de resultados y razonamiento causal.</p>
 <p><strong>Situación:</strong> durante el ajuste del algoritmo evolutivo para Rosenbrock 3D se investigó si la mutación y el elitismo estaban afectando la convergencia. La IA interpretó la mejora observada al reducir el elitismo como evidencia de que conservar demasiados individuos limitaba la búsqueda.</p>

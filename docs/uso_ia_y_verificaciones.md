@@ -141,6 +141,8 @@ de IA demostradas.** Si se recuperan esas respuestas originales, podrán
 completarse los campos de atribución sin reconstruir citas de memoria.
 
 ### V01. Distinguir Rosenbrock 3D de una superficie de Rosenbrock 2D
+**Responsable:** Sara Acevedo Maya. V01 y V02 se comprobaron de nuevo el 13 de octubre de 2026 y se desarrollaron también en la [sección de Cacería del blog](index.html#sara-v01). Continúan clasificadas como verificaciones: no se recuperó una respuesta literal incorrecta de IA.
+
 ****Categoría:**** matemáticas y representación de funciones.
 
 1\. ****Prompt conservado:**** R03, transcrito completo arriba. La parte pertinente

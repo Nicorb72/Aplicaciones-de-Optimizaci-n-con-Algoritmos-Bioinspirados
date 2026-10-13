@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-09T13:45:20-05:00",
+  "checked_at": "2026-10-13T17:28:51-05:00",
   "classification": "Verificaciones; no se conserva una respuesta incorrecta literal de IA.",
   "V01_rosenbrock_3d": {
     "f_2d_at_minus1_2_1": 24.199999999999996,
@@ -73,7 +73,7 @@
   "file_sha256": {
     "src/optimization/rosenbrock.py": "b562838394f3a2d05fa0aafe9c73497fa195a84dc6e452d0a5383dc38b369f9b",
     "src/optimization/gradient_descent_rosenbrock.py": "cca853367d45ebf0a8b8b035424ebd78f4532a446b85d0f69bb46ad8b3a94aca",
-    "visualization/animations.py": "a491965129abebe7397a8921d10a5a727b0e964b29cb0b548739622868aae5f2",
+    "visualization/animations.py": "a61c6c9c9dddeb974998f86db8c924e7e195b81a9636825dc0ca328ea28e9523",
     "docs/evidencias_ia/verificar_rosenbrock.py": "7b4b9fb79d9ad865e899a01b90e9948a407a9f3ee136ab8b9d86a0afe922d2f7"
   }
 }
