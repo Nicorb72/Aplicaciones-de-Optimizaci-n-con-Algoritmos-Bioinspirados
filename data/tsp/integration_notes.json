@@ -1,0 +1,9 @@
+{
+  "fecha_integracion_utc": "2026-10-13T05:47:05.846413+00:00",
+  "distancias": "openrouteservice driving-car",
+  "tiempos": "openrouteservice driving-car",
+  "peajes": "matriz original del proyecto, provisional",
+  "advertencia": "Los peajes no estan verificados para las 2162 rutas dirigidas. Los valores cero pueden representar ausencia de datos y no necesariamente ausencia de peaje.",
+  "vehiculo": "SEAT Leon 1.5 TSI",
+  "estado": "provisional"
+}

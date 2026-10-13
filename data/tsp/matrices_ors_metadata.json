@@ -1,0 +1,271 @@
+{
+  "fuente": "openrouteservice",
+  "endpoint": "https://api.openrouteservice.org/v2/matrix/driving-car",
+  "perfil": "driving-car",
+  "fecha_consulta_utc": "2026-10-13T01:05:54.955950+00:00",
+  "ciudades": [
+    "A Coruña",
+    "Albacete",
+    "Alicante",
+    "Almería",
+    "Ávila",
+    "Badajoz",
+    "Barcelona",
+    "Bilbao",
+    "Burgos",
+    "Cáceres",
+    "Cádiz",
+    "Castellón de la Plana",
+    "Ciudad Real",
+    "Córdoba",
+    "Cuenca",
+    "Donostia-San Sebastián",
+    "Girona",
+    "Granada",
+    "Guadalajara",
+    "Huelva",
+    "Huesca",
+    "Jaén",
+    "León",
+    "Lleida",
+    "Logroño",
+    "Lugo",
+    "Madrid",
+    "Málaga",
+    "Murcia",
+    "Ourense",
+    "Oviedo",
+    "Palencia",
+    "Pamplona",
+    "Pontevedra",
+    "Salamanca",
+    "Santander",
+    "Segovia",
+    "Sevilla",
+    "Soria",
+    "Tarragona",
+    "Teruel",
+    "Toledo",
+    "Valencia",
+    "Valladolid",
+    "Vitoria-Gasteiz",
+    "Zamora",
+    "Zaragoza"
+  ],
+  "numero_ciudades": 47,
+  "unidades_distancia": "km",
+  "unidades_tiempo": "horas",
+  "peajes_incluidos": false,
+  "nota": "Estimaciones de rutas por carretera. No incluyen precios de peajes.",
+  "ors_metadata": {
+    "attribution": "openrouteservice.org | OpenStreetMap contributors",
+    "service": "matrix",
+    "timestamp": 1791853553037,
+    "query": {
+      "locations": [
+        [
+          -8.4115,
+          43.3623
+        ],
+        [
+          -1.8585,
+          38.9943
+        ],
+        [
+          -0.481,
+          38.3452
+        ],
+        [
+          -2.4637,
+          36.834
+        ],
+        [
+          -4.6818,
+          40.6565
+        ],
+        [
+          -6.9706,
+          38.8794
+        ],
+        [
+          2.1734,
+          41.3851
+        ],
+        [
+          -2.935,
+          43.263
+        ],
+        [
+          -3.6969,
+          42.344
+        ],
+        [
+          -6.3722,
+          39.4753
+        ],
+        [
+          -6.2886,
+          36.5271
+        ],
+        [
+          -0.0513,
+          39.9864
+        ],
+        [
+          -3.9274,
+          38.9861
+        ],
+        [
+          -4.7794,
+          37.8882
+        ],
+        [
+          -2.1374,
+          40.0704
+        ],
+        [
+          -1.9812,
+          43.3183
+        ],
+        [
+          2.8214,
+          41.9794
+        ],
+        [
+          -3.5986,
+          37.1773
+        ],
+        [
+          -3.1674,
+          40.6337
+        ],
+        [
+          -6.9447,
+          37.2614
+        ],
+        [
+          -0.4087,
+          42.1362
+        ],
+        [
+          -3.7849,
+          37.7796
+        ],
+        [
+          -5.5671,
+          42.5987
+        ],
+        [
+          0.62,
+          41.6176
+        ],
+        [
+          -2.4499,
+          42.4658
+        ],
+        [
+          -7.5558,
+          43.0121
+        ],
+        [
+          -3.7038,
+          40.4168
+        ],
+        [
+          -4.4214,
+          36.7213
+        ],
+        [
+          -1.1307,
+          37.9922
+        ],
+        [
+          -7.8639,
+          42.3358
+        ],
+        [
+          -5.8494,
+          43.3619
+        ],
+        [
+          -4.5288,
+          42.0095
+        ],
+        [
+          -1.6458,
+          42.8125
+        ],
+        [
+          -8.6481,
+          42.4336
+        ],
+        [
+          -5.6635,
+          40.9701
+        ],
+        [
+          -3.8099,
+          43.4623
+        ],
+        [
+          -4.1088,
+          40.9429
+        ],
+        [
+          -5.9845,
+          37.3891
+        ],
+        [
+          -2.4688,
+          41.7666
+        ],
+        [
+          1.2445,
+          41.1189
+        ],
+        [
+          -1.1072,
+          40.3456
+        ],
+        [
+          -4.0273,
+          39.8628
+        ],
+        [
+          -0.3763,
+          39.4699
+        ],
+        [
+          -4.7245,
+          41.6523
+        ],
+        [
+          -2.6716,
+          42.8469
+        ],
+        [
+          -5.7446,
+          41.5034
+        ],
+        [
+          -0.8891,
+          41.6488
+        ]
+      ],
+      "profile": "driving-car",
+      "profileName": "driving-car",
+      "responseType": "json",
+      "metrics": [
+        "distance",
+        "duration"
+      ],
+      "units": "km"
+    },
+    "engine": {
+      "version": "9.10.0",
+      "build_date": "2026-08-13T11:53:14Z",
+      "graph_date": "2026-09-21T10:31:27Z",
+      "osm_date": "2026-09-13T23:59:59Z"
+    }
+  }
+}
