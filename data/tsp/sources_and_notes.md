@@ -51,38 +51,16 @@ Por tanto, la función objetivo considera simultáneamente el costo asociado al 
 
 ### Construcción de las matrices de distancia y tiempo
 
-Las distancias entre las 47 capitales se estimaron a partir de sus coordenadas geográficas.
+La versión actual del proyecto utiliza distancias y duraciones estimadas **por carretera** para las 47 capitales, obtenidas mediante la matriz de **openrouteservice** (perfil `driving-car`). La consulta registrada se hizo el **13 de octubre de 2026, a las 01:05:54 UTC**, con el servicio:
 
-Para aproximar la diferencia entre la distancia geográfica directa y un recorrido por carretera, se aplicó un factor vial de 1.25:
 
-\[
-D_{ij}
-=
-1.25\,D_{ij}^{geo}
-\]
+Las distancias se expresan en **km** y las duraciones en **horas**. El origen, el perfil, la fecha, las coordenadas consultadas y otros metadatos están documentados en `data/tsp/matrices_ors_metadata.json`.
 
-donde \(D_{ij}^{geo}\) representa la distancia geográfica entre las ciudades \(i\) y \(j\).
+**Esta versión ya no calcula la distancia como 1,25 veces la distancia geográfica ni el tiempo dividiendo por una velocidad fija de 95 km/h.** Esos supuestos corresponden a una etapa anterior y no deben presentarse como la metodología vigente. Las distancias y tiempos proceden de estimaciones de rutas por carretera, no de mediciones de viajes efectivamente realizados.
 
-A partir de la distancia estimada se calculó el tiempo de viaje suponiendo una velocidad media de 95 km/h:
+Las matrices que emplean los algoritmos están almacenadas localmente en `data/tsp/matrices.npz`. Se conservan para permitir ejecutar ACO y GA sin efectuar nuevamente las consultas a la API. Son estimaciones sujetas a la red vial y a los parámetros del motor de rutas en la fecha indicada; no incorporan por sí solas tarifas de peajes.
 
-\[
-T_{ij}
-=
-\frac{D_{ij}}{95}
-\]
-
-De esta manera, las matrices utilizadas en el modelo representan una aproximación homogénea de las distancias y los tiempos de desplazamiento entre las ciudades.
-
-Estas matrices no corresponden a rutas obtenidas directamente de un servicio de navegación o de una API de rutas. El uso del factor vial y de una velocidad media permite mantener el conjunto de datos completamente disponible de forma local y reproducible durante la ejecución del proyecto.
-
-Los parámetros utilizados para la construcción de las matrices son:
-
-- Número de ciudades: 47.
-- Factor vial: 1.25.
-- Velocidad media utilizada: 95 km/h.
-- Distancia mínima registrada en la matriz: 53.6 km.
-- Distancia máxima registrada en la matriz: 1238.0 km.
-- Distancia media entre pares de ciudades: aproximadamente 521.90 km.
+**Observación sobre archivos históricos:** `data/tsp/matrices_summary.json` todavía registra el factor 1,25, la velocidad de 95 km/h y estadísticas de la matriz anterior. Se conserva como referencia histórica, **no como descripción de las matrices actuales**. Para el origen de la matriz actual debe consultarse `matrices_ors_metadata.json`.
 
 ## 3. Estado de la Red de Autopistas de Peaje en España
 
@@ -126,7 +104,7 @@ La matriz `tolls_eur` contiene valores de peaje distintos de cero para los sigui
 | Logroño | Zaragoza | 18.00 |
 | Madrid | Segovia | 7.50 |
 
-Los valores anteriores corresponden a los peajes incluidos en la matriz `tolls_eur` utilizada por el modelo de costos del proyecto.
+Los valores anteriores corresponden a los peajes incluidos en la matriz `tolls_eur` utilizada por el modelo de costos del proyecto. **No son tarifas oficiales verificadas para 2026**. Según `data/tsp/integration_notes.json`, la matriz de peajes proviene de la versión previa del proyecto y se considera **provisional**. Los valores cero pueden significar falta de registro; no necesariamente una carretera gratuita. La documentación disponible no confirma los importes ni la cobertura para todos los pares de ciudades. Por eso, los costos totales del TSP deben interpretarse bajo este supuesto y no como presupuestos reales certificados.
 
 Los valores concretos de estos pares se almacenan directamente en la matriz `tolls_eur` incluida en el archivo:
 
@@ -141,6 +119,8 @@ El modelo utiliza un vehículo de referencia con un consumo homologado utilizado
 Los parámetros correspondientes se encuentran almacenados en:
 
 `data/tsp/vehicle_specs.yaml`
+
+En el archivo constan los siguientes parámetros de referencia: **SEAT León 1.5 TSI 130 CV (manual)**, consumo WLTP de **5,4 L/100 km**, **gasolina 95** y precio de **1,58 €/L**, con fecha de consulta declarada **6 de octubre de 2026** para el combustible. Son los valores **declarados en la configuración del proyecto**; este documento no acredita una comprobación independiente de las fichas del modelo exacto ni del precio histórico del carburante.
 
 El consumo y el precio del combustible no se encuentran duplicados dentro del algoritmo de optimización. Tanto la matriz de costos como el desglose final del recorrido leen estos parámetros desde el mismo archivo de configuración.
 
@@ -168,18 +148,21 @@ Los datos necesarios para ejecutar el TSP se encuentran almacenados dentro del r
 
 - `data/tsp/spain_capitals.csv`: información de las 47 capitales y sus coordenadas.
 - `data/tsp/matrices.npz`: matrices de distancia, tiempo y peajes.
-- `data/tsp/matrices_summary.json`: resumen de los parámetros utilizados para construir las matrices.
+- `data/tsp/matrices_ors_metadata.json`: procedencia, fecha, perfil y unidades de las matrices actuales de openrouteservice.
+- `data/tsp/integration_notes.json`: integración de datos y advertencia de peajes provisionales.
+- `data/tsp/matrices_summary.json`: resumen histórico de la matriz aproximada anterior; no describe las matrices viales actuales.
 - `data/tsp/vehicle_specs.yaml`: parámetros del vehículo y precio del combustible.
 - `data/tsp/sources_and_notes.md`: documentación metodológica y fuentes empleadas.
 
 El almacenamiento local de estos archivos permite reproducir las ejecuciones sin realizar consultas a servicios externos.
 
-## 6. Fuentes Citadas
+## 6. Fuentes y trazabilidad
 
-Ministerio de Transportes y Movilidad Sostenible. (2024). *Mapa oficial de carreteras y autopistas de peaje del Estado*. Gobierno de España. https://www.transportes.gob.es/
+- **openrouteservice** (2026). Servicio de matriz de rutas `driving-car`. Endpoint: https://api.openrouteservice.org/v2/matrix/driving-car . Consulta registrada el 13 de octubre de 2026 (UTC); metadatos archivados en `matrices_ors_metadata.json`. Datos de carreteras atribuidos a OpenStreetMap y colaboradores, según metadatos de respuesta.
+- **SEAT España**. Especificaciones del SEAT León. https://www.seat.es/coches/leon/especificaciones . En `vehicle_specs.yaml` se cita esta página como fuente del consumo WLTP; conviene contrastar la versión exacta del vehículo y archivar la ficha consultada.
+- **Ministerio para la Transición Ecológica y el Reto Demográfico (MITECO)**. Geoportal de estaciones de servicio. https://geoportalgasolineras.es/ . En `vehicle_specs.yaml` se registra consulta del 6 de octubre de 2026 y precio de referencia de 1,58 €/L; no se adjuntó comprobante independiente del precio consultado.
+- **Ministerio de Transportes y Movilidad Sostenible**. Información sobre la red vial y autopistas de peaje: https://www.transportes.gob.es/ . **No se ha verificado** que los ocho importes actualmente guardados en la matriz coincidan con tarifas oficiales vigentes.
 
-Ministerio para la Transición Ecológica y el Reto Demográfico. (2026). *Geoportal de estaciones de servicio: precios de carburantes*. Gobierno de España. https://geoportalgasolineras.es/
+### Limitación de uso
 
-SEAT S.A. (2024). *Manual y especificaciones técnicas: SEAT León 1.5 TSI*. SEAT España. https://www.seat.es/
-
-Instituto Geográfico Nacional. (2024). *Nomenclátor Geográfico Básico de España*. Ministerio de Transportes y Movilidad Sostenible.
+El modelo es útil para comparar rutas **bajo los parámetros y datos configurados**. Debido a que los peajes todavía son provisionales, no debe afirmarse que los costos calculados sean tarifas de desplazamiento exactas ni que todos los tramos sin peaje registrado sean gratuitos.
