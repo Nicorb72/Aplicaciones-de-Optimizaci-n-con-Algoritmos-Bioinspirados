@@ -6,26 +6,32 @@ Código: `src/tsp/cost_model.py`, `src/tsp/ant_colony.py` y `src/tsp/genetic_tsp
 
 Un vendedor debe visitar las $n = 47$ capitales de provincia de la España peninsular, pasando una sola vez por cada una y volviendo a la ciudad de salida. Un recorrido es una permutación $\pi = (\pi_0, \pi_1, \dots, \pi_{n-1})$ de las ciudades, y su costo es
 
-$$L(\pi) = \sum_{k=0}^{n-1} C_{\pi_k,\, \pi_{(k+1) \bmod n}}$$
+$$
+L(\pi) = \sum_{k=0}^{n-1} C_{\pi_k,\, \pi_{(k+1) \bmod n}}
+$$
 
 donde $C_{ij}$ es el costo de ir de la ciudad $i$ a la $j$ (sección 2). Se busca
 
-$$\pi^{*} = \arg\min_{\pi} L(\pi)$$
+$$
+\pi^{*} = \arg\min_{\pi} L(\pi)
+$$
 
 Como el recorrido es cerrado, rotarlo no cambia su costo, así que no importa en qué ciudad empiece. Si los costos fueran simétricos habría $(n-1)!/2 \approx 2.75 \times 10^{57}$ recorridos distintos, por lo que probarlos todos es imposible y se usan metaheurísticas.
 
 ## 2. Costo entre dos ciudades
 
-$$C_{ij} = w \, t_{ij} + p_{ij} + \frac{c}{100} \, d_{ij} \, \varphi, \qquad C_{ii} = 0$$
+$$
+C_{ij} = w \, t_{ij} + p_{ij} + \frac{c}{100} \, d_{ij} \, \varphi, \qquad C_{ii} = 0
+$$
 
-| Símbolo | Significado | Unidad | De dónde sale |
-|---|---|---|---|
-| $w$ | valor de la hora del vendedor | €/h | `hourly_rate` del YAML (25.0 por defecto); se cambia con `--hourly-rate` |
-| $t_{ij}$ | tiempo de viaje por carretera | h | `times_hours` en `data/tsp/matrices.npz` |
-| $p_{ij}$ | peajes del trayecto | € | `tolls_eur` en `data/tsp/matrices.npz` |
-| $d_{ij}$ | distancia por carretera | km | `distances_km` en `data/tsp/matrices.npz` |
-| $c$ | consumo homologado (WLTP) | L/100 km | `data/tsp/vehicle_specs.yaml` |
-| $\varphi$ | precio del combustible | €/L | `data/tsp/vehicle_specs.yaml` |
+| Símbolo    | Significado                   | Unidad   | De dónde sale                                                               |
+| ----------- | ----------------------------- | -------- | ---------------------------------------------------------------------------- |
+| $w$       | valor de la hora del vendedor | €/h     | `hourly_rate` del YAML (25.0 por defecto); se cambia con `--hourly-rate` |
+| $t_{ij}$  | tiempo de viaje por carretera | h        | `times_hours` en `data/tsp/matrices.npz`                                 |
+| $p_{ij}$  | peajes del trayecto           | €       | `tolls_eur` en `data/tsp/matrices.npz`                                   |
+| $d_{ij}$  | distancia por carretera       | km       | `distances_km` en `data/tsp/matrices.npz`                                |
+| $c$       | consumo homologado (WLTP)     | L/100 km | `data/tsp/vehicle_specs.yaml`                                              |
+| $\varphi$ | precio del combustible        | €/L     | `data/tsp/vehicle_specs.yaml`                                              |
 
 Las tres matrices están guardadas en el repositorio, así que la ejecución no depende de internet ni de APIs externas. Los valores del vehículo y las fuentes de cada dato, con su fecha de consulta, están en `vehicle_specs.yaml` y en `data/tsp/sources_and_notes.md` (según el README: SEAT León 1.5 TSI 130 CV, 5.4 L/100 km, gasolina 95 a 1.58 €/L).
 
@@ -39,23 +45,33 @@ Las tres matrices están guardadas en el repositorio, así que la ejecución no 
 
 **Feromona inicial**, uniforme:
 
-$$\tau_{ij}(0) = \tau_0 = \frac{1}{n \, \bar{C}}$$
+$$
+\tau_{ij}(0) = \tau_0 = \frac{1}{n \, \bar{C}}
+$$
 
 con $\bar{C}$ la media de los costos positivos de la matriz.
 
 **Regla de transición.** Estando en $i$, la hormiga $k$ elige $j \in \mathcal{N}_i^k$ con probabilidad
 
-$$P_{ij}^{k} = \frac{\tau_{ij}^{\alpha} \, \eta_{ij}^{\beta}}{\sum_{l \in \mathcal{N}_i^{k}} \tau_{il}^{\alpha} \, \eta_{il}^{\beta}}$$
+$$
+P_{ij}^{k} = \frac{\tau_{ij}^{\alpha} \, \eta_{ij}^{\beta}}{\sum_{l \in \mathcal{N}_i^{k}} \tau_{il}^{\alpha} \, \eta_{il}^{\beta}}
+$$
 
 Si todos los pesos fueran cero o no finitos, elige uniformemente entre las ciudades restantes.
 
 **Actualización de la feromona** al final de cada iteración:
 
-$$\tau_{ij} \leftarrow (1-\rho)\,\tau_{ij} + \sum_{k=1}^{m} \Delta\tau_{ij}^{k} + \Delta\tau_{ij}^{\text{élite}}$$
+$$
+\tau_{ij} \leftarrow (1-\rho)\,\tau_{ij} + \sum_{k=1}^{m} \Delta\tau_{ij}^{k} + \Delta\tau_{ij}^{\text{élite}}
+$$
 
-$$\Delta\tau_{ij}^{k} = \begin{cases} Q / L_k & \text{si la arista } \{i,j\} \text{ está en el recorrido de la hormiga } k \\ 0 & \text{en otro caso} \end{cases}$$
+$$
+\Delta\tau_{ij}^{k} = \begin{cases} Q / L_k & \text{si la arista } \{i,j\} \text{ está en el recorrido de la hormiga } k \\ 0 & \text{en otro caso} \end{cases}
+$$
 
-$$\Delta\tau_{ij}^{\text{élite}} = \begin{cases} 2Q / L_{\text{mejor}} & \text{si la arista } \{i,j\} \text{ está en el mejor recorrido hallado hasta ahora} \\ 0 & \text{en otro caso} \end{cases}$$
+$$
+\Delta\tau_{ij}^{\text{élite}} = \begin{cases} 2Q / L_{\text{mejor}} & \text{si la arista } \{i,j\} \text{ está en el mejor recorrido hallado hasta ahora} \\ 0 & \text{en otro caso} \end{cases}
+$$
 
 **Algoritmo.**
 
@@ -69,15 +85,15 @@ $$\Delta\tau_{ij}^{\text{élite}} = \begin{cases} 2Q / L_{\text{mejor}} & \text{
 
 **Parámetros** (`configs/tsp_aco.yaml`):
 
-| Parámetro | Símbolo | Valor |
-|---|---|---|
-| `n_ants` | $m$ | 25 |
-| `iterations` | | 80 |
-| `alpha` | $\alpha$ | 1.0 |
-| `beta` | $\beta$ | 2.5 |
-| `rho` | $\rho$ | 0.1 |
-| `q` | $Q$ | 100.0 |
-| `seed` | | 42 |
+| Parámetro     | Símbolo   | Valor |
+| -------------- | ---------- | ----- |
+| `n_ants`     | $m$      | 25    |
+| `iterations` |            | 80    |
+| `alpha`      | $\alpha$ | 1.0   |
+| `beta`       | $\beta$  | 2.5   |
+| `rho`        | $\rho$   | 0.25  |
+| `q`          | $Q$      | 100.0 |
+| `seed`       |            | 42    |
 
 **Detalles de implementación.**
 
@@ -96,13 +112,17 @@ $$\Delta\tau_{ij}^{\text{élite}} = \begin{cases} 2Q / L_{\text{mejor}} & \text{
 
 **Cruce de orden (variante de OX).** Se sortean dos puntos de corte $a < b$. El hijo copia de $p_1$ el tramo $[a, b]$ en las mismas posiciones, y las posiciones libres se rellenan de izquierda a derecha con las ciudades de $p_2$, en el orden en que aparecen en $p_2$, saltando las ya copiadas. Siempre se aplica (no hay probabilidad de cruce) y el resultado es siempre una permutación válida. Ejemplo con $p_1 = (0,1,\dots,9)$, $p_2 = (9,8,\dots,0)$ y corte en las posiciones 3 a 5:
 
-$$\text{hijo} = (9, 8, 7, \underline{3, 4, 5}, 6, 2, 1, 0)$$
+$$
+\text{hijo} = (9, 8, 7, \underline{3, 4, 5}, 6, 2, 1, 0)
+$$
 
 El OX clásico rellena empezando después del segundo corte; esta versión rellena desde la posición 0.
 
 **Mutación por inversión.** Con probabilidad $\mu$ (`mutation_rate`) se sortean dos posiciones $i < j$ y se invierte el tramo entre ellas:
 
-$$(\pi_i, \pi_{i+1}, \dots, \pi_j) \leftarrow (\pi_j, \dots, \pi_{i+1}, \pi_i)$$
+$$
+(\pi_i, \pi_{i+1}, \dots, \pi_j) \leftarrow (\pi_j, \dots, \pi_{i+1}, \pi_i)
+$$
 
 Es un movimiento tipo 2-opt. Solo se aplica a los hijos, no a la élite.
 
@@ -118,14 +138,14 @@ Es un movimiento tipo 2-opt. Solo se aplica a los hijos, no a la élite.
 
 **Parámetros** (`configs/tsp_ga.yaml`):
 
-| Parámetro | Valor |
-|---|---|
-| `population_size` | 100 |
-| `generations` | 250 |
-| `mutation_rate` $\mu$ | 0.25 |
-| `tournament_size` | 4 |
-| `elite_size` | 2 |
-| `seed` | 42 |
+| Parámetro                | Valor |
+| ------------------------- | ----- |
+| `population_size`       | 100   |
+| `generations`           | 250   |
+| `mutation_rate` $\mu$ | 0.5   |
+| `tournament_size`       | 6     |
+| `elite_size`            | 2     |
+| `seed`                  | 42    |
 
 **Evaluaciones del costo.** En cada generación se recalcula el costo de toda la población, incluida la élite, así que son $\text{population\_size} \times (\text{generations} + 1) = 100 \times 251 = 25\,100$.
 
