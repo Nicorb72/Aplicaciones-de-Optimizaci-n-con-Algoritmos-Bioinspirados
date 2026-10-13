@@ -12,16 +12,15 @@ en `requirements.txt`. El proyecto requiere Python **3.11 o posterior**;
 ### Windows (PowerShell)
 
 Abre PowerShell en la carpeta raíz del repositorio. Comprueba que tienes Python
-3.11 instalado:
+3.11 o posteriores instalado:
 
 ```powershell
-py -3.11 --version
+python --version
 ```
 
 Crea y activa un entorno virtual e instala las dependencias:
 
 ```powershell
-py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
@@ -52,23 +51,46 @@ python -m pytest -q
 
 Ejecuta el experimento principal (480 corridas; puede tardar varios minutos):
 
+## Parte 1 completa: solo un comando
+
+Con el entorno activado, desde la raíz del repositorio:
+
+
 ```powershell
 python -m experiments.run_part1
 ```
 
-Para probar primero la demostración corta:
+Ejecuta **480 corridas**: GD, PSO, evolutivo y DE sobre Rosenbrock y Rastrigin
+en 2D y 3D; 30 corridas por configuración.
+Los parámetros están en `configs/part1.yaml`, incluidas las semillas 42–71,
+el umbral de éxito, los tamaños de población y los coeficientes de los algoritmos.
+
+### Demostración corta
 
 ```powershell
 python -m experiments.run_part1 --config configs/part1_demo.yaml
 ```
+
+Mantiene 30 corridas por configuración, con un presupuesto de búsqueda menor y
+GIF de 48 fotogramas a 4 fps (12 segundos), con ritmo por movimiento. Escribe en `results/part1_demo/`, sin reemplazar los
+resultados principales. El experimento completo puede tardar varios minutos;
+la demostración es la que se debe cronometrar en la máquina de sustentación.
+
+
+
+### Mostrar el informe en pantalla
 
 Los resultados se guardan en `results/part1/` para el experimento principal y
 en `results/part1_demo/` para la demostración. El informe generado está en
 `comparisons/all/report.html` dentro de la carpeta correspondiente; puedes
 abrirlo desde el Explorador de archivos o con:
 
+
 ```powershell
 Start-Process results\part1\comparisons\all\report.html
+
+
+
 ```
 
 ### Linux y macOS
@@ -80,10 +102,23 @@ uv venv
 uv pip sync requirements.txt
 ```
 
+En Windows PowerShell, desde la raíz del repositorio:
+
+```powershell
+uv venv
+uv pip sync requirements.txt
+```
+
 Activa el entorno en cada terminal nueva:
 
 ```bash
 source .venv/bin/activate
+```
+
+En Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
 ```
 
 `.venv/` está excluido de Git; cada integrante crea su propio entorno.
@@ -94,6 +129,13 @@ Con el entorno activado, desde la raíz del repositorio:
 
 ```bash
 MPLBACKEND=Agg python -m experiments.run_part1
+```
+
+En Windows PowerShell:
+
+```powershell
+$env:MPLBACKEND = "Agg"
+python -m experiments.run_part1
 ```
 
 Ejecuta **480 corridas**: GD, PSO, evolutivo y DE sobre Rosenbrock y Rastrigin
@@ -126,9 +168,18 @@ y la demostración, junto con los límites de lo que se ha comprobado.
 
 ### Demostración corta
 
+
 ```bash
 MPLBACKEND=Agg python -m experiments.run_part1 --config configs/part1_demo.yaml
 ```
+
+En Windows PowerShell:
+
+```powershell
+$env:MPLBACKEND = "Agg"
+python -m experiments.run_part1 --config configs/part1_demo.yaml
+```
+
 
 Mantiene 30 corridas por configuración, con un presupuesto de búsqueda menor y
 GIF de 48 fotogramas a 4 fps (12 segundos), con ritmo por movimiento. Escribe en `results/part1_demo/`, sin reemplazar los
@@ -146,6 +197,12 @@ En Linux, desde la raíz del repositorio:
 
 ```bash
 xdg-open results/part1/comparisons/all/report.html
+```
+
+En Windows PowerShell:
+
+```powershell
+Start-Process results\part1\comparisons\all\report.html
 ```
 
 La página funciona sin conexión y muestra imágenes y GIF sin instalar nada.
@@ -178,6 +235,27 @@ MPLBACKEND=Agg python -m experiments.run_part1 --no-visuals
 MPLBACKEND=Agg python -m experiments.run_part1 --output-dir /tmp/parte1 --frames 60
 ```
 
+En Windows PowerShell:
+
+```powershell
+$env:MPLBACKEND = "Agg"
+
+# Ejecutar solamente un método sobre las dos funciones:
+python -m experiments.run_pso
+python -m experiments.run_evolutionary
+python -m experiments.run_differential_evolution
+
+# Elegir una función, método y dimensión:
+python -m experiments.run_part1 --function rastrigin --method gd --dimension 3
+
+# Rehacer las figuras y GIF, sin volver a optimizar:
+python -m experiments.run_part1 --render-only
+
+# Ejecutar solo cálculos y tablas, o cambiar el destino/fotogramas:
+python -m experiments.run_part1 --no-visuals
+python -m experiments.run_part1 --output-dir "$env:TEMP\parte1" --frames 60
+```
+
 `--render-only` exige resultados guardados con la misma configuración.
 Cada selección escribe su comparación en un subdirectorio propio para no
 sobrescribir la tabla completa. Las rutas de salida relativas se resuelven desde
@@ -197,6 +275,13 @@ Para regenerar la demo con el nuevo ritmo, sin recalcular las corridas:
 MPLBACKEND=Agg python -m experiments.run_part1 --config configs/part1_demo.yaml --render-only
 ```
 
+En Windows PowerShell:
+
+```powershell
+$env:MPLBACKEND = "Agg"
+python -m experiments.run_part1 --config configs/part1_demo.yaml --render-only
+```
+
 Para una reproducción más fluida de la misma duración, puedes agregar
 `--frames 120 --fps 10`; requiere más tiempo de renderizado. Recarga el informe
 con Ctrl+Shift+R para evitar que el navegador conserve los GIF anteriores.
@@ -210,6 +295,13 @@ El comando independiente de Rastrigin también quedó reparado:
 MPLBACKEND=Agg python -m experiments.run_rastrigin_gd
 ```
 
+En Windows PowerShell:
+
+```powershell
+$env:MPLBACKEND = "Agg"
+python -m experiments.run_rastrigin_gd
+```
+
 Usa `configs/rastrigin.yaml`: 30 corridas por dimensión, estadísticas, gráficas y
 GIF. Sus archivos van a `results/raw/rastrigin_gd`, `results/figures/rastrigin_gd`
 y `results/animations/rastrigin_gd`.
@@ -221,6 +313,14 @@ Python activo, ejecuta:
 
 ```bash
 MPLBACKEND=Agg PYTHONPATH=src python -m experiments.run_persona1
+```
+
+En Windows PowerShell:
+
+```powershell
+$env:MPLBACKEND = "Agg"
+$env:PYTHONPATH = "src"
+python -m experiments.run_persona1
 ```
 
 El comando ejecuta 30 corridas en 2D y 30 en 3D, guarda sus estadísticas y
@@ -265,6 +365,14 @@ Para regenerar solo el GIF 3D desde los resultados guardados:
 MPLBACKEND=Agg PYTHONPATH=src python -m visualization.animations --results-dir results/raw/rosenbrock_gd/3d
 ```
 
+En Windows PowerShell:
+
+```powershell
+$env:MPLBACKEND = "Agg"
+$env:PYTHONPATH = "src"
+python -m visualization.animations --results-dir results\raw\rosenbrock_gd\3d
+```
+
 La visualización no vuelve a ejecutar GD. Sus evaluaciones de Rosenbrock sirven
 para dibujar y no se suman a los contadores del experimento.
 
@@ -285,13 +393,32 @@ Para ejecutar **Colonias de Hormigas (ACO)**:
 python -m experiments.run_tsp --config configs/tsp_aco.yaml
 ```
 
+En Windows PowerShell:
+
+```powershell
+python -m experiments.run_tsp --config configs/tsp_aco.yaml
+```
+
 Para ejecutar **Algoritmos Genéticos (GA)**:
 ```bash
 python -m experiments.run_tsp --config configs/tsp_ga.yaml
 ```
 
+En Windows PowerShell:
+
+```powershell
+python -m experiments.run_tsp --config configs/tsp_ga.yaml
+```
+
 Para evaluar el impacto de la tarifa horaria del vendedor (`--hourly-rate`) o ejecutar el estudio paramétrico (`--study-hourly-rates`):
 ```bash
+python -m experiments.run_tsp --config configs/tsp_aco.yaml --hourly-rate 50.0
+python -m experiments.run_tsp --config configs/tsp_aco.yaml --study-hourly-rates
+```
+
+En Windows PowerShell:
+
+```powershell
 python -m experiments.run_tsp --config configs/tsp_aco.yaml --hourly-rate 50.0
 python -m experiments.run_tsp --config configs/tsp_aco.yaml --study-hourly-rates
 ```
