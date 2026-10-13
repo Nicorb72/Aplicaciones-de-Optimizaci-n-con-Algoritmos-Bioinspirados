@@ -12,15 +12,17 @@ en `requirements.txt`. El proyecto requiere Python **3.11 o posterior**;
 ### Windows (PowerShell)
 
 Abre PowerShell en la carpeta raíz del repositorio. Comprueba que tienes Python
-3.11 o posteriores instalado:
+3.11 instalado:
 
 ```powershell
-python --version
+py -3.11 --version
 ```
+Por seguridad si no tienes la 3.11 deberas descargarla aqui: https://www-python-org.translate.goog/downloads/release/python-3110/?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc
 
 Crea y activa un entorno virtual e instala las dependencias:
 
 ```powershell
+py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
@@ -70,26 +72,11 @@ el umbral de éxito, los tamaños de población y los coeficientes de los algori
 ```powershell
 python -m experiments.run_part1 --config configs/part1_demo.yaml
 ```
-
+```
 Mantiene 30 corridas por configuración, con un presupuesto de búsqueda menor y
 GIF de 48 fotogramas a 4 fps (12 segundos), con ritmo por movimiento. Escribe en `results/part1_demo/`, sin reemplazar los
 resultados principales. El experimento completo puede tardar varios minutos;
 la demostración es la que se debe cronometrar en la máquina de sustentación.
-
-
-
-### Mostrar el informe en pantalla
-
-Los resultados se guardan en `results/part1/` para el experimento principal y
-en `results/part1_demo/` para la demostración. El informe generado está en
-`comparisons/all/report.html` dentro de la carpeta correspondiente; puedes
-abrirlo desde el Explorador de archivos o con:
-
-
-```powershell
-Start-Process results\part1\comparisons\all\report.html
-
-
 
 ```
 
@@ -102,12 +89,7 @@ uv venv
 uv pip sync requirements.txt
 ```
 
-En Windows PowerShell, desde la raíz del repositorio:
 
-```powershell
-uv venv
-uv pip sync requirements.txt
-```
 
 Activa el entorno en cada terminal nueva:
 
@@ -115,11 +97,6 @@ Activa el entorno en cada terminal nueva:
 source .venv/bin/activate
 ```
 
-En Windows PowerShell:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
 
 `.venv/` está excluido de Git; cada integrante crea su propio entorno.
 
@@ -131,12 +108,6 @@ Con el entorno activado, desde la raíz del repositorio:
 MPLBACKEND=Agg python -m experiments.run_part1
 ```
 
-En Windows PowerShell:
-
-```powershell
-$env:MPLBACKEND = "Agg"
-python -m experiments.run_part1
-```
 
 Ejecuta **480 corridas**: GD, PSO, evolutivo y DE sobre Rosenbrock y Rastrigin
 en 2D y 3D; 30 corridas por configuración.
@@ -173,12 +144,6 @@ y la demostración, junto con los límites de lo que se ha comprobado.
 MPLBACKEND=Agg python -m experiments.run_part1 --config configs/part1_demo.yaml
 ```
 
-En Windows PowerShell:
-
-```powershell
-$env:MPLBACKEND = "Agg"
-python -m experiments.run_part1 --config configs/part1_demo.yaml
-```
 
 
 Mantiene 30 corridas por configuración, con un presupuesto de búsqueda menor y
