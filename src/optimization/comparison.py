@@ -23,6 +23,14 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
     )
     configurations_count = len(rows)
 
+    def figure_link(path):
+        """En GitHub Pages, apunta a los recursos publicados bajo docs/."""
+        docs_results = Path(__file__).resolve().parents[2] / "docs" / "resultados"
+        if output_dir.resolve() == docs_results.resolve():
+            public_path = output_dir.parent / "imagenes" / "part1" / path.relative_to(artifacts_dir)
+            return Path(os.path.relpath(public_path, output_dir)).as_posix()
+        return Path(os.path.relpath(path, output_dir)).as_posix()
+
     (output_dir / "comparison.json").write_text(
         json.dumps(rows, indent=2, ensure_ascii=False, allow_nan=False) + "\n",
         encoding="utf-8",
@@ -363,12 +371,7 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
             )
 
             if path.exists():
-                link = Path(
-                    os.path.relpath(
-                        path,
-                        output_dir,
-                    )
-                ).as_posix()
+                link = figure_link(path)
 
                 lines.append(
                     f"La [Figura {index}]({link}) muestra "
@@ -418,7 +421,7 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
             if path.exists():
                 lines.append(
                     f"[Animación de {relative}]("
-                    f"{Path(os.path.relpath(path, output_dir)).as_posix()}"
+                    f"{figure_link(path)}"
                     "). Fuente: elaboración propia.\n"
                 )
 
