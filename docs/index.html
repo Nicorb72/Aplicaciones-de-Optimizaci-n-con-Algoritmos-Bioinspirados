@@ -73,6 +73,13 @@ tr.destacado{background:#f9e9f2!important}
 <h2>1. Introducción</h2>
 <p>En este trabajo se comparan técnicas basadas en gradientes y métodos metaheurísticos para minimizar funciones continuas. Además, se implementan algoritmos combinatorios para buscar recorridos de bajo costo por las 47 capitales de provincia de la España peninsular, regresando a la ciudad de partida.</p>
 <p>El análisis considera el valor final de la función objetivo, las evaluaciones empleadas, las tasas de éxito y las limitaciones de los datos utilizados.</p>
+<h3>Integrantes</h3>
+<ul>
+<li>Iván Darío Gómez</li>
+<li>Nicole Guaranguay</li>
+<li>Sara Acevedo</li>
+<li>Sebastián Cataño</li>
+</ul>
 </section>
 <section id="parte1">
 <h2>2. Parte 1: optimización numérica</h2>
@@ -203,14 +210,34 @@ tr.destacado{background:#f9e9f2!important}
 <p><strong>Alcance:</strong> función Rosenbrock en 2D y 3D, descenso por gradiente y sus visualizaciones.</p>
 <p><strong>R01. Desarrollo incremental:</strong> consulta para implementar cambios mínimos de forma progresiva, explicando y comprobando cada modificación. También se documentaron consultas sobre la estética y la representación correcta de las trayectorias tridimensionales (R02 y R03).</p>
 <p><strong>Verificación:</strong> pruebas del gradiente, los contadores de evaluaciones y las superficies de nivel de Rosenbrock 3D, descritas en el registro completo.</p>
-<h3>4.2. Nicole Guaranguay — Algoritmo evolutivo</h3>
+<h3>4.2. Iván Darío Gómez Cabrera — Descenso por gradiente para Rastrigin</h3>
+<p><strong>Alcance:</strong> implementación y evaluación de Rastrigin en 2D y 3D mediante descenso por gradiente, con condiciones iniciales aleatorias, tasa de aprendizaje 0,001 y hasta 10.000 iteraciones.</p>
+<p><strong>I01. Orientación para implementar el algoritmo:</strong></p>
+<blockquote><p>Necesito implementar en Python un algoritmo de descenso por gradiente para optimizar la función Rastrigin en dos y tres dimensiones, partiendo de condiciones iniciales aleatorias. ¿Me puedes explicar cómo calcular el gradiente, implementar las actualizaciones de las coordenadas, organizar las corridas experimentales y representar gráficamente el proceso de optimización?</p></blockquote>
+<p><strong>I02. Verificación de compatibilidad e integración:</strong></p>
+<blockquote><p>Quiero que me verifiques si mi código se acopla con los demás archivos necesarios del proyecto.</p></blockquote>
+<p><strong>Impacto:</strong> se incorporaron el gradiente analítico, las trayectorias, los contadores de evaluaciones, la detección de divergencias, las estadísticas y las gráficas de convergencia para 30 corridas por dimensión. La integración se contrasta con la configuración, el ejecutor y las pruebas del proyecto.</p>
+<p><strong>Evidencia relacionada:</strong> <a href="src/optimization/gradient_descent_rastrigin.py">GD de Rastrigin</a>, <a href="src/optimization/rastrigin.py">función y gradiente</a>, <a href="configs/part1.yaml">configuración</a> y <a href="experiments/run_part1.py">ejecutor</a>.</p>
+<h3>4.3. Nicole Guaranguay — Algoritmo evolutivo</h3>
 <p><strong>Alcance:</strong> implementación del algoritmo evolutivo en Rosenbrock y Rastrigin, en 2D y 3D, con selección por torneo, cruce BLX-alpha, mutación gaussiana y elitismo.</p>
 <p><strong>N01. Orientación para implementar el algoritmo evolutivo</strong></p>
 <blockquote><p>Necesito implementar un algoritmo evolutivo en Python para optimizar las funciones Rosenbrock y Rastrigin. ¿Me puedes explicar cómo funciona, qué métodos de selección, cruce y mutación puedo utilizar y cómo podría organizar el código para implementarlo correctamente?</p></blockquote>
 <p><strong>Propósito:</strong> comprender las etapas del evolutivo y organizar su implementación en Python. <strong>Nota de trazabilidad:</strong> N01 es un ejemplo reconstruido de consulta, no un prompt histórico literalmente verificado. No acredita una respuesta concreta de IA.</p>
 <p><strong>Evidencia relacionada:</strong> <a href="https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados/blob/main/src/optimization/evolutionary.py" rel="noopener noreferrer" target="_blank">implementación</a>, <a href="https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados/blob/main/configs/part1.yaml" rel="noopener noreferrer" target="_blank">configuración</a> y <a href="https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados/blob/main/tests/test_evolutionary.py" rel="noopener noreferrer" target="_blank">pruebas del algoritmo</a>.</p>
+<h3>4.4. Nicolás Ruiz — Hiperparámetros y Evolución Diferencial</h3>
+<p><strong>Alcance:</strong> selección de hiperparámetros mediante Grid Search, integración de las configuraciones 2D/3D, ejecución de Evolución Diferencial, persistencia de resultados y actualización de benchmarks e informes.</p>
+<p><strong>NR01. Integración de la tercera dimensión:</strong></p>
+<blockquote><p>Extiende el experimento existente de 2D a 3D para todas las funciones y todos los métodos. Integra la nueva dimensión en la configuración, ejecución, visualizaciones, animaciones, benchmarks e informes, sin modificar los tests.</p></blockquote>
+<p><strong>NR02. Selección de hiperparámetros:</strong></p>
+<blockquote><p>Documenta el proceso de Grid Search, los valores seleccionados para cada método y la validación final. Explica las limitaciones de la búsqueda y no presentes los parámetros como óptimos universales.</p></blockquote>
+<p><strong>NR03. Persistencia y regeneración:</strong></p>
+<blockquote><p>Asegura que los resultados de las ejecuciones filtradas, especialmente las configuraciones 3D, se incorporen al <code>report.md</code>, <code>comparison.csv</code> y <code>comparison.json</code> globales. Debe ser posible regenerar el informe sin repetir las optimizaciones.</p></blockquote>
+<p><strong>NR04. Instalación reproducible con UV:</strong></p>
+<blockquote><p>Propón una forma general y reproducible de crear el entorno del proyecto con UV, respetando la versión de Python y las dependencias fijadas. Incluye comandos de comprobación y explica qué hacer si UV o el acceso a paquetes no están disponibles.</p></blockquote>
+<p><strong>Impacto:</strong> se integraron Rosenbrock y Rastrigin, GD, PSO, evolutivo y DE en 2D y 3D; se consolidaron los hiperparámetros mediante Grid Search y se validaron 30 corridas por configuración. La configuración final de DE usa población 40, 999 generaciones, F=0,7 y CR=0,5. La del evolutivo usa población 40, 1249 generaciones, torneo 3, BLX-alpha=0,6, mutación 0,5, sigma 0,1 y élite 0,2, para 40.008 evaluaciones.</p>
+<p><strong>Evidencia relacionada:</strong> <a href="configs/part1.yaml">configuración principal</a>, <a href="experiments/run_part1.py">ejecutor</a>, <a href="src/optimization/differential_evolution.py">Evolución Diferencial</a>, <a href="docs/parte1_metodologia.md">metodología</a> y <a href="docs/resultados/report.md">reporte</a>.</p>
 <article id="sebastian-ia">
-<h3>4.3. Sebastián Cataño — PSO y revisión del TSP</h3>
+<h3>4.5. Sebastián Cataño — PSO y revisión del TSP</h3>
 <h4>Alcance del aporte y uso de IA</h4>
 <p>Se utilizó Claude como apoyo para desarrollar la implementación de optimización por enjambre de partículas PSO. Posteriormente, se utilizó ChatGPT/Codex para revisar el proyecto, actualizar los resultados del TSP, corregir sus visualizaciones y realizar un análisis de sensibilidad a los peajes provisionales.</p>
 <h4>Prompts reconstruidos para PSO</h4>
@@ -249,7 +276,9 @@ tr.destacado{background:#f9e9f2!important}
 <p><strong>Categoría:</strong> matemáticas y visualización. <strong>Clasificación:</strong> verificación técnica; no se conserva una respuesta literal incorrecta de IA.</p>
 <p><strong>Prompt relacionado:</strong> R03 solicita mostrar la función en el GIF 3D, además del recorrido. El mensaje completo se conserva en el registro de prompts.</p>
 <p><strong>Afirmación sometida a prueba, no cita de IA:</strong> dibujar <code>z=f(x1,x2)</code> sería suficiente para mostrar Rosenbrock de tres variables. Se cuestiona porque la altura de esa superficie es el valor de una función de dos variables, mientras que <code>x3</code> es una entrada independiente en el problema tridimensional.</p>
+<p><strong>Motivo de comprobación:</strong> confundir la altura de una superficie 2D con una coordenada de entrada 3D cambia la función que se representa.</p>
 <p><strong>Evidencia:</strong> <code>f(-1.2,1)=24.2</code>, pero <code>f(-1.2,1,0.5)=49.2</code>. En las superficies de nivel implementadas, los puntos <code>(1,1,0.9)</code> y <code>(1,1,1.1)</code> satisfacen <code>f≈1</code>. Se comprueban también puntos del nivel <code>f=10</code>.</p>
+<p><strong>Conclusión:</strong> la visualización correcta usa <code>x1,x2,x3</code> como ejes y superficies de nivel <code>f=1</code> y <code>f=10</code>, no una superficie <code>z=f(x1,x2)</code>.</p>
 <p><strong>Interpretación correcta:</strong> el GIF 3D utiliza los ejes <code>x1,x2,x3</code>, superficies de nivel <code>f=1</code> y <code>f=10</code>, y muestra el valor objetivo aparte. Esta representación ya está implementada; no se atribuye a una corrección de IA sin respaldo.</p>
 <p><strong>Lección:</strong> identificar las variables de cada eje y sustituir puntos de la visualización en la función original.</p>
 </article>
@@ -258,7 +287,9 @@ tr.destacado{background:#f9e9f2!important}
 <p><strong>Categoría:</strong> código y comparación de costos. <strong>Clasificación:</strong> verificación técnica; no se conserva una respuesta literal incorrecta de IA.</p>
 <p><strong>Prompt de contexto:</strong> R01 solicita desarrollar y comprobar paso a paso Rosenbrock/GD. No se conserva una consulta específica que contenga la afirmación sobre costos.</p>
 <p><strong>Afirmación sometida a prueba, no cita de IA:</strong> <code>C=N_f+2d·N_grad</code> sería el número real de llamadas a la función. Se cuestiona porque GD utiliza un gradiente analítico, mientras que el factor <code>2d</code> procede de una equivalencia con diferencias centrales.</p>
+<p><strong>Motivo de comprobación:</strong> una convención de costo basada en diferencias centrales no debe confundirse con las llamadas que realmente realiza una implementación con gradiente analítico.</p>
 <p><strong>Evidencia:</strong> instrumentando diez iteraciones de GD se obtiene una llamada real a <code>f</code> y diez al gradiente, tanto en 2D como en 3D. Los costos equivalentes son 41 y 61, respectivamente; no son 41 y 61 llamadas ejecutadas a <code>f</code>.</p>
+<p><strong>Conclusión:</strong> los valores 41 y 61 son costos equivalentes, no llamadas reales ni segundos de ejecución.</p>
 <p><strong>Interpretación correcta:</strong> reportar los contadores por separado y justificar la equivalencia. El costo equivalente tampoco mide segundos de ejecución.</p>
 <p><strong>Lección:</strong> comprobar llamadas reales mediante instrumentación y distinguirlas de una convención de comparación.</p>
 </article>
@@ -274,11 +305,33 @@ tr.destacado{background:#f9e9f2!important}
 <tr><td>C: ambos cambios</td><td>20 %</td><td>0,05</td><td>1248</td><td>39.976</td><td>6/30</td></tr>
 </tbody></table></div>
 <p class="fuente">Tabla 5. Verificación experimental del algoritmo evolutivo. Resultados de 30 corridas por prueba registrados durante los experimentos de ajuste del evolutivo. La diferencia de presupuesto entre 40.000 y 39.976 evaluaciones es de 24 llamadas (0,06 %).</p>
+<p><strong>Respuesta relevante de IA:</strong> se presentó la reducción del elitismo como explicación principal de la mejora observada en Rosenbrock 3D. Esa explicación era demasiado fuerte porque también cambiaron las generaciones, el número de hijos y el presupuesto efectivo.</p>
+<p><strong>Motivo de comprobación:</strong> pasar de 50 % a 20 % de élite cambia simultáneamente la cantidad de individuos conservados y la cantidad de descendientes. No permite identificar el efecto aislado del elitismo.</p>
 <p><strong>Corrección:</strong> la prueba B alcanzó 9/30 éxitos frente a 0/30 en la original, pero se debe describir como una mejora observada para esa <em>configuración</em>, no atribuirla exclusivamente al porcentaje de élite. Para una conclusión causal más sólida harían falta pruebas que controlen también la distribución temporal de las evaluaciones y análisis adicionales entre semillas.</p>
 <p><strong>Aprendizaje:</strong> una explicación convincente de la IA no reemplaza el diseño experimental. Deben comprobarse los parámetros, las evaluaciones y los resultados antes de afirmar por qué mejora un algoritmo.</p>
 <p><strong>Alcance de esta verificación:</strong> la configuración finalmente publicada del evolutivo es distinta (40 individuos, 1249 generaciones, cruce BLX-α = 0,6 y élite del 20 %, con 40.008 evaluaciones por corrida). Los resultados de esta tabla corresponden únicamente a las pruebas exploratorias anteriores.</p>
+<article id="nicolas-v04">
+<h4>V04. Presupuesto incorrecto del algoritmo evolutivo — Nicolás Ruiz</h4>
+<p><strong>Categoría:</strong> costos, configuración experimental y comparación de métodos.</p>
+<p><strong>Prompt:</strong> «Documenta los parámetros finales de todos los métodos y verifica que los presupuestos de evaluación reportados coincidan con la configuración realmente ejecutada».</p>
+<p><strong>Respuesta relevante de IA:</strong> se identificó la afirmación de que el algoritmo evolutivo usaba 40.000 evaluaciones, igual que PSO y DE, aunque la configuración anterior tenía una élite de 0,2 y 1.998 generaciones. La cifra calculada entonces era 63.976; posteriormente la configuración final se ajustó a 1.249 generaciones.</p>
+<p><strong>Motivo de comprobación:</strong> con población <code>P=40</code>, élite <code>E=round(40·0,2)=8</code> y 32 hijos por generación, el total debe calcularse desde la regla de reproducción.</p>
+<p><strong>Evidencia:</strong></p>
+<p class="ecuacion">N<sub>f</sub> = P + (P − E)G = 40 + (40 − 8)·1249 = 40.008</p>
+<p><strong>Conclusión:</strong> la configuración final del evolutivo realiza 40.008 evaluaciones por corrida. La diferencia de ocho frente al objetivo nominal de 40.000 se debe a que las generaciones son enteras y cada generación produce 32 hijos.</p>
+<p><strong>Lección:</strong> los presupuestos deben calcularse desde los parámetros efectivos y verificarse contra los contadores guardados; no se debe asumir que todos los métodos tienen exactamente el mismo costo.</p>
+</article>
 <h4>Otras verificaciones documentadas</h4>
 <p>El registro también contiene V01, que distingue Rosenbrock de tres variables de una superficie bidimensional, y V02, que separa las llamadas reales al gradiente del costo equivalente. Son verificaciones técnicas; no se presentan como respuestas erróneas literales sin evidencia.</p>
+<h4>Resumen de alucinaciones y verificaciones de IA</h4>
+<p>Antes del informe completo se muestran las verificaciones que están documentadas en el registro. El archivo conserva cuatro fichas explícitas (V01–V04); el quinto elemento es un control de trazabilidad y no se presenta como una alucinación inventada.</p>
+<ol>
+<li><strong>V01 — Rosenbrock 3D:</strong> no basta representar <code>z=f(x1,x2)</code> para mostrar una función de tres variables; se verificaron los ejes <code>x1,x2,x3</code> y las superficies de nivel.</li>
+<li><strong>V02 — Costo del gradiente:</strong> <code>C=N_f+2d·N_grad</code> es un costo equivalente basado en diferencias centrales, no el número real de llamadas cuando se usa el gradiente analítico.</li>
+<li><strong>V03 — Mejora del evolutivo:</strong> una mejora observada al cambiar elitismo y mutación no demuestra que el elitismo sea la única causa; se compararon configuraciones completas.</li>
+<li><strong>V04 — Evaluaciones del evolutivo:</strong> con élite de 0,2, población 40 y 1 249 generaciones, el conteo es <code>40 + 32·1249 = 40.008</code>, no una suposición genérica de 40.000.</li>
+<li><strong>Control de trazabilidad:</strong> el registro advierte que no se deben inventar una quinta respuesta incorrecta, captura o prompt literal cuando no existe evidencia conservada.</li>
+</ol>
 <p>Para presentar V03 como una respuesta errónea documentada, el equipo debe conservar el mensaje original de la IA y las salidas de las pruebas. El archivo enlazado reúne el registro de prompts y evidencias.</p>
 <p><a class="enlace" href="uso_ia_y_verificaciones.md">Consultar el registro completo de prompts y verificaciones</a></p>
 </section>
