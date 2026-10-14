@@ -1,0 +1,108 @@
+{
+  "seed": 123,
+  "finite_difference_step": 1e-06,
+  "gradient_checks": [
+    {
+      "function": "rosenbrock",
+      "dimension": 2,
+      "points": 20,
+      "max_scaled_gradient_error": 4.514195683924527e-10
+    },
+    {
+      "function": "rosenbrock",
+      "dimension": 3,
+      "points": 20,
+      "max_scaled_gradient_error": 1.719375422558699e-09
+    },
+    {
+      "function": "rastrigin",
+      "dimension": 2,
+      "points": 20,
+      "max_scaled_gradient_error": 3.467777064619313e-10
+    },
+    {
+      "function": "rastrigin",
+      "dimension": 3,
+      "points": 20,
+      "max_scaled_gradient_error": 7.559426506653677e-10
+    }
+  ],
+  "rosenbrock_2d": {
+    "hessian_at_minimum": [
+      [
+        802.0,
+        -400.0
+      ],
+      [
+        -400.0,
+        200.0
+      ]
+    ],
+    "eigenvalues": [
+      0.3993607674876216,
+      1001.6006392325123
+    ],
+    "condition_number": 2508.0096012775152,
+    "quadratic_local_step_upper_bound": 0.0019968038374381654
+  },
+  "rosenbrock_3d": {
+    "stationary_polynomial": "(x1-1)(200*x1^2+200*x1+101)=0",
+    "quadratic_factor_minimum": 51,
+    "only_stationary_point": [
+      1,
+      1,
+      1
+    ]
+  },
+  "rastrigin": {
+    "interval": [
+      -5.12,
+      5.12
+    ],
+    "grid_points": 40001,
+    "stationary_points_1d": [
+      -4.974691390895,
+      -4.522993659585,
+      -3.979783860301,
+      -3.51785913817,
+      -2.984855701039,
+      -2.5127433182,
+      -1.989912233709,
+      -1.50764073187,
+      -0.994958637652,
+      -0.502546036555,
+      0.0,
+      0.502546036555,
+      0.994958637652,
+      1.50764073187,
+      1.989912233709,
+      2.5127433182,
+      2.984855701039,
+      3.51785913817,
+      3.979783860301,
+      4.522993659585,
+      4.974691390895
+    ],
+    "strict_minima_1d": [
+      -4.974691390895,
+      -3.979783860301,
+      -2.984855701039,
+      -1.989912233709,
+      -0.994958637652,
+      0.0,
+      0.994958637652,
+      1.989912233709,
+      2.984855701039,
+      3.979783860301,
+      4.974691390895
+    ],
+    "local_minima_count_2d": 121,
+    "local_minima_count_3d": 1331,
+    "condition_number_at_origin": 1,
+    "scope": "Conteo numérico por aislamiento de cambios de signo y bisección, con segunda derivada positiva; no es una certificación simbólica exhaustiva."
+  },
+  "source_sha256": {
+    "src/optimization/rosenbrock.py": "8265535ec1d88e3d3dcb3fe643bd88c835ff322f362c96c71ffa1df79b36c236",
+    "src/optimization/rastrigin.py": "92d8b0030c47ef568b9fe2aad6638c643497a3ca2b72717ce809c37c664710ff"
+  }
+}
