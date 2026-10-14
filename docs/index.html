@@ -154,7 +154,41 @@ tr.destacado{background:#f9e9f2!important}
 <blockquote><p>Necesito implementar un algoritmo evolutivo en Python para optimizar las funciones Rosenbrock y Rastrigin. ¿Me puedes explicar cómo funciona, qué métodos de selección, cruce y mutación puedo utilizar y cómo podría organizar el código para implementarlo correctamente?</p></blockquote>
 <p><strong>Propósito:</strong> comprender las etapas del evolutivo y organizar su implementación en Python. <strong>Nota de trazabilidad:</strong> N01 es un ejemplo reconstruido de consulta, no un prompt histórico literalmente verificado. No acredita una respuesta concreta de IA.</p>
 <p><strong>Evidencia relacionada:</strong> <a href="https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados/blob/main/src/optimization/evolutionary.py" target="_blank" rel="noopener noreferrer">implementación</a>, <a href="https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados/blob/main/configs/part1.yaml" target="_blank" rel="noopener noreferrer">configuración</a> y <a href="https://github.com/Nicorb72/Aplicaciones-de-Optimizaci-n-con-Algoritmos-Bioinspirados/blob/main/tests/test_evolutionary.py" target="_blank" rel="noopener noreferrer">pruebas del algoritmo</a>.</p>
-<h3>4.3. Cacería de la alucinación y verificaciones</h3>
+<article id="sebastian-ia">
+<h3>4.3. Sebastián Cataño — PSO y revisión del TSP</h3>
+<h4>Alcance del aporte y uso de IA</h4>
+<p>Se utilizó Claude como apoyo para desarrollar la implementación de optimización por enjambre de partículas PSO. Posteriormente, se utilizó ChatGPT/Codex para revisar el proyecto, actualizar los resultados del TSP, corregir sus visualizaciones y realizar un análisis de sensibilidad a los peajes provisionales.</p>
+<h4>Prompts reconstruidos para PSO</h4>
+<p><strong>P01. Implementación del algoritmo</strong></p>
+<blockquote><p>Desarrolla una implementación modular de PSO en Python con NumPy para minimizar Rosenbrock y Rastrigin en dos y tres dimensiones. La función debe permitir configurar el dominio, el tamaño del enjambre, las iteraciones, la semilla y los coeficientes de actualización. Explica la inicialización de las partículas y la relación entre las ecuaciones matemáticas y el código.</p></blockquote>
+<p>Relación con el proyecto: función <code>run_pso</code>, inicialización aleatoria y actualización de velocidades y posiciones en <code>src/optimization/pso.py</code>.</p>
+<p><strong>P02. Gestión de las mejores soluciones</strong></p>
+<blockquote><p>Revisa la actualización de la mejor posición individual y de la mejor posición global del enjambre. Verifica que se conserven las mejoras, que las copias de los arreglos eviten modificaciones involuntarias y que los factores aleatorios se generen independientemente para cada partícula y coordenada.</p></blockquote>
+<p>Relación con el proyecto: manejo de <code>p_best</code>, <code>p_best_val</code>, <code>g_best</code> y los factores aleatorios <code>r1</code> y <code>r2</code>.</p>
+<p><strong>P03. Reproducibilidad y conteo de evaluaciones</strong></p>
+<blockquote><p>Instrumenta el algoritmo para registrar todas las evaluaciones de la función objetivo, incluida la evaluación inicial del enjambre. Comprueba que el conteo corresponda a N_f = P(T + 1) y utiliza semillas configurables para reproducir las corridas de forma independiente.</p></blockquote>
+<p>Relación con el proyecto: generador <code>numpy.random.default_rng(seed)</code> e historial de evaluaciones. Con 40 partículas y 999 iteraciones, PSO realiza 40.000 evaluaciones.</p>
+<p><strong>P04. Persistencia de resultados y visualización</strong></p>
+<blockquote><p>Estructura la salida del optimizador para conservar la evolución del mejor punto, sus valores objetivo, las evaluaciones acumuladas y las posiciones de todas las partículas. Los historiales deben permitir regenerar gráficas y animaciones sin repetir la optimización y distinguir el movimiento del enjambre de la trayectoria del mejor punto conocido.</p></blockquote>
+<p>Relación con el proyecto: historiales <code>trajectory</code>, <code>values_history</code>, <code>evaluations</code> y <code>population_history</code>.</p>
+<h4>Consultas de TSP — versiones editadas para presentación</h4>
+<p><strong>T01. Actualización de resultados y sincronización del blog</strong></p>
+<blockquote><p>Revisa la implementación local del TSP y regenera los resultados de ACO y del algoritmo genético utilizando las matrices viales y configuraciones vigentes. Actualiza los resúmenes, mapas, animaciones y tablas del blog. Comprueba la coherencia entre los costos de optimización, sus desgloses y el estudio del valor de la hora, conservando los resultados publicados de la Parte 1.</p></blockquote>
+<p>Impacto comprobado: actualización de los resultados principales e incorporación de <code>--tsp-only</code> para sincronizar únicamente el TSP.</p>
+<p>Evidencia: commit <code>39ef0d0</code>, <code>docs/datos/resultados_blog.json</code> y <code>scripts/build_blog.py</code>.</p>
+<p><strong>T02. Representación geográfica de las rutas</strong></p>
+<blockquote><p>Corrige las gráficas y animaciones del TSP para representar los recorridos sobre un mapa geográfico de España. Incorpora los límites territoriales como fondo, conserva la correspondencia con las coordenadas de las capitales y almacena los recursos necesarios para que las visualizaciones puedan regenerarse sin conexión a internet.</p></blockquote>
+<p>Impacto comprobado: incorporación del mapa de fondo y regeneración de las visualizaciones de ACO y GA. Las líneas representan el orden de visita entre capitales; las distancias y tiempos se obtienen de las matrices viales.</p>
+<p>Evidencia: commit <code>5e35faf</code>, <code>visualization/plot_tsp.py</code>, <code>data/tsp/iberia_boundaries.geojson</code> y <code>docs/imagenes/tsp/</code>.</p>
+<p><strong>T03. Análisis de sensibilidad a los peajes provisionales</strong></p>
+<blockquote><p>Evalúa una alternativa reproducible para estudiar la influencia de los peajes sin verificar individualmente todos los trayectos. Implementa escenarios que excluyan, mantengan y dupliquen los importes provisionales registrados. Ejecuta ambos algoritmos con semillas emparejadas, reporta costos y cambios de ruta, y distingue el efecto directo del precio de la variabilidad asociada a volver a optimizar.</p></blockquote>
+<p>Impacto comprobado: ejecución de 18 corridas con factores de peaje 0, 1 y 2, utilizando tres semillas por algoritmo. Se publicaron estadísticas y se recalcularon las rutas base manteniendo fijo su recorrido.</p>
+<p>Evidencia: commit <code>a6304af</code>, <code>experiments/run_toll_study.py</code>, <code>tests/test_toll_study.py</code> y <code>docs/datos/sensibilidad_peajes.json</code>.</p>
+<h4>Discusión del impacto y límites</h4>
+<p>La IA sirvió como apoyo para estructurar el código, revisar resultados y preparar experimentos reproducibles. La validación incluyó pruebas automatizadas, comprobaciones de costos y revisión de las visualizaciones.</p>
+<p>El análisis de sensibilidad permite estudiar el comportamiento del modelo bajo distintos supuestos. No verifica tarifas oficiales ni completa los peajes desconocidos. Tampoco demuestra optimalidad global o superioridad general de un algoritmo.</p>
+</article>
+<h3>4.4. Cacería de la alucinación y verificaciones</h3>
 <article id="sara-v01">
 <h4>V01. Confundir una superficie 2D con Rosenbrock de tres variables — Sara Acevedo Maya</h4>
 <p><strong>Categoría:</strong> matemáticas y visualización. <strong>Clasificación:</strong> verificación técnica; no se conserva una respuesta literal incorrecta de IA.</p>

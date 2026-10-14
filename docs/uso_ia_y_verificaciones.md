@@ -1,4 +1,4 @@
-# Uso de IA y Cacería de la alucinación — Parte 1
+# Uso de IA y Cacería de la alucinación
 
 Este registro reúne la evidencia de asistencia de IA del trabajo. El equipo debe
 complementarlo con sus otras conversaciones y revisar las afirmaciones antes
@@ -181,6 +181,70 @@ implementación final se contrastó con el YAML, los contadores, los archivos
 generados y las pruebas disponibles. En particular, la comparación entre
 métodos debe considerar los presupuestos reales y no solo el número nominal de
 generaciones.
+
+## Sebastián Cataño — PSO y revisión del TSP
+
+### Alcance del aporte y uso de IA
+
+Se utilizó Claude como apoyo para desarrollar la implementación de optimización por enjambre de partículas PSO. Posteriormente, se utilizó ChatGPT/Codex para revisar el proyecto, actualizar los resultados del TSP, corregir sus visualizaciones y realizar un análisis de sensibilidad a los peajes provisionales.
+
+### Prompts reconstruidos para PSO
+
+**P01. Implementación del algoritmo**
+
+> Desarrolla una implementación modular de PSO en Python con NumPy para minimizar Rosenbrock y Rastrigin en dos y tres dimensiones. La función debe permitir configurar el dominio, el tamaño del enjambre, las iteraciones, la semilla y los coeficientes de actualización. Explica la inicialización de las partículas y la relación entre las ecuaciones matemáticas y el código.
+
+Relación con el proyecto: función `run_pso`, inicialización aleatoria y actualización de velocidades y posiciones en `src/optimization/pso.py`.
+
+**P02. Gestión de las mejores soluciones**
+
+> Revisa la actualización de la mejor posición individual y de la mejor posición global del enjambre. Verifica que se conserven las mejoras, que las copias de los arreglos eviten modificaciones involuntarias y que los factores aleatorios se generen independientemente para cada partícula y coordenada.
+
+Relación con el proyecto: manejo de `p_best`, `p_best_val`, `g_best` y los factores aleatorios `r1` y `r2`.
+
+**P03. Reproducibilidad y conteo de evaluaciones**
+
+> Instrumenta el algoritmo para registrar todas las evaluaciones de la función objetivo, incluida la evaluación inicial del enjambre. Comprueba que el conteo corresponda a N_f = P(T + 1) y utiliza semillas configurables para reproducir las corridas de forma independiente.
+
+Relación con el proyecto: generador `numpy.random.default_rng(seed)` e historial de evaluaciones. Con 40 partículas y 999 iteraciones, PSO realiza 40.000 evaluaciones.
+
+**P04. Persistencia de resultados y visualización**
+
+> Estructura la salida del optimizador para conservar la evolución del mejor punto, sus valores objetivo, las evaluaciones acumuladas y las posiciones de todas las partículas. Los historiales deben permitir regenerar gráficas y animaciones sin repetir la optimización y distinguir el movimiento del enjambre de la trayectoria del mejor punto conocido.
+
+Relación con el proyecto: historiales `trajectory`, `values_history`, `evaluations` y `population_history`.
+
+### Consultas de TSP — versiones editadas para presentación
+
+**T01. Actualización de resultados y sincronización del blog**
+
+> Revisa la implementación local del TSP y regenera los resultados de ACO y del algoritmo genético utilizando las matrices viales y configuraciones vigentes. Actualiza los resúmenes, mapas, animaciones y tablas del blog. Comprueba la coherencia entre los costos de optimización, sus desgloses y el estudio del valor de la hora, conservando los resultados publicados de la Parte 1.
+
+Impacto comprobado: actualización de los resultados principales e incorporación de `--tsp-only` para sincronizar únicamente el TSP.
+
+Evidencia: commit `39ef0d0`, `docs/datos/resultados_blog.json` y `scripts/build_blog.py`.
+
+**T02. Representación geográfica de las rutas**
+
+> Corrige las gráficas y animaciones del TSP para representar los recorridos sobre un mapa geográfico de España. Incorpora los límites territoriales como fondo, conserva la correspondencia con las coordenadas de las capitales y almacena los recursos necesarios para que las visualizaciones puedan regenerarse sin conexión a internet.
+
+Impacto comprobado: incorporación del mapa de fondo y regeneración de las visualizaciones de ACO y GA. Las líneas representan el orden de visita entre capitales; las distancias y tiempos se obtienen de las matrices viales.
+
+Evidencia: commit `5e35faf`, `visualization/plot_tsp.py`, `data/tsp/iberia_boundaries.geojson` y `docs/imagenes/tsp/`.
+
+**T03. Análisis de sensibilidad a los peajes provisionales**
+
+> Evalúa una alternativa reproducible para estudiar la influencia de los peajes sin verificar individualmente todos los trayectos. Implementa escenarios que excluyan, mantengan y dupliquen los importes provisionales registrados. Ejecuta ambos algoritmos con semillas emparejadas, reporta costos y cambios de ruta, y distingue el efecto directo del precio de la variabilidad asociada a volver a optimizar.
+
+Impacto comprobado: ejecución de 18 corridas con factores de peaje 0, 1 y 2, utilizando tres semillas por algoritmo. Se publicaron estadísticas y se recalcularon las rutas base manteniendo fijo su recorrido.
+
+Evidencia: commit `a6304af`, `experiments/run_toll_study.py`, `tests/test_toll_study.py` y `docs/datos/sensibilidad_peajes.json`.
+
+### Discusión del impacto y límites
+
+La IA sirvió como apoyo para estructurar el código, revisar resultados y preparar experimentos reproducibles. La validación incluyó pruebas automatizadas, comprobaciones de costos y revisión de las visualizaciones.
+
+El análisis de sensibilidad permite estudiar el comportamiento del modelo bajo distintos supuestos. No verifica tarifas oficiales ni completa los peajes desconocidos. Tampoco demuestra optimalidad global o superioridad general de un algoritmo.
 
 ## Cacería de la alucinación: verificaciones con evidencia
 
