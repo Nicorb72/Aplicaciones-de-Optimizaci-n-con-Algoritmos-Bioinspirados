@@ -80,6 +80,39 @@ del gradiente, del mínimo conocido, de los contadores y de las superficies de
 nivel. En la sustentación corresponde explicar esas comprobaciones, la regla
 `x_nuevo = x − α∇f(x)` y las limitaciones del paso fijo.
 
+### Ivan Dario Gomez Cabrera - Descenso por gradiente (GD) para Rastrigin
+****Alcance de este aporte:****Implementación y evaluación del algoritmo de descenso por gradiente para optimizar la función Rastrigin en dos y tres dimensiones, utilizando condiciones iniciales aleatorias, una tasa de aprendizaje de 0.001 y un máximo de 10.000 iteraciones. Se realizaron 30 corridas por dimensión y se analizaron los resultados obtenidos mediante estadísticas y gráficas de convergencia.
+
+### Prompts conservados e impacto
+El siguiente prompt se preparó para representar una consulta de orientación sobre la implementación del algoritmo. No se afirma que se haya enviado literalmente a la IA, salvo que exista un registro verificable de la conversación.
+
+#### I01. Orientación para implementar el algoritmo evolutivo
+>Necesito implementar en Python un algoritmo de descenso por gradiente para optimizar la función Rastrigin en dos y tres dimensiones, partiendo de condiciones iniciales aleatorias. ¿Me puedes explicar cómo calcular el gradiente, implementar las actualizaciones de las coordenadas, organizar las corridas experimentales y representar gráficamente el proceso de optimización?
+
+Impacto previsto: Comprender el funcionamiento del descenso por gradiente, calcular el gradiente analítico de Rastrigin y estructurar la implementación para ejecutar experimentos reproducibles. También se busca analizar el comportamiento del algoritmo frente a los mínimos locales de la función y representar su convergencia mediante gráficas.
+
+Evidencia relacionada: Implementación del descenso por gradiente, función Rastrigin y su gradiente, configuración de la Parte 1, ejecutor de experimentos y las figuras y resultados generados durante las corridas. Estos archivos permiten verificar la implementación y los resultados, pero no demuestran por sí solos que el prompt propuesto haya sido enviado.
+
+#### I02. Verificación de compatibilidad e integración del código
+
+>Quiero que me verifiques si mi código se acopla con los demás archivos necesarios del proyecto.
+
+Impacto: La consulta estuvo orientada a revisar la integración de la implementación del descenso por gradiente para Rastrigin con los demás componentes del repositorio. Esto incluye comprobar la compatibilidad de las importaciones, la estructura de los módulos, los parámetros de configuración, el formato de los resultados y la conexión con el ejecutor de experimentos y las herramientas de análisis estadístico.
+
+Esta revisión permite identificar posibles incompatibilidades entre la implementación del algoritmo y los archivos existentes, facilitando su integración en el flujo general de experimentación. La verificación debe respaldarse con la revisión del código y, cuando corresponda, con la ejecución de pruebas.
+
+Evidencia relacionada: src/optimization/gradient_descent_rastrigin.py, src/optimization/rastrigin.py, configs/part1.yaml, experiments/run_part1.py y los archivos de pruebas correspondientes. Estos archivos permiten documentar la estructura revisada y comprobar la integración mediante su ejecución.
+
+### Discusión del impacto en mi entrega
+
+En mi parte del proyecto implementé el algoritmo de descenso por gradiente para minimizar la función Rastrigin en dos y tres dimensiones. La implementación utiliza el gradiente analítico para actualizar iterativamente las coordenadas en dirección contraria al gradiente, con el objetivo de reducir el valor de la función. Se incorporaron registros de la trayectoria, contadores de evaluaciones, validaciones numéricas y detección de divergencias.
+
+La evaluación se realizó mediante 30 corridas por dimensión, utilizando semillas desde 42 hasta 71, una tasa de aprendizaje de 0.001 y un máximo de 10.000 iteraciones por corrida. Los resultados mostraron un valor final promedio de 15.8197 en dos dimensiones y de 24.4758 en tres dimensiones. En ambos casos, se obtuvo una tasa de éxito del 0 %, considerando como criterio alcanzar un valor de la función menor o igual a 0.0001.
+
+Estos resultados evidencian una limitación del descenso por gradiente frente a la estructura multimodal de Rastrigin, que presenta numerosos mínimos locales. El algoritmo puede converger hacia un mínimo local dependiendo de la condición inicial, sin alcanzar necesariamente el mínimo global. La comparación con métodos poblacionales, como la evolución diferencial y la optimización por enjambre de partículas, permitió observar diferencias en la exploración del espacio de búsqueda para las configuraciones evaluadas.
+
+Finalmente, las estadísticas y gráficas de convergencia permitieron documentar el comportamiento del algoritmo y analizar sus resultados. La orientación mediante inteligencia artificial se distingue del trabajo de implementación, ejecución y verificación de los experimentos realizados en el repositorio.
+
 ## Nicole Guaranguay — Algoritmo evolutivo
 
 ****Alcance de este aporte:**** Implementación del algoritmo evolutivo para optimizar Rosenbrock y Rastrigin en 2D y 3D, con selección por torneo, cruce BLX-alpha, mutación gaussiana y elitismo.
@@ -99,6 +132,7 @@ Evidencia relacionada: [algoritmo evolutivo](../src/optimization/evolutionary.py
 ### Discusión del impacto en mi entrega
 
 En mi parte del proyecto implementé el algoritmo evolutivo y evalué su comportamiento en las funciones Rosenbrock y Rastrigin para dos y tres dimensiones. La selección por torneo permite elegir los padres; el cruce BLX-alpha genera nuevas soluciones; la mutación gaussiana introduce variaciones, y el elitismo conserva los mejores individuos. Las corridas y las pruebas del repositorio permiten revisar el desempeño obtenido y el conteo de evaluaciones. El uso de IA como orientación debe distinguirse de la implementación y verificación efectivamente realizadas.
+
 
 ## Nicolás Ruiz - Optimización de Hiperparametros, Evolución Diferencial
 
