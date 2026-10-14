@@ -34,9 +34,18 @@ resultados publicados de la Parte 1, incluido PSO y el trabajo de otros integran
 
 ## Validación realizada
 
-- Suite completa: **128 pruebas aprobadas**. Incluye regresiones de depósito
-  dirigido, cierre del ciclo, comparación entre semillas iguales y exportación
-  de costos con parámetros distintos de los predeterminados.
+- Antes de incorporar las actualizaciones remotas de otros integrantes, la
+  suite completa aprobó **128 pruebas**. Después de integrar `ed7478c`
+  (sin modificar sus archivos), el resultado es **127 aprobadas y 1 fallida**:
+  `tests/test_part1.py::test_suite_covers_requirements_and_equivalent_budget`.
+  Ese commit cambia las generaciones del evolutivo en `configs/part1.yaml`
+  de 1998 a 1249; la aserción existente del presupuesto ya no coincide.
+  No se modifica ni la configuración ni esa prueba, por quedar fuera del TSP.
+- Todas las pruebas específicas del TSP aprueban: **14 pruebas**, mediante
+  `python -m pytest -q tests/test_tsp.py tests/test_toll_study.py tests/test_tsp_directed_study.py`.
+  Incluyen regresiones de depósito dirigido, cierre del ciclo, comparación
+  entre semillas iguales y exportación de costos con parámetros distintos
+  de los predeterminados.
 - Dos ejecuciones principales completas con mapas y GIF; a 25 €/h, semilla
   42 y factor 1: ACO **2546,56 €**, GA **2561,25 €**. Cada recorrido visita las
   47 ciudades una vez y regresa al inicio. Se comprobó que estas rutas coinciden
