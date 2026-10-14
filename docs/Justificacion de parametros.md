@@ -92,7 +92,7 @@ de `results/part1/`.
 | PSO | `cognitive` | 1.4 | Influencia de la mejor posición individual |
 | PSO | `social` | 1.0 | Influencia de la mejor posición colectiva |
 | Evolutivo | `population_size` | 40 | Tamaño de la población |
-| Evolutivo | `generations` | 1998 | Presupuesto generacional |
+| Evolutivo | `generations` | 1249 | Presupuesto generacional de la configuración óptima |
 | Evolutivo | `tournament_size` | 3 | Presión de selección |
 | Evolutivo | `crossover_alpha` | 0.6 | Amplitud del cruce BLX-\(\alpha\) |
 | Evolutivo | `mutation_rate` | 0.5 | Probabilidad de mutar una coordenada |
@@ -137,9 +137,12 @@ de que los mismos valores sean óptimos para cada función por separado.
 
 En particular, la selección final del evolutivo usa
 `crossover_alpha=0.6`, `mutation_rate=0.5`, `mutation_sigma=0.1` y
-`elite_fraction=0.2`. Estos valores deben interpretarse como la configuración
-validada en producción, mientras que las filas de la tabla anterior son
-resultados de la fase exploratoria del cuaderno.
+`elite_fraction=0.2`. Con \(P=40\) y \(E=8\), esta fracción produce 32 hijos
+por generación. Por ello, al consolidar la configuración óptima encontrada,
+`generations` se estableció en 1 249 para obtener
+\(40+32\cdot1249=40\,008\) evaluaciones. Estos valores deben interpretarse
+como la configuración validada en producción, mientras que las filas de la
+tabla anterior son resultados de la fase exploratoria del cuaderno.
 
 ## 6. Hiperparámetros seleccionados para TSP
 

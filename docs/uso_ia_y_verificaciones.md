@@ -335,10 +335,10 @@ completarse los campos de atribución sin reconstruir citas de memoria.
 
 Fuente: ejecución de `docs/evidencias_ia/verificar_rosenbrock.py`, 9 de octubre de 2026; resultados en [rosenbrock_verificaciones.json](evidencias_ia/rosenbrock_verificaciones.json).
 
-| Dimensión | Punto inicial | Iteraciones | Llamadas reales a \(f\) | Llamadas reales al gradiente | Costo equivalente |
-|---:|---|---:|---:|---:|---:|
-| 2 | `(-1.2, 1.0)` | 10 | 1 | 10 | 41 |
-| 3 | `(-1.2, 1.0, 0.5)` | 10 | 1 | 10 | 61 |
+| Dimensión | Punto inicial        | Iteraciones | Llamadas reales a\(f\) | Llamadas reales al gradiente | Costo equivalente |
+| ---------: | -------------------- | ----------: | ---------------------: | ---------------------------: | ----------------: |
+|          2 | `(-1.2, 1.0)`      |          10 |                      1 |                           10 |                41 |
+|          3 | `(-1.2, 1.0, 0.5)` |          10 |                      1 |                           10 |                61 |
 
 5. **Conclusión e interpretación correcta:** GD evalúa `f` una vez al final y utiliza diez evaluaciones de su gradiente analítico en estos ejemplos. Los valores 41 y 61 son costos equivalentes bajo la convención declarada, no llamadas reales a `f` ni segundos de ejecución. Las evaluaciones para dibujar figuras se contabilizan fuera de la optimización. El conteo actual es consistente; se documenta una verificación, no un defecto corregido.
 6. **Lección:** instrumentar las llamadas, reportar `N_f` y `N_grad` por separado y explicar la equivalencia. No deducir el costo real de una etiqueta, del número de fotogramas ni del número de iteraciones solamente.
@@ -349,35 +349,37 @@ Fuente: ejecución de `docs/evidencias_ia/verificar_rosenbrock.py`, 9 de octubre
 
 1. **Contexto y consulta conservada:** durante el ajuste del algoritmo evolutivo se preguntó: «Si se obtiene que sí es por esos valores que se debería realizar?». La consulta hacía referencia a los valores de mutación y elitismo que podían estar afectando la convergencia.
 2. **Afirmación que motivó la verificación:** al comparar los resultados exploratorios, la IA presentó la reducción del elitismo como principal explicación de la mejora en Rosenbrock 3D. La conclusión era demasiado firme para el diseño del experimento, porque además cambiaron las generaciones y el número de descendientes por generación.
-3. **Por qué se cuestionó:** pasar del 50 % al 20 % de élite implica conservar 20 frente a 8 individuos y producir 20 frente a 32 hijos nuevos por generación. Para mantener cercano el presupuesto, las generaciones pasaron de 1998 a 1248. Por ello, los ensayos compararon configuraciones completas, no el efecto aislado de una variable manteniendo constante todo lo demás.
+3. **Por qué se cuestionó:** pasar del 50 % al 20 % de élite implica conservar 20 frente a 8 individuos y producir 20 frente a 32 hijos nuevos por generación. La configuración óptima consolidada establece 1249 generaciones, con 40008 evaluaciones. Por ello, los ensayos compararon configuraciones completas, no el efecto aislado de una variable manteniendo constante todo lo demás.
 4. **Evidencia:** las siguientes salidas fueron compartidas durante los experimentos de 30 corridas por configuración, con umbral de éxito de 0,0001:
 
-   | Prueba | Élite | Sigma | Generaciones | Evaluaciones | Éxitos Rosenbrock 3D |
-   |---|---:|---:|---:|---:|---:|
-   | Original | 50 % | 0,10 | 1998 | 40.000 | 0/30 |
-   | A: menor mutación | 50 % | 0,05 | 1998 | 40.000 | 0/30 |
-   | B: menor elitismo | 20 % | 0,10 | 1248 | 39.976 | 9/30 |
-   | C: ambos cambios | 20 % | 0,05 | 1248 | 39.976 | 6/30 |
+   | Prueba             | Élite | Sigma | Generaciones | Evaluaciones | Éxitos Rosenbrock 3D |
+   | ------------------ | -----: | ----: | -----------: | -----------: | --------------------: |
+   | Original           |   50 % |  0,10 |         1998 |       40.000 |                  0/30 |
+   | A: menor mutación |   50 % |  0,05 |         1998 |       40.000 |                  0/30 |
+   | B: menor elitismo  |   20 % |  0,10 |         1248 |       39.976 |                  9/30 |
+   | C: ambos cambios   |   20 % |  0,05 |         1248 |       39.976 |                  6/30 |
 
    La diferencia entre 40.000 y 39.976 evaluaciones es de 24 llamadas, equivalente al 0,06 %. Las salidas de terminal y el fragmento de conversación original pueden incorporarse como capturas de respaldo; **no se adjuntan capturas que no estén disponibles**.
 5. **Corrección:** la prueba B obtuvo mejores resultados observados que la configuración original, pero eso demuestra una mejora de la configuración probada, **no que el elitismo por sí solo sea la causa exclusiva**. Una afirmación causal más fuerte exigiría controlar también cómo se distribuyen las evaluaciones a lo largo de las generaciones y repetir experimentos comparables.
 6. **Lección aprendida:** las explicaciones de la IA deben confrontarse con el diseño de los experimentos y sus salidas reales. Las tasas de éxito, por sí solas, no identifican qué parámetro es responsable de una mejora.
 
-**Diferencia respecto de la entrega principal:** esta tabla corresponde a ensayos exploratorios. La configuración definitiva usa 40 individuos, 1998 generaciones, BLX-α = 0,6 y elitismo del 20 %, con **63.976 evaluaciones por corrida**. No deben mezclarse los resultados de ambas configuraciones.
+**Diferencia respecto de la entrega principal:** esta tabla corresponde a ensayos exploratorios. La configuración definitiva usa 40 individuos, 1249 generaciones, BLX-α = 0,6 y elitismo del 20 %, con **40.008 evaluaciones por corrida**. El número de generaciones se ajustó después de seleccionar los hiperparámetros óptimos para aproximar el presupuesto objetivo de 40 000 evaluaciones. No deben mezclarse los resultados de ambas configuraciones.
 
 ### V04. El algoritmo evolutivo no usa 40 000 evaluaciones con una élite de 0.2
 
 **Categoría:** costos, configuración experimental y comparación de métodos.
 
 1. **Prompt:** «Documenta los parámetros finales de todos los métodos y verifica que los presupuestos de evaluación reportados coincidan con la configuración realmente ejecutada».
-2. **Respuesta de la IA:** se identificó la afirmación incorrecta de que el algoritmo evolutivo usaba 40 000 evaluaciones, igual que PSO y DE, aunque la configuración final tenía una fracción de élite de 0.2. La respuesta original completa no se conserva como cita independiente; se registra aquí la afirmación revisada y su corrección verificable.
+2. **Respuesta de la IA:** No se identificó la afirmación incorrecta de que el algoritmo evolutivo usaba 40 000 evaluaciones, igual que PSO y DE, aunque la configuración final tenía una fracción de élite de 0.2. Lo que ocasiono que se informara de un numero que en realidad era muy distinto, pues con los parametros establecidos se hacian 63 976 evaluaciones
 3. **Motivo de comprobación:** con población \(P=40\), fracción de élite \(0.2\), \(E=8\) individuos élite y \(G=1998\) generaciones, cada generación produce \(P-E=32\) hijos, no 20.
-4. **Evidencia:** el cálculo ejecutado es:
+4. **Evidencia:** el cálculo ejecutado era:
 
-   $$ N_f = P + (P-E)G = 40 + (40-8)\cdot 1998 = 63\,976. $$
+   $$
+   N_f = P + (P-E)G = 40 + (40-8)\cdot 1998 = 63\,976.
+   $$
 
-   La salida del experimento informa 63 976 evaluaciones para el evolutivo y la Tabla 2 de [report.md](resultados/report.md) muestra ese valor en sus cuatro configuraciones. PSO y DE registran 40 000 evaluaciones.
-5. **Conclusión:** la afirmación de que el evolutivo usa 40 000 evaluaciones con una élite de 0.2 es incorrecta. El valor correcto es **63 976**. La configuración y el informe fueron actualizados para reflejar el contador real.
+   La configuración final informaba 63 976 evaluaciones para el evolutivo y la Tabla 2 de [report.md](resultados/report.md) muestra ese valor en sus cuatro configuraciones. PSO y DE registran 40 000 evaluaciones.
+5. **Conclusión:** con una élite de 0.2, 40 individuos y 1998 generaciones, el valor correcto es 63 976, por lo que fue necesario cambiar las generaciones a 1249 para que las evaluaciones totales dieran **40008**. La diferencia de ocho evaluaciones respecto al presupuesto nominal se debe a que cada generación produce 32 hijos y las generaciones deben ser enteras. La configuración óptima y el informe fueron actualizados para reflejar este cambio.
 6. **Lección:** los presupuestos deben calcularse desde las reglas de reproducción del algoritmo y contrastarse con los contadores guardados; no se debe asumir que todos los métodos tienen el mismo costo por usar poblaciones de igual tamaño.
 
 ### Reproducción de las evidencias de Sara
@@ -419,14 +421,14 @@ dos de sus controles para la parte de Sara. Las menciones a pruebas o arreglos
 
 en este registro histórico no certifican el estado actual de todos los métodos.
 
-| Categoría | Afirmación puesta a prueba | Evidencia y resultado | Lección |
-|---|---|---|---|
-| Matemáticas | El gradiente implementado corresponde a cada función. | Las pruebas de funciones contrastan derivadas analíticas con diferencias finitas en 2D/3D. Pasan en la suite. | Comprobar derivadas numéricamente además de derivarlas. |
-| Matemáticas | La superficie del GIF representa Rosenbrock de tres variables. | `test_isosurfaces_are_actual_rosenbrock_level_sets` sustituye sus puntos y verifica \(f=1\) y \(f=10\). | En tres variables, \(z\) no debe confundirse con \(f\); hay que indicar qué representan los ejes. |
-| Código | Los contadores reflejan llamadas realmente ejecutadas. | `test_population_counts_history_and_reproducibility` instrumenta el objetivo; las pruebas de GD comprueban sus contadores separados. | Contar llamadas dentro del optimizador, no deducirlas de una gráfica. |
-| Código | La visualización reproduce los datos guardados. | `test_gif_preserves_endpoints_and_saved_data` compara cada punto animado y verifica que no se alteren archivos de resultados. | Separar cálculo, persistencia y visualización. |
-| Conceptos | Completar iteraciones equivale a encontrar el mínimo global. | No: GD Rastrigin principal completa corridas pero obtiene 0/30 éxitos en cada dimensión al umbral 0.0001. Ver [comparison.json](resultados/comparison.json). | Separar `completed` de éxito, e informar \(f_{\mathrm{final}}\) y el umbral. |
-| Conceptos | \(C=N_f+2dN_{\mathrm{grad}}\) mide tiempo real. | No: es una equivalencia justificada por diferencias centrales; el código usa gradientes analíticos. Ver metodología y contadores. | Declarar la convención y no interpretarla como un cronómetro. |
+| Categoría   | Afirmación puesta a prueba                                    | Evidencia y resultado                                                                                                                                        | Lección                                                                                          |
+| ------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Matemáticas | El gradiente implementado corresponde a cada función.         | Las pruebas de funciones contrastan derivadas analíticas con diferencias finitas en 2D/3D. Pasan en la suite.                                               | Comprobar derivadas numéricamente además de derivarlas.                                         |
+| Matemáticas | La superficie del GIF representa Rosenbrock de tres variables. | `test_isosurfaces_are_actual_rosenbrock_level_sets` sustituye sus puntos y verifica \(f=1\) y \(f=10\).                                                    | En tres variables,\(z\) no debe confundirse con \(f\); hay que indicar qué representan los ejes. |
+| Código      | Los contadores reflejan llamadas realmente ejecutadas.         | `test_population_counts_history_and_reproducibility` instrumenta el objetivo; las pruebas de GD comprueban sus contadores separados.                       | Contar llamadas dentro del optimizador, no deducirlas de una gráfica.                            |
+| Código      | La visualización reproduce los datos guardados.               | `test_gif_preserves_endpoints_and_saved_data` compara cada punto animado y verifica que no se alteren archivos de resultados.                              | Separar cálculo, persistencia y visualización.                                                  |
+| Conceptos    | Completar iteraciones equivale a encontrar el mínimo global.  | No: GD Rastrigin principal completa corridas pero obtiene 0/30 éxitos en cada dimensión al umbral 0.0001. Ver[comparison.json](resultados/comparison.json). | Separar`completed` de éxito, e informar \(f_{\mathrm{final}}\) y el umbral.                    |
+| Conceptos    | \(C=N_f+2dN_{\mathrm{grad}}\) mide tiempo real.                | No: es una equivalencia justificada por diferencias centrales; el código usa gradientes analíticos. Ver metodología y contadores.                         | Declarar la convención y no interpretarla como un cronómetro.                                   |
 
 En la auditoría también se encontraron parámetros inválidos aceptados por las
 

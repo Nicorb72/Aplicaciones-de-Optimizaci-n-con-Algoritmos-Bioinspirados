@@ -123,10 +123,12 @@ El presupuesto es
 N_f=P+(P-E)G,
 \]
 
-por lo que con \(P=40\), \(E=8\) y \(G=1998\) se realizan exactamente
-\(40+32\cdot1998=63\,976\) evaluaciones de \(f\). Por tanto, el evolutivo no
-comparte el mismo presupuesto de evaluaciones que PSO y DE en la configuración
-actual; esta diferencia debe considerarse al interpretar la comparación.
+por lo que con \(P=40\), \(E=8\) y \(G=1249\) se realizan exactamente
+\(40+32\cdot1249=40\,008\) evaluaciones de \(f\). Las 1 249 generaciones
+son las definidas por la configuración óptima de hiperparámetros consolidada
+después del Grid Search. Esto permite aproximarse al presupuesto nominal de
+40 000 evaluaciones; la diferencia de 8 llamadas se debe a que cada generación
+produce 32 hijos y el número de generaciones debe ser entero.
 
 **DE.** Se eligen tres individuos distintos a, b y c, excluyendo al individuo objetivo. El donante es \(v=\operatorname{clip}(a+F(b-c),l,u)\), con \(F=0.7\).
 Cada componente del candidato toma el donante con probabilidad \(CR=0.5\); si
@@ -158,9 +160,10 @@ Hay dos llamadas a f por coordenada: 2d para el vector completo. Esta es la conv
 
 En 2D, GD completado cuesta \(1+4\cdot10000=40\,001\). En 3D cuesta
 \(1+6\cdot10000=60\,001\). PSO y DE cuestan 40 000 llamadas reales a \(f\)
-en ambas dimensiones. El evolutivo cuesta 63 976 llamadas con la fracción de
-élite actual. Por tanto, la comparación de rendimiento debe considerar que el
-presupuesto del evolutivo es mayor.
+en ambas dimensiones. El evolutivo cuesta 40 008 llamadas con la configuración
+óptima de hiperparámetros seleccionada. Por tanto, la comparación de
+rendimiento debe considerar la diferencia de 8 evaluaciones frente al
+presupuesto nominal.
 
 Los resultados 3D se analizan aparte de los 2D para no mezclar paisajes ni costos. Si GD diverge antes, se incluyen sus intentos efectivamente ejecutados en el conteo; el menor costo no compensa que haya fracasado. Las llamadas de las visualizaciones no forman parte del optimizador y no
 alteran sus contadores.
@@ -175,7 +178,10 @@ combinaciones discretas de sus hiperparámetros mediante la media, la
 desviación y la tasa de éxito.
 
 Después se seleccionaron configuraciones prometedoras y se validaron con
-30 corridas y semillas 42–71 en la configuración principal. Los valores
+30 corridas y semillas 42–71 en la configuración principal. Como parte de la
+selección final, el número de generaciones del evolutivo se ajustó a 1 249
+para producir 40 008 evaluaciones con \(P=40\) y una élite de 8 individuos.
+Los valores
 efectivos usados en esta entrega son los de `configs/part1.yaml`: PSO usa
 \(w=0.7,c_1=1.4,c_2=1.0\); el evolutivo usa torneo 3,
 \(\alpha=0.6\), mutación 0.5, \(\sigma=0.1\) y élite 0.2; DE usa

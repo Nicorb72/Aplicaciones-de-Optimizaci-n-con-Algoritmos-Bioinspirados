@@ -33,12 +33,12 @@ methods:
 
   evolutionary:
     population_size: 40
-    generations: 1998
+    generations: 1249
     tournament_size: 3
     crossover_alpha: 0.6
     mutation_rate: 0.5
     elite_fraction: 0.2
-    # Evaluaciones = population_size + (population_size - elite_size) * generations
+    # Evaluaciones = 40 + (40 - 8) * 1249 = 40 008
 
   de:
     population_size: 40

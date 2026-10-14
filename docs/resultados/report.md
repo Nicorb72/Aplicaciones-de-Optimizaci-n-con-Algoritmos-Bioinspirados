@@ -37,24 +37,24 @@ Esta tabla contiene **16 configuraciones** (una fila por función, dimensión y 
 
 Esta tabla contiene **16 configuraciones**, las mismas de la Tabla 1.
 
-Se cuentan las llamadas de optimización a $f$ y al gradiente por separado. Las evaluaciones para dibujar quedan fuera. Definimos $C = N_f + 2dN_{\mathrm{grad}}$: diferencias centrales necesitarían $2d$ llamadas a $f$ por gradiente. Es una convención de equivalencia, NO el tiempo real ni el costo medido del gradiente analítico implementado. La Tabla 2 muestra los contadores medios obtenidos con los parámetros guardados en comparison.json. GD incluye la evaluación final de $f$. PSO y DE usan 40000 evaluaciones de $f$; el evolutivo usa 63976 porque conserva el 20% de una población de 40 y genera 32 hijos durante 1998 generaciones. Los resultados de cada dimensión se analizan por separado.
+Se cuentan las llamadas de optimización a $f$ y al gradiente por separado. Las evaluaciones para dibujar quedan fuera. Definimos $C = N_f + 2dN_{\mathrm{grad}}$: diferencias centrales necesitarían $2d$ llamadas a $f$ por gradiente. Es una convención de equivalencia, NO el tiempo real ni el costo medido del gradiente analítico implementado. La Tabla 2 muestra los contadores medios obtenidos con los parámetros guardados en comparison.json. GD incluye la evaluación final de $f$. PSO y DE usan 40000 evaluaciones de $f$; la configuración óptima consolidada del evolutivo usa 40008 porque conserva el 20% de una población de 40 y genera 32 hijos durante 1249 generaciones. Los resultados de cada dimensión se analizan por separado.
 
 | Función | Dim. | Método | N_f medio | N_grad medio | C medio |
 |---|---:|---|---:|---:|---:|
 | rastrigin | 2 | de | 40000 | 0 | 40000 |
-| rastrigin | 2 | evolutionary | 63976 | 0 | 63976 |
+| rastrigin | 2 | evolutionary | 40008 | 0 | 40008 |
 | rastrigin | 2 | gd | 1 | 10000 | 40001 |
 | rastrigin | 2 | pso | 40000 | 0 | 40000 |
 | rastrigin | 3 | de | 40000 | 0 | 40000 |
-| rastrigin | 3 | evolutionary | 63976 | 0 | 63976 |
+| rastrigin | 3 | evolutionary | 40008 | 0 | 40008 |
 | rastrigin | 3 | gd | 1 | 10000 | 60001 |
 | rastrigin | 3 | pso | 40000 | 0 | 40000 |
 | rosenbrock | 2 | de | 40000 | 0 | 40000 |
-| rosenbrock | 2 | evolutionary | 63976 | 0 | 63976 |
+| rosenbrock | 2 | evolutionary | 40008 | 0 | 40008 |
 | rosenbrock | 2 | gd | 1 | 10000 | 40001 |
 | rosenbrock | 2 | pso | 40000 | 0 | 40000 |
 | rosenbrock | 3 | de | 40000 | 0 | 40000 |
-| rosenbrock | 3 | evolutionary | 63976 | 0 | 63976 |
+| rosenbrock | 3 | evolutionary | 40008 | 0 | 40008 |
 | rosenbrock | 3 | gd | 1 | 9000.83 | 54006 |
 | rosenbrock | 3 | pso | 40000 | 0 | 40000 |
 
@@ -91,7 +91,7 @@ Los valores de esta tabla son la configuración consolidada después del Grid Se
 | Método | Parámetros usados |
 |---|---|
 | PSO | partículas=40, iteraciones=999, w=0.7, c1=1.4, c2=1.0 |
-| Evolutivo | población=40, generaciones=1998, torneo=3, alpha=0.6, mutación=0.5, sigma=0.1, élite=0.2 (8 individuos) |
+| Evolutivo | población=40, generaciones=1249, torneo=3, alpha=0.6, mutación=0.5, sigma=0.1, élite=0.2 (8 individuos) |
 | DE | población=40, generaciones=999, F=0.7, CR=0.5 |
 | GD | iteraciones=10000, tasa de aprendizaje según configuración |
 

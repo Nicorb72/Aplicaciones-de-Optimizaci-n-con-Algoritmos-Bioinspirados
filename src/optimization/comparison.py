@@ -174,9 +174,10 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
         "del gradiente analítico implementado. "
         "La Tabla 2 muestra los contadores medios obtenidos con los parámetros "
         "guardados en comparison.json. GD incluye la evaluación final de $f$. "
-        "PSO y DE usan 40000 evaluaciones de $f$; el evolutivo usa 63976 porque "
-        "conserva el 20% de una población de 40 y genera 32 hijos durante 1998 "
-        "generaciones. Los resultados de cada dimensión se analizan por separado.",
+        "PSO y DE usan 40000 evaluaciones de $f$; el evolutivo usa 40008 porque "
+        "la configuración óptima consolidada conserva el 20% de una población "
+        "de 40 y genera 32 hijos durante 1249 generaciones. Los resultados de "
+        "cada dimensión se analizan por separado.",
         "",
         "| Función | Dim. | Método | N_f medio | N_grad medio | C medio |",
         "|---|---:|---|---:|---:|---:|",
@@ -319,7 +320,7 @@ def write_comparison(rows, output_dir, artifacts_dir, include_figures=True):
         "|---|---|",
         "| PSO | partículas=40, iteraciones=999, w=0.7, c1=1.4, c2=1.0 |",
         (
-            "| Evolutivo | población=40, generaciones=1998, torneo=3, "
+            "| Evolutivo | población=40, generaciones=1249, torneo=3, "
             "alpha=0.6, mutación=0.5, sigma=0.1, élite=0.2 (8 individuos) |"
         ),
         "| DE | población=40, generaciones=999, F=0.7, CR=0.5 |",
