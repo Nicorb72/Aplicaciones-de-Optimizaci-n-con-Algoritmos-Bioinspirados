@@ -77,18 +77,18 @@ tr.destacado{background:#f9e9f2!important}
 <section id="parte1">
 <h2>2. Parte 1: optimización numérica</h2>
 <h3>2.1. Funciones de prueba</h3>
-<p><strong>Rosenbrock.</strong> Es una función con un valle curvo y estrecho. En dimensión <em>d</em>:</p>
+<p><strong>Rosenbrock.</strong> Es una función con un valle curvo y estrecho (Simon Fraser University, s. f.-b). En dimensión <em>d</em>:</p>
 <p class="ecuacion">f(x) = ∑<sub>i=1</sub><sup>d−1</sup> [100(x<sub>i+1</sub> − x<sub>i</sub><sup>2</sup>)<sup>2</sup> + (1 − x<sub>i</sub>)<sup>2</sup>]</p>
 <p>Su mínimo global es 0 en el punto (1, …, 1).</p>
-<p><strong>Rastrigin.</strong> Posee numerosos mínimos locales, lo que dificulta la búsqueda global:</p>
+<p><strong>Rastrigin.</strong> Posee numerosos mínimos locales, lo que dificulta la búsqueda global: (Simon Fraser University, s. f.-a).</p>
 <p class="ecuacion">f(x) = 10d + ∑<sub>i=1</sub><sup>d</sup> [x<sub>i</sub><sup>2</sup> − 10 cos(2πx<sub>i</sub>)]</p>
 <p>Su mínimo global es 0 en el origen. Ambas funciones están definidas sobre ℝ<sup>d</sup>. Los intervalos utilizados para inicializar las soluciones están indicados en las configuraciones del proyecto.</p>
 <h3>2.2. Algoritmos implementados</h3>
-<p><strong>Descenso por gradiente (GD):</strong> actualiza la solución mediante x<sub>t+1</sub> = x<sub>t</sub> − η∇f(x<sub>t</sub>).</p>
-<p><strong>Optimización por enjambre de partículas (PSO):</strong> combina la mejor posición individual y la mejor posición conocida por el enjambre para actualizar velocidad y posición.</p>
+<p><strong>Descenso por gradiente (GD):</strong> actualiza la solución en sentido opuesto al gradiente, mediante x<sub>t+1</sub> = x<sub>t</sub> − η∇f(x<sub>t</sub>) (Nocedal &amp; Wright, 2006).</p>
+<p><strong>Optimización por enjambre de partículas (PSO):</strong> combina la mejor posición individual y la mejor posición conocida por el enjambre para actualizar velocidad y posición (Kennedy &amp; Eberhart, 1995).</p>
 <p class="ecuacion">v ← wv + c₁r₁(p − x) + c₂r₂(g − x)</p>
-<p><strong>Algoritmo evolutivo:</strong> utiliza torneos de tamaño 3, cruce BLX-alfa (α = 0,6), mutación gaussiana (probabilidad 0,5 por coordenada y σ = 0,1) y elitismo del 20 %. En la configuración publicada se usaron 40 individuos y 1998 generaciones, con 63.976 evaluaciones por corrida.</p>
-<p><strong>Evolución diferencial (DE):</strong> genera un candidato con diferencias entre miembros de la población, realiza cruce y conserva la solución si mejora la función objetivo.</p>
+<p><strong>Algoritmo evolutivo:</strong> utiliza selección por torneo (Goldberg &amp; Deb, 1991), cruce BLX-alfa (Eshelman &amp; Schaffer, 1993), mutación gaussiana y elitismo. En la implementación se usa torneo de tamaño 3, α = 0,6, probabilidad de mutación de 0,5 por coordenada, σ = 0,1 y elitismo del 20 %. La configuración publicada emplea 40 individuos y 1998 generaciones, con 63.976 evaluaciones por corrida.</p>
+<p><strong>Evolución diferencial (DE):</strong> genera un candidato con diferencias entre miembros de la población, realiza cruce y conserva la solución si mejora la función objetivo (Storn &amp; Price, 1997).</p>
 <p class="ecuacion">v = a + F(b − c)</p>
 <h3>2.3. Comparación justa</h3>
 <p>Se registraron 30 corridas independientes por configuración, con semillas de 42 a 71 y umbral de éxito de 0,0001. Se contabilizan por separado evaluaciones de la función y evaluaciones del gradiente.</p>
@@ -109,14 +109,14 @@ tr.destacado{background:#f9e9f2!important}
 <p>Se busca una ruta cerrada que recorra las 47 capitales de provincia de la España peninsular y minimice el costo de transporte.</p>
 <p class="ecuacion">Costo por tramo = h · tiempo + peajes + distancia · (consumo / 100) · precio del combustible</p>
 <p>El valor <em>h</em> representa el costo de una hora de trabajo del vendedor. Se implementaron colonia de hormigas (ACO) y algoritmo genético (GA).</p>
-<p><strong>ACO:</strong> construye rutas a partir de probabilidades asociadas con feromonas y características de las conexiones. Después actualiza las feromonas, considerando evaporación y refuerzo.</p>
-<p><strong>GA:</strong> trabaja con una población de rutas representadas como permutaciones válidas, a las que aplica selección, cruce y mutación.</p>
+<p><strong>ACO:</strong> construye rutas a partir de probabilidades asociadas con feromonas y características de las conexiones. Después actualiza las feromonas, considerando evaporación y refuerzo (Dorigo &amp; Gambardella, 1997).</p>
+<p><strong>GA:</strong> trabaja con una población de rutas representadas como permutaciones válidas, a las que aplica selección, cruce y mutación (Goldberg, 1989).</p>
 <h3>3.1. Resultados almacenados para h = 25 €/h</h3>
 <p class="estado" id="estado-parte2">Leyendo docs/datos/resultados_blog.json</p><div class="tabla"><table><thead><tr><th scope="col">Método</th><th scope="col">Valor hora (€/h)</th><th scope="col">Costo total (€)</th><th scope="col">Distancia (km)</th><th scope="col">Tiempo (h)</th><th scope="col">Combustible (€)</th><th scope="col">Peajes (€)</th></tr></thead><tbody id="tabla-parte2"><tr><td colspan="7">Cargando resultados del proyecto…</td></tr></tbody></table></div>
 <p class="fuente">Tabla 2. Resultados TSP almacenados. Fuente: elaboración propia a partir de los resúmenes de ACO y GA del repositorio.</p>
 <p class="nota">La tabla y las figuras TSP se regeneraron con las matrices por carretera vigentes, las configuraciones de ACO y GA y la semilla 42. Cada método aporta una corrida; sus presupuestos de búsqueda son diferentes. La comparación describe estas ejecuciones y no demuestra superioridad general de un algoritmo.</p>
 <p id="analisis-parte2">La diferencia de costos se calculará a partir de los resultados disponibles.</p>
-<p class="nota"><strong>Origen de los datos:</strong> las distancias y tiempos de viaje provienen de matrices por carretera obtenidas con openrouteservice (perfil <code>driving-car</code>). La matriz de peajes sigue siendo provisional y debe interpretarse como una aproximación del costo por tramo.</p>
+<p class="nota"><strong>Origen de los datos:</strong> las distancias y tiempos de viaje provienen de matrices por carretera obtenidas con openrouteservice (perfil <code>driving-car</code>; Heidelberg Institute for Geoinformation Technology, s. f.). La matriz de peajes sigue siendo provisional y debe interpretarse como una aproximación del costo por tramo.</p>
 <h3>3.2. Sensibilidad al valor de la hora</h3>
 <p>Se estudian los recorridos de ACO y GA para diferentes tarifas del vendedor. La tabla se construye a partir de los resultados de <code>results/tsp/*/hourly_rate_study.json</code>, sincronizados a <code>docs/datos/sensibilidad_tsp.json</code> mediante <code>python -m scripts.build_blog</code>.</p>
 <p class="estado" id="estado-sensibilidad">Cargando estudio de sensibilidad…</p>
@@ -242,12 +242,16 @@ tr.destacado{background:#f9e9f2!important}
 </section>
 <section id="referencias">
 <h2>7. Referencias</h2>
+<p>Dorigo, M., &amp; Gambardella, L. M. (1997). Ant colony system: A cooperative learning approach to the traveling salesman problem. <em>IEEE Transactions on Evolutionary Computation, 1</em>(1), 53–66. <a href="https://doi.org/10.1109/4235.585892">https://doi.org/10.1109/4235.585892</a></p>
 <p>Eshelman, L. J., &amp; Schaffer, J. D. (1993). Real-coded genetic algorithms and interval-schemata. En <em>Foundations of Genetic Algorithms</em> (Vol. 2, pp. 187–202). Elsevier. <a href="https://doi.org/10.1016/B978-0-08-094832-4.50018-0">https://doi.org/10.1016/B978-0-08-094832-4.50018-0</a></p>
+<p>Goldberg, D. E. (1989). <em>Genetic algorithms in search, optimization, and machine learning</em>. Addison-Wesley.</p>
 <p>Goldberg, D. E., &amp; Deb, K. (1991). A comparative analysis of selection schemes used in genetic algorithms. En <em>Foundations of Genetic Algorithms</em> (Vol. 1, pp. 69–93). Elsevier. <a href="https://doi.org/10.1016/B978-0-08-050684-5.50008-2">https://doi.org/10.1016/B978-0-08-050684-5.50008-2</a></p>
-<p>Simon Fraser University. (s. f.). <em>Rastrigin function</em>. <a href="https://www.sfu.ca/~ssurjano/rastr.html">https://www.sfu.ca/~ssurjano/rastr.html</a></p>
-<p>Simon Fraser University. (s. f.). <em>Rosenbrock function</em>. <a href="https://www.sfu.ca/~ssurjano/rosen.html">https://www.sfu.ca/~ssurjano/rosen.html</a></p>
+<p>Heidelberg Institute for Geoinformation Technology. (s. f.). <em>openrouteservice</em>. <a href="https://openrouteservice.org/">https://openrouteservice.org/</a></p>
+<p>Kennedy, J., &amp; Eberhart, R. (1995). Particle swarm optimization. En <em>Proceedings of ICNN’95 - International Conference on Neural Networks</em> (Vol. 4, pp. 1942–1948). IEEE. <a href="https://doi.org/10.1109/ICNN.1995.488968">https://doi.org/10.1109/ICNN.1995.488968</a></p>
+<p>Nocedal, J., &amp; Wright, S. J. (2006). <em>Numerical optimization</em> (2.ª ed.). Springer. <a href="https://doi.org/10.1007/978-0-387-40065-5">https://doi.org/10.1007/978-0-387-40065-5</a></p>
+<p>Simon Fraser University. (s. f.-a). <em>Rastrigin function</em>. <a href="https://www.sfu.ca/~ssurjano/rastr.html">https://www.sfu.ca/~ssurjano/rastr.html</a></p>
+<p>Simon Fraser University. (s. f.-b). <em>Rosenbrock function</em>. <a href="https://www.sfu.ca/~ssurjano/rosen.html">https://www.sfu.ca/~ssurjano/rosen.html</a></p>
 <p>Storn, R., &amp; Price, K. (1997). Differential evolution—A simple and efficient heuristic for global optimization over continuous spaces. <em>Journal of Global Optimization, 11</em>, 341–359. <a href="https://doi.org/10.1023/A:1008202821328">https://doi.org/10.1023/A:1008202821328</a></p>
-
 </section>
 </main>
 <footer>Trabajo 1 · Redes neuronales y algoritmos bioinspirados · Universidad Nacional de Colombia</footer>
