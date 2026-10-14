@@ -1,5 +1,6 @@
 
 from pathlib import Path
+import argparse
 import json
 import shutil
 
@@ -47,7 +48,7 @@ def cargar_json(ruta):
 # SINCRONIZAR GRÁFICAS Y ANIMACIONES
 # ============================================================
 
-def sincronizar_imagenes():
+def sincronizar_imagenes(solo_tsp=False):
 
     origen = ROOT / "results"
     destino = DOCS / "imagenes"
@@ -76,6 +77,9 @@ def sincronizar_imagenes():
 
         # Mantener la estructura original de carpetas
         ruta_relativa = archivo.relative_to(origen)
+
+        if solo_tsp and ruta_relativa.parts[0] != "tsp":
+            continue
 
         ruta_destino = destino / ruta_relativa
 
@@ -231,10 +235,15 @@ def generar_sensibilidad_tsp():
 
 def main():
 
+    parser = argparse.ArgumentParser(description="Actualiza datos e imágenes del blog.")
+    parser.add_argument("--tsp-only", action="store_true",
+                        help="Actualiza el TSP conservando los resultados publicados de la Parte 1.")
+    args = parser.parse_args()
+
     print("=== GENERADOR DEL BLOG ===")
 
     # Obtener resultados de los experimentos
-    parte1 = generar_parte1()
+    parte1 = cargar_json(SALIDA)["parte1"] if args.tsp_only else generar_parte1()
 
     parte2 = generar_parte2()
 
@@ -274,7 +283,7 @@ def main():
     generar_sensibilidad_tsp()
 
     # Sincronizar todas las gráficas y animaciones
-    sincronizar_imagenes()
+    sincronizar_imagenes(solo_tsp=args.tsp_only)
 
     print(
         "\nBlog actualizado correctamente."

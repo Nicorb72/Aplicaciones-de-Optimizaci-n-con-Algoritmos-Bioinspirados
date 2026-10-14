@@ -53,7 +53,8 @@
         25,
         29,
         33
-      ]
+      ],
+      "edges_changed_vs_previous": null
     },
     {
       "hourly_rate": 10.0,
@@ -108,7 +109,8 @@
         19,
         5,
         9
-      ]
+      ],
+      "edges_changed_vs_previous": 13
     },
     {
       "hourly_rate": 25.0,
@@ -163,7 +165,8 @@
         39,
         6,
         16
-      ]
+      ],
+      "edges_changed_vs_previous": 17
     },
     {
       "hourly_rate": 50.0,
@@ -218,7 +221,8 @@
         39,
         6,
         16
-      ]
+      ],
+      "edges_changed_vs_previous": 16
     },
     {
       "hourly_rate": 75.0,
@@ -273,7 +277,8 @@
         0,
         33,
         29
-      ]
+      ],
+      "edges_changed_vs_previous": 19
     },
     {
       "hourly_rate": 100.0,
@@ -328,7 +333,8 @@
         35,
         36,
         4
-      ]
+      ],
+      "edges_changed_vs_previous": 11
     }
   ],
   "ga": [
@@ -385,7 +391,8 @@
         32,
         44,
         24
-      ]
+      ],
+      "edges_changed_vs_previous": null
     },
     {
       "hourly_rate": 10.0,
@@ -440,7 +447,8 @@
         43,
         36,
         26
-      ]
+      ],
+      "edges_changed_vs_previous": 24
     },
     {
       "hourly_rate": 25.0,
@@ -495,7 +503,8 @@
         0,
         33,
         29
-      ]
+      ],
+      "edges_changed_vs_previous": 13
     },
     {
       "hourly_rate": 50.0,
@@ -550,7 +559,8 @@
         33,
         29,
         45
-      ]
+      ],
+      "edges_changed_vs_previous": 14
     },
     {
       "hourly_rate": 75.0,
@@ -605,7 +615,8 @@
         32,
         15,
         7
-      ]
+      ],
+      "edges_changed_vs_previous": 15
     },
     {
       "hourly_rate": 100.0,
@@ -660,7 +671,8 @@
         8,
         38,
         24
-      ]
+      ],
+      "edges_changed_vs_previous": 16
     }
   ]
 }

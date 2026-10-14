@@ -392,3 +392,21 @@ python -m experiments.run_tsp --config configs/tsp_aco.yaml --study-hourly-rates
   - Mapa del recorrido estático: `results/tsp/{aco,ga}/spain_optimal_tour.png`.
   - Animación GIF de la evolución: `results/tsp/{aco,ga}/tour_evolution.gif`.
   - Resumen numérico y desglose de costos: `results/tsp/{aco,ga}/tsp_summary.json`.
+
+### Actualizar únicamente el TSP del blog
+
+Después de cambiar matrices o configuraciones, regenera las dos rutas y los
+estudios antes de sincronizar el blog:
+
+```powershell
+python -m experiments.run_tsp --config configs/tsp_aco.yaml
+python -m experiments.run_tsp --config configs/tsp_ga.yaml
+python -m experiments.run_tsp --config configs/tsp_aco.yaml --study-hourly-rates
+python -m experiments.run_tsp --config configs/tsp_ga.yaml --study-hourly-rates
+python -m scripts.build_blog --tsp-only
+```
+
+La opción `--tsp-only` conserva los resultados y las imágenes publicados de la
+Parte 1; actualiza las tablas, los mapas, los GIF y la sensibilidad del TSP.
+El generador completo sigue disponible sin esa opción. Para publicar los cambios,
+deben incorporarse a Git y enviarse al repositorio.
