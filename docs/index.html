@@ -113,7 +113,7 @@ tr.destacado{background:#f9e9f2!important}
 <p>Se eligen dos padres mediante torneos de tamaño 3, sin reemplazo dentro de cada torneo; gana el de menor f (Goldberg &amp; Deb, 1991). Para cada coordenada j, el cruce BLX-α genera un hijo uniforme en el intervalo ampliado (Eshelman &amp; Schaffer, 1993):</p>
 <p class="ecuacion">Δ<sub>j</sub> = |p₁<sub>j</sub> − p₂<sub>j</sub>|; a<sub>j</sub> = min(p₁<sub>j</sub>, p₂<sub>j</sub>); b<sub>j</sub> = max(p₁<sub>j</sub>, p₂<sub>j</sub>)</p>
 <p class="ecuacion">y<sub>j</sub> ∼ U(a<sub>j</sub> − αΔ<sub>j</sub>, b<sub>j</sub> + αΔ<sub>j</sub>); y′<sub>j</sub> = clip(y<sub>j</sub> + B<sub>j</sub>ε<sub>j</sub>, l<sub>j</sub>, u<sub>j</sub>)</p>
-<p>B<sub>j</sub> ∼ Bernoulli(p<sub>m</sub>) y ε<sub>j</sub> ∼ N(0, σ²). Se usa α = 0,6, p<sub>m</sub> = 0,5 y σ = 0,1. De N = 40 individuos se conservan E = round(0,2N) = 8 élites y se generan N−E = 32 hijos por generación. La siguiente población reúne la élite y los hijos evaluados; la élite conserva sus valores de f.</p>
+<p>B<sub>j</sub> ∼ Bernoulli(p<sub>m</sub>) y ε<sub>j</sub> ∼ N(0, σ²). Se usa α = 0,6, p<sub>m</sub> = 0,5 y σ = 0,1. De N = 40 individuos se conservan E = round(0,2N) = 8 élites y se generan N−E = 32 hijos por generación durante G = 1249 generaciones. La siguiente población reúne la élite y los hijos evaluados; la élite conserva sus valores de f.</p>
 <h4>Evolución diferencial — DE</h4>
 <p>Para cada individuo x<sub>i</sub>, se eligen tres individuos distintos a, b y c de la población anterior, excluyendo i. Se genera un donante mediante diferencias y se recorta al dominio (Storn &amp; Price, 1997):</p>
 <p class="ecuacion">v<sub>i</sub> = clip(a + F(b − c), l, u)</p>
@@ -125,7 +125,7 @@ tr.destacado{background:#f9e9f2!important}
 <p class="ecuacion">∂f/∂x<sub>j</sub> ≈ [f(x + he<sub>j</sub>) − f(x − he<sub>j</sub>)]/(2h); C = N<sub>f</sub> + 2dN<sub>∇f</sub></p>
 <p>e<sub>j</sub> es el vector unitario de la coordenada j. Las diferencias centrales necesitan dos evaluaciones por coordenada; esto justifica el factor 2d. GD usa gradientes analíticos: C es una convención de costo equivalente y no mide el tiempo real.</p>
 <p class="ecuacion">N<sub>f,PSO</sub> = 40(999 + 1) = 40.000; N<sub>f,DE</sub> = 40(999 + 1) = 40.000</p>
-<p class="ecuacion">N<sub>f,evolutivo</sub> = N + (N − E)G = 40 + 32·1998 = 63.976</p>
+<p class="ecuacion">N<sub>f,evolutivo</sub> = N + (N − E)G = 40 + 32·1249 = 40.008</p>
 <p>GD completado utiliza una evaluación final de f y 10.000 gradientes: C = 40.001 en 2D y C = 60.001 en 3D. Las divergencias pueden detenerlo antes. Las evaluaciones empleadas para dibujar no se añaden al optimizador. Los presupuestos son diferentes y deben considerarse al comparar los resultados; no se atribuye superioridad general a un método por el menor promedio observado.</p>
 
 <h3>2.5. Resultados de las configuraciones registradas</h3>
@@ -276,7 +276,7 @@ tr.destacado{background:#f9e9f2!important}
 <p class="fuente">Tabla 5. Verificación experimental del algoritmo evolutivo. Resultados de 30 corridas por prueba registrados durante los experimentos de ajuste del evolutivo. La diferencia de presupuesto entre 40.000 y 39.976 evaluaciones es de 24 llamadas (0,06 %).</p>
 <p><strong>Corrección:</strong> la prueba B alcanzó 9/30 éxitos frente a 0/30 en la original, pero se debe describir como una mejora observada para esa <em>configuración</em>, no atribuirla exclusivamente al porcentaje de élite. Para una conclusión causal más sólida harían falta pruebas que controlen también la distribución temporal de las evaluaciones y análisis adicionales entre semillas.</p>
 <p><strong>Aprendizaje:</strong> una explicación convincente de la IA no reemplaza el diseño experimental. Deben comprobarse los parámetros, las evaluaciones y los resultados antes de afirmar por qué mejora un algoritmo.</p>
-<p><strong>Alcance de esta verificación:</strong> la configuración finalmente publicada del evolutivo es distinta (40 individuos, 1998 generaciones, cruce BLX-α = 0,6 y élite del 20 %, con 63.976 evaluaciones por corrida). Los resultados de esta tabla corresponden únicamente a las pruebas exploratorias anteriores.</p>
+<p><strong>Alcance de esta verificación:</strong> la configuración finalmente publicada del evolutivo es distinta (40 individuos, 1249 generaciones, cruce BLX-α = 0,6 y élite del 20 %, con 40.008 evaluaciones por corrida). Los resultados de esta tabla corresponden únicamente a las pruebas exploratorias anteriores.</p>
 <h4>Otras verificaciones documentadas</h4>
 <p>El registro también contiene V01, que distingue Rosenbrock de tres variables de una superficie bidimensional, y V02, que separa las llamadas reales al gradiente del costo equivalente. Son verificaciones técnicas; no se presentan como respuestas erróneas literales sin evidencia.</p>
 <p>Para presentar V03 como una respuesta errónea documentada, el equipo debe conservar el mensaje original de la IA y las salidas de las pruebas. El archivo enlazado reúne el registro de prompts y evidencias.</p>
