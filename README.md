@@ -348,7 +348,7 @@ Optimización de la ruta cerrada del vendedor viajero que recorre las 47 capital
 ### Datos y reproducibilidad offline
 - Capitales y coordenadas: `data/tsp/spain_capitals.csv` (47 ciudades peninsulares con latitud y longitud).
 - Matrices guardadas (distancias por carretera, tiempos y peajes): `data/tsp/matrices.npz`.
-- Vehículo y precios: `data/tsp/vehicle_specs.yaml` (SEAT León 1.5 TSI 130 CV, consumo 5.4 L/100km WLTP, Gasolina 95 a 1.58 €/L con fuente MITECO).
+- Vehículo y precios: `data/tsp/vehicle_specs.yaml` (SEAT León 1.5 TSI 130 CV, consumo 5.4 L/100 km como extremo inferior del intervalo WLTP oficial 5.4–6.1; gasolina 95 a 1.7159 €/L, referencia MITECO de agosto de 2026 con impuestos; fuentes consultadas el 13 de octubre de 2026).
 - Justificación de datos y estado de autopistas de peaje: `data/tsp/sources_and_notes.md`.
 
 ### Ejecución con un solo comando

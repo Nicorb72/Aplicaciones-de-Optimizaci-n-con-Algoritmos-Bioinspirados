@@ -121,7 +121,11 @@ Los parámetros correspondientes se encuentran almacenados en:
 
 `data/tsp/vehicle_specs.yaml`
 
-En el archivo constan los siguientes parámetros de referencia: **SEAT León 1.5 TSI 130 CV (manual)**, consumo WLTP de **5,4 L/100 km**, **gasolina 95** y precio de **1,58 €/L**, con fecha de consulta declarada **6 de octubre de 2026** para el combustible. Son los valores **declarados en la configuración del proyecto**; este documento no acredita una comprobación independiente de las fichas del modelo exacto ni del precio histórico del carburante.
+La verificación del **13 de octubre de 2026** identifica el **SEAT León de 5 puertas, 1.5 TSI 130 CV (96 kW) St&Sp, manual de 6 velocidades**, con **gasolina 95**, en la página 1 de la [ficha técnica oficial de SEAT](https://www.seat-mediacenter.com/mediacenter_netstor/seat-media-center/Img/2020/04/2020-04-14/CT-SEAT-Leon-NF-5-puertas.pdf). La primera columna publica un consumo combinado WLTP de **5,4–6,1 L/100 km**. El modelo conserva **5,4 L/100 km** como extremo inferior documentado y supuesto optimista explícito; no es una medición real ni un valor atribuido a un acabado individual.
+
+Para el combustible se adopta **1,7159 €/L**, a partir de **171,59 c€/L** del [informe oficial de MITECO de agosto de 2026](https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/petroleo/Informes/InformesMensuales/DatosBibliotecaConsumer/2026/Agosto%202026.pdf), página 38: sección A, precios medios nacionales, PVP con impuestos, gasolina eurosúper sin plomo I.O.95. La conversión es `171.59 / 100`. Es una referencia nacional mensual fija, no el precio de una estación ni una cotización de octubre.
+
+La fecha de consulta es **13 de octubre de 2026**; el período del precio es **agosto de 2026**. Se distinguen ambas fechas. Se retiró el valor anterior de 1,58 €/L porque no se conservaba un comprobante de la consulta declarada. La evidencia estructurada, las páginas, las unidades y los hashes de los PDFs consultados están en `vehicle_fuel_evidence.json`. Los resultados TSP se regeneran con el precio corregido.
 
 El consumo y el precio del combustible no se encuentran duplicados dentro del algoritmo de optimización. Tanto la matriz de costos como el desglose final del recorrido leen estos parámetros desde el mismo archivo de configuración.
 
@@ -153,6 +157,7 @@ Los datos necesarios para ejecutar el TSP se encuentran almacenados dentro del r
 - `data/tsp/integration_notes.json`: integración de datos y advertencia de peajes provisionales.
 - `data/tsp/matrices_summary.json`: resumen histórico de la matriz aproximada anterior; no describe las matrices viales actuales.
 - `data/tsp/vehicle_specs.yaml`: parámetros del vehículo y precio del combustible.
+- `data/tsp/vehicle_fuel_evidence.json`: verificación, páginas, unidades y hashes de las fuentes oficiales de vehículo y combustible.
 - `data/tsp/sources_and_notes.md`: documentación metodológica y fuentes empleadas.
 
 El almacenamiento local de estos archivos permite reproducir las ejecuciones sin realizar consultas a servicios externos.
@@ -160,8 +165,8 @@ El almacenamiento local de estos archivos permite reproducir las ejecuciones sin
 ## 6. Fuentes y trazabilidad
 
 - **openrouteservice** (2026). Servicio de matriz de rutas `driving-car`. Endpoint: https://api.openrouteservice.org/v2/matrix/driving-car . Consulta registrada el 13 de octubre de 2026 (UTC); metadatos archivados en `matrices_ors_metadata.json`. Datos de carreteras atribuidos a OpenStreetMap y colaboradores, según metadatos de respuesta.
-- **SEAT España**. Especificaciones del SEAT León. https://www.seat.es/coches/leon/especificaciones . En `vehicle_specs.yaml` se cita esta página como fuente del consumo WLTP; conviene contrastar la versión exacta del vehículo y archivar la ficha consultada.
-- **Ministerio para la Transición Ecológica y el Reto Demográfico (MITECO)**. Geoportal de estaciones de servicio. https://geoportalgasolineras.es/ . En `vehicle_specs.yaml` se registra consulta del 6 de octubre de 2026 y precio de referencia de 1,58 €/L; no se adjuntó comprobante independiente del precio consultado.
+- **SEAT** (s. f.). *Características técnicas: Nuevo SEAT León 5 puertas*. https://www.seat-mediacenter.com/mediacenter_netstor/seat-media-center/Img/2020/04/2020-04-14/CT-SEAT-Leon-NF-5-puertas.pdf . Página 1, primera columna; consulta: 13 de octubre de 2026. Intervalo WLTP 5,4–6,1 L/100 km, transmisión y combustible comprobados.
+- **Ministerio para la Transición Ecológica y el Reto Demográfico** (2026). *Precios de carburantes y combustibles: datos de agosto de 2026*. https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/petroleo/Informes/InformesMensuales/DatosBibliotecaConsumer/2026/Agosto%202026.pdf . Página 38, PVP nacional con impuestos: 171,59 c€/L; consulta: 13 de octubre de 2026.
 - **Ministerio de Transportes y Movilidad Sostenible**. Información sobre la red vial y autopistas de peaje: https://www.transportes.gob.es/ . **No se ha verificado** que los ocho importes actualmente guardados en la matriz coincidan con tarifas oficiales vigentes.
 
 ### Limitación de uso

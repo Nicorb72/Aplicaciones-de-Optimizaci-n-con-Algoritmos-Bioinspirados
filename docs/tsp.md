@@ -33,7 +33,7 @@ $$
 | $c$       | consumo homologado (WLTP)     | L/100 km | `data/tsp/vehicle_specs.yaml`                                              |
 | $\varphi$ | precio del combustible        | €/L     | `data/tsp/vehicle_specs.yaml`                                              |
 
-Las tres matrices están guardadas en el repositorio, así que la ejecución no depende de internet ni de APIs externas. Los valores del vehículo y las fuentes de cada dato, con su fecha de consulta, están en `vehicle_specs.yaml` y en `data/tsp/sources_and_notes.md` (según el README: SEAT León 1.5 TSI 130 CV, 5.4 L/100 km, gasolina 95 a 1.58 €/L).
+Las tres matrices están guardadas en el repositorio, así que la ejecución no depende de internet ni de APIs externas. Los valores del vehículo y las fuentes de cada dato, con su fecha de consulta, están en `vehicle_specs.yaml` y en `data/tsp/sources_and_notes.md` (SEAT León 5 puertas 1.5 TSI 130 CV manual; se adopta 5,4 L/100 km, límite inferior del intervalo oficial WLTP 5,4–6,1). El precio es 1,7159 €/L, media nacional PVP con impuestos publicada por MITECO para agosto de 2026. Ambas fuentes se consultaron el 13 de octubre de 2026; páginas, unidades y hashes están en `data/tsp/vehicle_fuel_evidence.json`. El consumo elegido es un supuesto optimista, y el precio mensual es una referencia fija, no una cotización de octubre.
 
 `get_tour_breakdown` descompone el costo de un recorrido en distancia total, tiempo total, costo del tiempo $w\sum t_{ij}$, combustible $\frac{c}{100}\varphi\sum d_{ij}$ y peajes $\sum p_{ij}$.
 

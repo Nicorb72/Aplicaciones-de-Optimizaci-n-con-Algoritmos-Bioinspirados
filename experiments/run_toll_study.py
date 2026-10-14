@@ -80,7 +80,7 @@ def main():
     paths = [ROOT / f"configs/tsp_{m}.yaml" for m in ("aco", "ga")]
     configs = [yaml.safe_load(p.read_text(encoding="utf-8")) for p in paths]
     study = run_study(configs, args.seeds, args.hourly_rate)
-    study["input_sha256"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+    study["input_sha256"] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
                              for p in [*paths, ROOT / "data/tsp/matrices.npz", ROOT / "data/tsp/vehicle_specs.yaml"]}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(study, ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8")

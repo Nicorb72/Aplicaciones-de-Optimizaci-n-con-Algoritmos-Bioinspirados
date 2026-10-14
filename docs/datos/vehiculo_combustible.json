@@ -1,0 +1,37 @@
+{
+  "verification_date": "2026-10-13",
+  "method": "Lectura de tablas en PDFs oficiales, extracción de texto y comprobación visual de la columna, fila y unidades.",
+  "vehicle": {
+    "source_url": "https://www.seat-mediacenter.com/mediacenter_netstor/seat-media-center/Img/2020/04/2020-04-14/CT-SEAT-Leon-NF-5-puertas.pdf",
+    "source_page": 1,
+    "source_sha256": "7a79711f4854aacc0de451be0e8405c30a765b5a0e8121d3a303bd23c5c0bb6e",
+    "model": "SEAT León 5 puertas 1.5 TSI 130 CV (96 kW) St&Sp",
+    "transmission": "Manual 6v Start-Stop",
+    "fuel": "Gasolina 95",
+    "wltp_combined_range_l_per_100km": [
+      5.4,
+      6.1
+    ],
+    "selected_l_per_100km": 5.4,
+    "selection": "Límite inferior publicado, supuesto optimista. No se atribuye a un acabado específico ni a una medición de carretera."
+  },
+  "fuel_price": {
+    "source_url": "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/petroleo/Informes/InformesMensuales/DatosBibliotecaConsumer/2026/Agosto%202026.pdf",
+    "source_page": 38,
+    "source_sha256": "7cbbe7ac41861aa7892db57e6e022718daf5b28166194453341fc43504b13eb1",
+    "reference_period": "2026-08",
+    "table": "A. PRECIOS MEDIOS NACIONALES, PVP (c€/l)",
+    "product": "Gasolina eurosúper s/Pb I.O.95",
+    "raw_value_cent_eur_per_liter": 171.59,
+    "conversion": "171.59 / 100",
+    "selected_eur_per_liter": 1.7159,
+    "includes_taxes": true,
+    "limitation": "Promedio nacional mensual usado como referencia fija; no es una cotización de octubre ni un precio específico de estación."
+  },
+  "superseded": {
+    "price_eur_per_liter": 1.58,
+    "claimed_query_date": "2026-10-06",
+    "status": "Sin comprobante conservado; sustituido y no validado retroactivamente."
+  },
+  "tolls": "Siguen siendo provisionales; esta verificación solo cubre vehículo y combustible."
+}

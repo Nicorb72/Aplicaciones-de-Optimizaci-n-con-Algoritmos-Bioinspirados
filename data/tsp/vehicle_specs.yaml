@@ -1,19 +1,35 @@
-# Especificaciones del vehículo seleccionado y precios de referencia para el TSP peninsular
 vehicle:
-  model: "SEAT León 1.5 TSI 130 CV (Manual 6 vel.)"
-  segment: "Compacto C"
+  model: SEAT León 5 puertas 1.5 TSI 130 CV (96 kW) St&Sp, manual 6 velocidades
+  segment: Compacto C
   homologated_consumption_wltp_l_per_100km: 5.4
-  fuel_type: "Gasolina 95"
-  source: "Ficha técnica oficial SEAT España / Base de datos IDAE (Instituto para la Diversificación y Ahorro de la Energía)"
-  source_url: "https://www.seat.es/coches/leon/especificaciones"
-
+  fuel_type: Gasolina 95
+  source: 'SEAT Media Center, Características técnicas: Nuevo SEAT León 5 puertas,
+    página 1, columna 1.5 TSI 130 CV'
+  source_url: https://www.seat-mediacenter.com/mediacenter_netstor/seat-media-center/Img/2020/04/2020-04-14/CT-SEAT-Leon-NF-5-puertas.pdf
+  homologated_consumption_wltp_range_l_per_100km:
+  - 5.4
+  - 6.1
+  consumption_selection: Extremo inferior del intervalo WLTP publicado; supuesto optimista
+    explícito. No representa un consumo real medido ni un acabado individual identificado.
+  source_page: 1
+  query_date: '2026-10-13'
+  evidence_file: data/tsp/vehicle_fuel_evidence.json
 fuel_price:
-  price_eur_per_liter: 1.58
-  fuel_type: "Gasolina 95 E5"
-  query_date: "2026-10-06"
-  source: "Geoportal de Gasolineras del Ministerio para la Transición Ecológica y el Reto Demográfico (MITECO)"
-  source_url: "https://geoportalgasolineras.es/"
-
+  price_eur_per_liter: 1.7159
+  fuel_type: Gasolina eurosúper sin plomo I.O.95
+  query_date: '2026-10-13'
+  source: 'MITECO, Precios de carburantes y combustibles: datos de agosto de 2026,
+    página 38, A. Precios medios nacionales, PVP'
+  source_url: https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/petroleo/Informes/InformesMensuales/DatosBibliotecaConsumer/2026/Agosto%202026.pdf
+  reference_period: 2026-08
+  source_page: 38
+  source_value_cent_eur_per_liter: 171.59
+  includes_taxes: true
+  spatial_scope: Media nacional del muestreo publicado por MITECO
+  selection_note: Referencia mensual fija para reproducibilidad; no es el precio de
+    cada estación ni el precio del 13 de octubre de 2026. Se convierte c€/L a €/L
+    dividiendo entre 100.
+  evidence_file: data/tsp/vehicle_fuel_evidence.json
 seller:
   default_hourly_rate_eur: 25.0
   hourly_rate_study_range:
