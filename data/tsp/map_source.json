@@ -1,0 +1,9 @@
+{
+  "dataset": "Natural Earth Admin 0 Countries, 1:50m",
+  "source_url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson",
+  "license": "Public domain",
+  "license_url": "https://www.naturalearthdata.com/about/terms-of-use/",
+  "original_sha256": "3e458fc036ad0a66411f2c1e6cac49c5d7bfb81cb1123bc513b22511a2b7fdeb",
+  "selection": "Spain mainland and neighbouring countries intersecting the Iberian map viewport",
+  "coordinate_system": "WGS84 longitude/latitude"
+}

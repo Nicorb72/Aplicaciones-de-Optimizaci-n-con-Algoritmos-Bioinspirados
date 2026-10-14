@@ -1,11 +1,51 @@
 """Visualización del TSP sobre el mapa de capitales peninsulares de España."""
 
 from pathlib import Path
+import json
+from functools import lru_cache
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
+from matplotlib.patches import Polygon
 import numpy as np
 
 from tsp.cost_model import load_tsp_data, calculate_tour_cost
+
+
+@lru_cache(maxsize=1)
+def _map_features():
+    """Límites guardados en el repositorio: el renderizado funciona offline."""
+    path = Path(__file__).resolve().parents[1] / "data/tsp/iberia_boundaries.geojson"
+    with path.open(encoding="utf-8") as f:
+        return json.load(f)["features"]
+
+
+def _draw_spain_background(ax):
+    """Mapa geográfico compartido por la imagen estática y cada fotograma."""
+    ax.set_facecolor("#eaf2f7")
+    for feature in _map_features():
+        spain = feature["properties"]["name"] == "Spain"
+        for polygon in feature["geometry"]["coordinates"]:
+            ax.add_patch(Polygon(
+                polygon[0], closed=True,
+                facecolor="#f8f0df" if spain else "#e4e8e6",
+                edgecolor="#7d8d91", linewidth=0.9, zorder=0.5,
+            ))
+    for name, lon, lat in [("ESPAÑA", -3.6, 39.5),
+                           ("PORTUGAL", -8.1, 39.5),
+                           ("FRANCIA", 1.1, 43.7)]:
+        ax.text(lon, lat, name, ha="center", fontsize=10,
+                color="#6f7f83", alpha=0.65, zorder=1)
+    ax.set_xlim(-9.8, 3.8)
+    ax.set_ylim(35.8, 44.2)
+    # Compensar la longitud a la latitud media de la península.
+    ax.set_aspect(1 / np.cos(np.deg2rad(40)))
+    ax.set_xlabel("Longitud (°)", fontsize=10)
+    ax.set_ylabel("Latitud (°)", fontsize=10)
+    ax.set_axisbelow(True)
+    ax.grid(True, linestyle="--", alpha=0.2)
+    ax.figure.text(0.02, 0.012,
+                   "Mapa: Natural Earth 1:50m · Líneas: orden de visita entre capitales, no trazado de carreteras",
+                   fontsize=8, color="#52646c")
 
 
 def plot_spain_tour(tour, cost_matrix, output_path, title=None, data_dir=None):
@@ -20,13 +60,13 @@ def plot_spain_tour(tour, cost_matrix, output_path, title=None, data_dir=None):
     cost = calculate_tour_cost(tour, cost_matrix)
 
     fig, ax = plt.subplots(figsize=(10, 8), facecolor="#fcfbfa")
-    ax.set_facecolor("#f6f8fb")
+    _draw_spain_background(ax)
 
     # Trazar recorrido
     ax.plot(
         lons[closed_tour], lats[closed_tour],
         color="#2b5c8f", linewidth=1.8, alpha=0.85, zorder=2,
-        label="Ruta óptima",
+        label="Ruta encontrada",
     )
 
     # Trazar ciudades
@@ -54,18 +94,12 @@ def plot_spain_tour(tour, cost_matrix, output_path, title=None, data_dir=None):
                 weight="bold", color="#2c3e50",
             )
 
-    ax.set_xlim(-9.8, 3.8)
-    ax.set_ylim(35.8, 44.2)
-    ax.set_xlabel("Longitud (°)", fontsize=10)
-    ax.set_ylabel("Latitud (°)", fontsize=10)
-
     if title is None:
         title = f"Recorrido TSP — 47 Capitales de España (Costo: {cost:.2f} €)"
     ax.set_title(title, fontsize=12, weight="bold", pad=12)
-    ax.grid(True, linestyle="--", alpha=0.3)
     ax.legend(loc="lower left", fontsize=9, framealpha=0.9)
 
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0.035, 1, 1))
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path, dpi=150, bbox_inches="tight")
@@ -87,7 +121,7 @@ def animate_tsp_tour_evolution(tour_evolution, cost_matrix, output_gif_path, fps
     lats = np.array([c["lat"] for c in capitals])
 
     fig, ax = plt.subplots(figsize=(10, 8), facecolor="#fcfbfa")
-    ax.set_facecolor("#f6f8fb")
+    _draw_spain_background(ax)
     ax.scatter(lons, lats, color="#c83e4d", edgecolor="#ffffff", s=40, zorder=3)
 
     line, = ax.plot([], [], color="#2b5c8f", linewidth=1.8, alpha=0.85, zorder=2)
@@ -99,11 +133,7 @@ def animate_tsp_tour_evolution(tour_evolution, cost_matrix, output_gif_path, fps
         bbox=dict(boxstyle="round,pad=0.4", facecolor="#ffffff", edgecolor="#bdc3c7", alpha=0.9),
     )
 
-    ax.set_xlim(-9.8, 3.8)
-    ax.set_ylim(35.8, 44.2)
-    ax.set_xlabel("Longitud (°)", fontsize=10)
-    ax.set_ylabel("Latitud (°)", fontsize=10)
-    ax.grid(True, linestyle="--", alpha=0.3)
+    fig.tight_layout(rect=(0, 0.035, 1, 1))
 
     def init():
         line.set_data([], [])
