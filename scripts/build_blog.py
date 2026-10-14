@@ -286,6 +286,10 @@ def main():
     if evidencia_vehiculo.is_file():
         shutil.copy2(evidencia_vehiculo, DOCS / "datos/vehiculo_combustible.json")
 
+    evidencia_coordenadas = ROOT / "data/tsp/coordinates_evidence.json"
+    if evidencia_coordenadas.is_file():
+        shutil.copy2(evidencia_coordenadas, DOCS / "datos/coordenadas_verificadas.json")
+
     estudio_peajes = TSP / "toll_sensitivity.json"
     if estudio_peajes.is_file():
         shutil.copy2(estudio_peajes, DOCS / "datos/sensibilidad_peajes.json")

@@ -151,7 +151,7 @@ tr.destacado{background:#f9e9f2!important}
 <p class="ecuacion">P<sub>ij</sub><sup>k</sup> = τ<sub>ij</sub><sup>α</sup>η<sub>ij</sub><sup>β</sup> / ∑<sub>ℓ∈Nᵏᵢ</sub> τ<sub>iℓ</sub><sup>α</sup>η<sub>iℓ</sub><sup>β</sup>, para j ∈ Nᵏᵢ</p>
 <p>Nᵏᵢ contiene las ciudades aún no visitadas por la hormiga k desde i. Si la suma de pesos es cero o no finita, la siguiente ciudad se elige uniformemente entre las disponibles. Al completar los recorridos se aplica evaporación y depósito:</p>
 <p class="ecuacion">τ<sub>ij</sub><sup>t+1</sup> = (1 − ρ)τ<sub>ij</sub><sup>t</sup> + ∑<sub>k=1</sub><sup>m</sup> (Q/L<sub>k</sub>)A<sub>ij</sub>(π<sup>k</sup>) + (2Q/L<sub>mejor</sub>)A<sub>ij</sub>(π<sub>mejor</sub>)</p>
-<p>A<sub>ij</sub>(π) vale 1 si el ciclo recorre i→j o j→i, y 0 en otro caso. Esta definición refleja que el código deposita en ambos sentidos, aunque evalúa los costos con su dirección real. Es una decisión de la variante implementada que comparte aprendizaje entre sentidos; no supone que los costos viales sean iguales y puede afectar la búsqueda en el problema asimétrico. No se imponen cotas de feromona. Parámetros: m = 25, 80 iteraciones, α = 1, β = 2,5, ρ = 0,25 y Q = 100. Se evalúan 25·80 = 2.000 recorridos.</p>
+<p>A<sub>ij</sub>(π) vale 1 únicamente si el ciclo recorre el arco dirigido i→j, y 0 en otro caso. El depósito ordinario y el refuerzo elitista respetan ese sentido: recorrer i→j no refuerza j→i. Las matrices viales son asimétricas; invertir un recorrido puede cambiar su costo. No se imponen cotas de feromona. Parámetros: m = 25, 80 iteraciones, α = 1, β = 2,5, ρ = 0,25 y Q = 100. Se evalúan 25·80 = 2.000 recorridos.</p>
 <h3>Algoritmo genético sobre permutaciones</h3>
 <p>GA aplica selección, cruce, mutación y elitismo sobre recorridos (Goldberg, 1989). Cada individuo es una permutación y su aptitud se compara minimizando L. En cada torneo se sortean seis individuos distintos y se elige:</p>
 <p class="ecuacion">π<sub>padre</sub> ∈ arg min<sub>π∈torneo</sub> L(π)</p>
@@ -170,6 +170,8 @@ tr.destacado{background:#f9e9f2!important}
 <p class="nota">La tabla y las figuras TSP se regeneraron con las matrices por carretera vigentes, las configuraciones de ACO y GA y la semilla 42. Cada método aporta una corrida; sus presupuestos de búsqueda son diferentes. La comparación describe estas ejecuciones y no demuestra superioridad general de un algoritmo.</p>
 <p id="analisis-parte2">La diferencia de costos se calculará a partir de los resultados disponibles.</p>
 <p class="nota"><strong>Origen de los datos:</strong> las distancias y tiempos de viaje provienen de matrices por carretera obtenidas con openrouteservice (perfil <code>driving-car</code>; Heidelberg Institute for Geoinformation Technology, s. f.). La matriz de peajes sigue siendo provisional y debe interpretarse como una aproximación del costo por tramo.</p>
+<p>Las 47 coordenadas existentes se contrastaron con GeoNames (s. f.) el 13 de octubre de 2026: todas corresponden a sus ciudades, con una separación máxima de 1,608 km entre puntos urbanos de referencia. La evidencia se conserva en <a href="datos/coordenadas_verificadas.json">el registro de contraste</a>. Es una verificación independiente, no una atribución del origen histórico del CSV. Las matrices por carretera se obtuvieron el 13 de octubre de 2026 (UTC), con datos atribuidos a © OpenStreetMap y colaboradores (s. f.). El fondo de los mapas y animaciones procede de Natural Earth (s. f.), <em>Admin 0 – Countries</em>, escala 1:50 millones, de dominio público; fuente y licencia consultadas el 13 de octubre de 2026. Los segmentos dibujados unen capitales en el orden de visita y no representan la geometría de las carreteras. La matriz total base de 47 × 47 costos en euros también se conserva en el repositorio, en <code>data/tsp/total_cost_matrix.npz</code>, con parámetros, orden de ciudades y hashes en <code>total_cost_matrix_metadata.json</code>. Se regenera sin internet mediante <code>python -m scripts.export_tsp_costs</code>; para otra tarifa debe recalcularse.</p>
+
 <h3>3.2. Sensibilidad al valor de la hora</h3>
 <p>Se estudian los recorridos de ACO y GA para diferentes tarifas del vendedor. La tabla se construye a partir de los resultados de <code>results/tsp/*/hourly_rate_study.json</code>, sincronizados a <code>docs/datos/sensibilidad_tsp.json</code> mediante <code>python -m scripts.build_blog</code>.</p>
 <p class="estado" id="estado-sensibilidad">Cargando estudio de sensibilidad…</p>
@@ -297,12 +299,15 @@ tr.destacado{background:#f9e9f2!important}
 <h2>7. Referencias</h2>
 <p>Dorigo, M., &amp; Gambardella, L. M. (1997). Ant colony system: A cooperative learning approach to the traveling salesman problem. <em>IEEE Transactions on Evolutionary Computation, 1</em>(1), 53–66. <a href="https://doi.org/10.1109/4235.585892">https://doi.org/10.1109/4235.585892</a></p>
 <p>Eshelman, L. J., &amp; Schaffer, J. D. (1993). Real-coded genetic algorithms and interval-schemata. En <em>Foundations of Genetic Algorithms</em> (Vol. 2, pp. 187–202). Elsevier. <a href="https://doi.org/10.1016/B978-0-08-094832-4.50018-0">https://doi.org/10.1016/B978-0-08-094832-4.50018-0</a></p>
+<p>GeoNames. (s. f.). <em>GeoNames geographical database: Spain</em> [Conjunto de datos]. Recuperado el 13 de octubre de 2026, de <a href="https://download.geonames.org/export/dump/">GeoNames</a>. Licencia CC BY 4.0.</p>
 <p>Goldberg, D. E. (1989). <em>Genetic algorithms in search, optimization, and machine learning</em>. Addison-Wesley.</p>
 <p>Goldberg, D. E., &amp; Deb, K. (1991). A comparative analysis of selection schemes used in genetic algorithms. En <em>Foundations of Genetic Algorithms</em> (Vol. 1, pp. 69–93). Elsevier. <a href="https://doi.org/10.1016/B978-0-08-050684-5.50008-2">https://doi.org/10.1016/B978-0-08-050684-5.50008-2</a></p>
-<p>Heidelberg Institute for Geoinformation Technology. (s. f.). <em>openrouteservice</em>. <a href="https://openrouteservice.org/">https://openrouteservice.org/</a></p>
+<p>Heidelberg Institute for Geoinformation Technology. (s. f.). <em>openrouteservice</em>. Recuperado el 13 de octubre de 2026, de <a href="https://openrouteservice.org/">https://openrouteservice.org/</a></p>
 <p>Kennedy, J., &amp; Eberhart, R. (1995). Particle swarm optimization. En <em>Proceedings of ICNN’95 - International Conference on Neural Networks</em> (Vol. 4, pp. 1942–1948). IEEE. <a href="https://doi.org/10.1109/ICNN.1995.488968">https://doi.org/10.1109/ICNN.1995.488968</a></p>
 <p>Ministerio para la Transición Ecológica y el Reto Demográfico. (2026). <em>Precios de carburantes y combustibles: datos de agosto de 2026</em>. <a href="https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/petroleo/Informes/InformesMensuales/DatosBibliotecaConsumer/2026/Agosto%202026.pdf">Informe oficial de agosto de 2026</a>.</p>
+<p>Natural Earth. (s. f.). <em>Admin 0 – Countries, 1:50m</em> [Conjunto de datos]. Recuperado el 13 de octubre de 2026, de <a href="https://www.naturalearthdata.com/downloads/50m-cultural-vectors/50m-admin-0-countries-2/">Natural Earth</a>. Licencia: <a href="https://www.naturalearthdata.com/about/terms-of-use/">dominio público</a>.</p>
 <p>Nocedal, J., &amp; Wright, S. J. (2006). <em>Numerical optimization</em> (2.ª ed.). Springer. <a href="https://doi.org/10.1007/978-0-387-40065-5">https://doi.org/10.1007/978-0-387-40065-5</a></p>
+<p>OpenStreetMap y colaboradores. (s. f.). <em>Copyright and license</em>. Recuperado el 13 de octubre de 2026, de <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.</p>
 <p>SEAT. (s. f.). <em>Características técnicas: Nuevo SEAT León 5 puertas</em>. <a href="https://www.seat-mediacenter.com/mediacenter_netstor/seat-media-center/Img/2020/04/2020-04-14/CT-SEAT-Leon-NF-5-puertas.pdf">Ficha técnica oficial</a>.</p>
 <p>Simon Fraser University. (s. f.-a). <em>Rastrigin function</em>. <a href="https://www.sfu.ca/~ssurjano/rastr.html">https://www.sfu.ca/~ssurjano/rastr.html</a></p>
 <p>Simon Fraser University. (s. f.-b). <em>Rosenbrock function</em>. <a href="https://www.sfu.ca/~ssurjano/rosen.html">https://www.sfu.ca/~ssurjano/rosen.html</a></p>
@@ -381,19 +386,14 @@ async function cargarSensibilidadTsp() {
    for(const v of valores){const td=document.createElement('td');td.textContent=v;tr.appendChild(td);}
    cuerpo.appendChild(tr);
   }
-  // El ciclo TSP es equivalente ante rotaciones; la dirección se conserva para rutas viales asimétricas.
-  function recorridoCanonico(tour) {
-   if(!Array.isArray(tour)||!tour.length) return null;
-   const min=Math.min(...tour),i=tour.indexOf(min);
-   return [...tour.slice(i),...tour.slice(0,i)].join(',');
-  }
-  const cambios=(rows)=>{
-   const rutas=rows.map(x=>recorridoCanonico(x.tour));
-   return rutas.slice(1).filter((x,i)=>x!==rutas[i]).length;
+  const explicar=(nombre,rows)=>{
+   const primero=rows.find(r=>Number(r.changed_seeds_vs_previous)>0);
+   const semillas=rows[0].seeds;
+   if(!Array.isArray(semillas)||!semillas.length) throw Error('Regenera el estudio con semillas emparejadas');
+   return primero ? `${nombre}: primer cambio observado al pasar de ${numero(primero.previous_hourly_rate,2)} a ${numero(primero.hourly_rate,2)} €/h, intervalo (${numero(primero.previous_hourly_rate,2)}, ${numero(primero.hourly_rate,2)}] €/h, en ${primero.changed_seeds_vs_previous}/${semillas.length} semillas` : `${nombre}: sin cambios observados entre las tarifas muestreadas`;
   };
-  const acoCambios=cambios(datos.aco),gaCambios=cambios(datos.ga);
-  estado.textContent=`Estudio actualizado: ${pares.length} tarifas comparadas por algoritmo.`;
-  analisis.textContent=`Entre las tarifas analizadas, ACO obtuvo ${acoCambios} cambios de ruta entre tarifas consecutivas y GA obtuvo ${gaCambios}. Los cambios describen recorridos encontrados en estas ejecuciones y no permiten fijar el umbral de una ruta óptima global; la aleatoriedad del método también puede influir.`;
+  estado.textContent=`Estudio actualizado: ${pares.length} tarifas, semillas emparejadas ${datos.aco[0].seeds.join(', ')} y mejor costo entre las ${datos.aco[0].seeds.length} corridas por tarifa.`;
+  analisis.textContent=explicar('ACO',datos.aco)+'. '+explicar('GA',datos.ga)+'. Cada semilla se compara consigo misma mediante arcos dirigidos, incluyendo el cierre. El intervalo corresponde a la resolución del muestreo y a rutas encontradas por las heurísticas: no identifica un punto de transición exacto ni una ruta óptima global. La aleatoriedad aún puede influir; tres semillas aportan evidencia exploratoria.';
  } catch(e) {
   estado.textContent='No se pudo cargar el estudio de sensibilidad.';
   cuerpo.replaceChildren();const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=8;td.textContent='Ejecuta python -m scripts.build_blog y abre docs/index.html con Live Server. Detalle: '+e.message;tr.appendChild(td);cuerpo.appendChild(tr);

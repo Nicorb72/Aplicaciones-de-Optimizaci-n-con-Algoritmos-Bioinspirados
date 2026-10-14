@@ -66,11 +66,11 @@ $$
 $$
 
 $$
-\Delta\tau_{ij}^{k} = \begin{cases} Q / L_k & \text{si la arista } \{i,j\} \text{ está en el recorrido de la hormiga } k \\ 0 & \text{en otro caso} \end{cases}
+\Delta\tau_{ij}^{k} = \begin{cases} Q / L_k & \text{si la arista } (i,j) \text{ está en el recorrido de la hormiga } k \\ 0 & \text{en otro caso} \end{cases}
 $$
 
 $$
-\Delta\tau_{ij}^{\text{élite}} = \begin{cases} 2Q / L_{\text{mejor}} & \text{si la arista } \{i,j\} \text{ está en el mejor recorrido hallado hasta ahora} \\ 0 & \text{en otro caso} \end{cases}
+\Delta\tau_{ij}^{\text{élite}} = \begin{cases} 2Q / L_{\text{mejor}} & \text{si la arista } (i,j) \text{ está en el mejor recorrido hallado hasta ahora} \\ 0 & \text{en otro caso} \end{cases}
 $$
 
 **Algoritmo.**
@@ -99,7 +99,7 @@ $$
 
 - Depositan **todas** las hormigas de la iteración, no solo la mejor, y además el mejor global recibe un refuerzo elitista con peso fijo 2 (no es un parámetro).
 - No hay límites inferior ni superior para la feromona.
-- El depósito se hace en ambos sentidos ($\tau_{uv}$ y $\tau_{vu}$), lo que supone costos aproximadamente simétricos.
+- El depósito se realiza únicamente sobre el arco dirigido recorrido, tanto para cada hormiga como para el refuerzo elitista. No se comparte feromona con el sentido inverso.
 - Evaluaciones del costo de un recorrido: $m \times \text{iterations} = 25 \times 80 = 2000$.
 
 ## 4. Algoritmo genético (GA)
@@ -124,7 +124,7 @@ $$
 (\pi_i, \pi_{i+1}, \dots, \pi_j) \leftarrow (\pi_j, \dots, \pi_{i+1}, \pi_i)
 $$
 
-Es un movimiento tipo 2-opt. Solo se aplica a los hijos, no a la élite.
+Es una mutación por inversión, sin comprobar mejora; no es búsqueda local 2-opt con aceptación por costo. Solo se aplica a los hijos, no a la élite.
 
 **Algoritmo.**
 
@@ -193,3 +193,26 @@ peajes, no buscar carreteras gratuitas. El factor 2 duplica importes registrados
 pero no completa los desconocidos ni es una cota superior real. Los ceros sin
 verificar siguen siendo cero. Se trata de escenarios hipotéticos y no de
 tarifas oficiales verificadas; tres semillas solo aportan evidencia exploratoria.
+
+
+## 8. Valor de la hora y matriz total reproducible
+
+`python -m experiments.run_tsp --config configs/tsp_aco.yaml --study-hourly-rates`
+y el mismo comando con `configs/tsp_ga.yaml` muestrean por defecto
+0, 1, 2, 5, 10, 25, 50, 75 y 100 €/h, con semillas 42, 43 y 44 en cada tarifa.
+Se conserva cada corrida, media, desviación muestral y mejor costo. Los cambios
+se miden entre tarifas consecutivas comparando cada semilla consigo misma,
+mediante arcos dirigidos que incluyen el cierre; una rotación es equivalente,
+una inversión no. El blog informa el primer intervalo con cambio observado.
+No es un umbral óptimo global ni una prueba de robustez con solo tres semillas.
+Las tablas principales siguen mostrando la semilla 42 a 25 €/h; la tabla de
+sensibilidad muestra el mejor resultado entre las tres semillas de cada tarifa.
+
+`python -m scripts.export_tsp_costs` conserva `data/tsp/total_cost_matrix.npz`
+con `total_cost_eur`, `time_cost_eur`, `fuel_cost_eur` y `toll_cost_eur` a
+25 €/h y factor de peajes 1. El JSON adjunto registra los parámetros efectivos,
+orden de las 47 ciudades y hashes de entrada y salida. `--hourly-rate` y
+`--toll-multiplier` permiten exportar otros escenarios; el archivo base debe
+regenerarse con los valores predeterminados para la entrega. La ejecución del
+optimizador sigue calculando la matriz con sus parámetros, sin reutilizar una
+matriz guardada para otra tarifa. Los peajes conservan su carácter provisional.

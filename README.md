@@ -348,6 +348,8 @@ Optimización de la ruta cerrada del vendedor viajero que recorre las 47 capital
 ### Datos y reproducibilidad offline
 - Capitales y coordenadas: `data/tsp/spain_capitals.csv` (47 ciudades peninsulares con latitud y longitud).
 - Matrices guardadas (distancias por carretera, tiempos y peajes): `data/tsp/matrices.npz`.
+- Matriz total de costos base y componentes monetarios: `data/tsp/total_cost_matrix.npz`; parámetros, orden de ciudades y hashes en `total_cost_matrix_metadata.json`. Se regenera offline con `python -m scripts.export_tsp_costs` (25 €/h, factor de peajes 1).
+- Contraste independiente de las 47 coordenadas: `data/tsp/coordinates_evidence.json` (GeoNames, consulta del 13 de octubre de 2026); cartografía Natural Earth y licencia en `data/tsp/map_source.json`.
 - Vehículo y precios: `data/tsp/vehicle_specs.yaml` (SEAT León 1.5 TSI 130 CV, consumo 5.4 L/100 km como extremo inferior del intervalo WLTP oficial 5.4–6.1; gasolina 95 a 1.7159 €/L, referencia MITECO de agosto de 2026 con impuestos; fuentes consultadas el 13 de octubre de 2026).
 - Justificación de datos y estado de autopistas de peaje: `data/tsp/sources_and_notes.md`.
 
@@ -403,6 +405,8 @@ python -m experiments.run_tsp --config configs/tsp_aco.yaml
 python -m experiments.run_tsp --config configs/tsp_ga.yaml
 python -m experiments.run_tsp --config configs/tsp_aco.yaml --study-hourly-rates
 python -m experiments.run_tsp --config configs/tsp_ga.yaml --study-hourly-rates
+python -m experiments.run_toll_study
+python -m scripts.export_tsp_costs
 python -m scripts.build_blog --tsp-only
 ```
 
@@ -431,3 +435,19 @@ El escenario 0 excluye el componente de peajes; no implica usar carreteras
 gratuitas. El escenario 2 duplica únicamente importes registrados, sin cubrir
 peajes desconocidos y sin constituir una cota superior real. Son supuestos para
 comparar el comportamiento del modelo, no tarifas verificadas.
+
+
+### Interpretación del estudio del valor de la hora
+
+El barrido predeterminado usa 0, 1, 2, 5, 10, 25, 50, 75 y 100 €/h, con
+semillas emparejadas 42, 43 y 44. Cada semilla se compara consigo misma y se
+conservan todas las rutas, media, desviación y mejor costo. Los cambios se
+detectan por arcos dirigidos, incluyendo el regreso: una rotación es equivalente,
+una inversión puede tener otro costo. ACO también deposita feromona únicamente
+en el sentido recorrido, sin reforzar automáticamente el inverso.
+
+La tabla de sensibilidad muestra el mejor resultado de las tres semillas;
+las rutas y mapas principales representan la semilla 42 a 25 €/h. El primer
+intervalo observado se muestra en el blog con la cantidad de semillas que
+cambian. Es una conclusión exploratoria del muestreo, no el punto exacto de
+transición de una solución óptima global. Véase [la metodología TSP](docs/tsp.md).

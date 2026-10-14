@@ -30,7 +30,8 @@ def run_ant_colony_tsp(
         record_evolution: si guarda tours intermedios para animaciones.
 
     Retorna:
-        dict con best_tour, best_cost, cost_history y tour_evolution.
+        dict con best_tour, best_cost, cost_history, tour_evolution y
+        pheromone_matrix (diagnóstico final de aprendizaje dirigido).
     """
     rng = np.random.default_rng(seed)
     n = cost_matrix.shape[0]
@@ -91,14 +92,13 @@ def run_ant_colony_tsp(
         # Evaporación de feromona
         tau = (1.0 - rho) * tau
 
-        # Depósito de feromona (acumulado por las hormigas del ciclo)
+        # Depósito solo en los arcos recorridos: C[i,j] puede diferir de C[j,i].
         for tour, cost in zip(all_tours, all_costs):
             deposit = q / cost
             for i in range(n):
                 u = tour[i]
                 v = tour[(i + 1) % n]
                 tau[u, v] += deposit
-                tau[v, u] += deposit
 
         # Refuerzo adicional al mejor global (elitismo ACO)
         deposit_best = (2.0 * q) / best_cost
@@ -106,7 +106,6 @@ def run_ant_colony_tsp(
             u = best_tour[i]
             v = best_tour[(i + 1) % n]
             tau[u, v] += deposit_best
-            tau[v, u] += deposit_best
 
         cost_history.append(best_cost)
 
@@ -119,4 +118,5 @@ def run_ant_colony_tsp(
         "iterations": iterations,
         "n_ants": n_ants,
         "seed": seed,
+        "pheromone_matrix": tau.copy(),
     }

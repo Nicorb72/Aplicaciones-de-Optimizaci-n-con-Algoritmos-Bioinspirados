@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "units": "EUR",
+  "shape": [
+    47,
+    47
+  ],
+  "hourly_rate_eur_per_h": 25.0,
+  "toll_multiplier": 1.0,
+  "consumption_l_per_100km": 5.4,
+  "fuel_price_eur_per_l": 1.7159,
+  "formula": "C_ij = w*t_ij + s*p_ij + (c/100)*d_ij*fuel_price; C_ii = 0",
+  "directed": true,
+  "city_order": [
+    {
+      "matrix_index": 0,
+      "id": 0,
+      "city": "A Coruña"
+    },
+    {
+      "matrix_index": 1,
+      "id": 1,
+      "city": "Albacete"
+    },
+    {
+      "matrix_index": 2,
+      "id": 2,
+      "city": "Alicante"
+    },
+    {
+      "matrix_index": 3,
+      "id": 3,
+      "city": "Almería"
+    },
+    {
+      "matrix_index": 4,
+      "id": 4,
+      "city": "Ávila"
+    },
+    {
+      "matrix_index": 5,
+      "id": 5,
+      "city": "Badajoz"
+    },
+    {
+      "matrix_index": 6,
+      "id": 6,
+      "city": "Barcelona"
+    },
+    {
+      "matrix_index": 7,
+      "id": 7,
+      "city": "Bilbao"
+    },
+    {
+      "matrix_index": 8,
+      "id": 8,
+      "city": "Burgos"
+    },
+    {
+      "matrix_index": 9,
+      "id": 9,
+      "city": "Cáceres"
+    },
+    {
+      "matrix_index": 10,
+      "id": 10,
+      "city": "Cádiz"
+    },
+    {
+      "matrix_index": 11,
+      "id": 11,
+      "city": "Castellón de la Plana"
+    },
+    {
+      "matrix_index": 12,
+      "id": 12,
+      "city": "Ciudad Real"
+    },
+    {
+      "matrix_index": 13,
+      "id": 13,
+      "city": "Córdoba"
+    },
+    {
+      "matrix_index": 14,
+      "id": 14,
+      "city": "Cuenca"
+    },
+    {
+      "matrix_index": 15,
+      "id": 15,
+      "city": "Donostia-San Sebastián"
+    },
+    {
+      "matrix_index": 16,
+      "id": 16,
+      "city": "Girona"
+    },
+    {
+      "matrix_index": 17,
+      "id": 17,
+      "city": "Granada"
+    },
+    {
+      "matrix_index": 18,
+      "id": 18,
+      "city": "Guadalajara"
+    },
+    {
+      "matrix_index": 19,
+      "id": 19,
+      "city": "Huelva"
+    },
+    {
+      "matrix_index": 20,
+      "id": 20,
+      "city": "Huesca"
+    },
+    {
+      "matrix_index": 21,
+      "id": 21,
+      "city": "Jaén"
+    },
+    {
+      "matrix_index": 22,
+      "id": 22,
+      "city": "León"
+    },
+    {
+      "matrix_index": 23,
+      "id": 23,
+      "city": "Lleida"
+    },
+    {
+      "matrix_index": 24,
+      "id": 24,
+      "city": "Logroño"
+    },
+    {
+      "matrix_index": 25,
+      "id": 25,
+      "city": "Lugo"
+    },
+    {
+      "matrix_index": 26,
+      "id": 26,
+      "city": "Madrid"
+    },
+    {
+      "matrix_index": 27,
+      "id": 27,
+      "city": "Málaga"
+    },
+    {
+      "matrix_index": 28,
+      "id": 28,
+      "city": "Murcia"
+    },
+    {
+      "matrix_index": 29,
+      "id": 29,
+      "city": "Ourense"
+    },
+    {
+      "matrix_index": 30,
+      "id": 30,
+      "city": "Oviedo"
+    },
+    {
+      "matrix_index": 31,
+      "id": 31,
+      "city": "Palencia"
+    },
+    {
+      "matrix_index": 32,
+      "id": 32,
+      "city": "Pamplona"
+    },
+    {
+      "matrix_index": 33,
+      "id": 33,
+      "city": "Pontevedra"
+    },
+    {
+      "matrix_index": 34,
+      "id": 34,
+      "city": "Salamanca"
+    },
+    {
+      "matrix_index": 35,
+      "id": 35,
+      "city": "Santander"
+    },
+    {
+      "matrix_index": 36,
+      "id": 36,
+      "city": "Segovia"
+    },
+    {
+      "matrix_index": 37,
+      "id": 37,
+      "city": "Sevilla"
+    },
+    {
+      "matrix_index": 38,
+      "id": 38,
+      "city": "Soria"
+    },
+    {
+      "matrix_index": 39,
+      "id": 39,
+      "city": "Tarragona"
+    },
+    {
+      "matrix_index": 40,
+      "id": 40,
+      "city": "Teruel"
+    },
+    {
+      "matrix_index": 41,
+      "id": 41,
+      "city": "Toledo"
+    },
+    {
+      "matrix_index": 42,
+      "id": 42,
+      "city": "Valencia"
+    },
+    {
+      "matrix_index": 43,
+      "id": 43,
+      "city": "Valladolid"
+    },
+    {
+      "matrix_index": 44,
+      "id": 44,
+      "city": "Vitoria-Gasteiz"
+    },
+    {
+      "matrix_index": 45,
+      "id": 45,
+      "city": "Zamora"
+    },
+    {
+      "matrix_index": 46,
+      "id": 46,
+      "city": "Zaragoza"
+    }
+  ],
+  "input_sha256": {
+    "matrices.npz": "d6b25d322b2044f5b33e1205ead1eafbd571f4029b430899d2b0dd73b1b0ce54",
+    "vehicle_specs.yaml": "2b58937044d6e561a3b701b067e27806646d26e7ecfd0f29eab8601c247c7616",
+    "spain_capitals.csv": "01645c50da645c48f172b2e7cd47143f9cedcf364743631814ea1e6973f7e6f1"
+  },
+  "output_file": "total_cost_matrix.npz",
+  "output_sha256": "6d39e034341366878e0faf4f0772f632754f0327df821486b6c95aec895101d8",
+  "reproduce": "python -m scripts.export_tsp_costs --hourly-rate 25 --toll-multiplier 1",
+  "scope": "Matriz de referencia bajo los parámetros indicados; peajes provisionales, no tarifas reales certificadas."
+}

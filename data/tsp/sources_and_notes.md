@@ -172,3 +172,37 @@ El almacenamiento local de estos archivos permite reproducir las ejecuciones sin
 ### Limitación de uso
 
 El modelo es útil para comparar rutas **bajo los parámetros y datos configurados**. Debido a que los peajes todavía son provisionales, no debe afirmarse que los costos calculados sean tarifas de desplazamiento exactas ni que todos los tramos sin peaje registrado sean gratuitos.
+
+
+## 7. Cartografía y matriz total archivada
+
+El fondo geográfico de mapas y GIF procede de **Natural Earth** (s. f.),
+*Admin 0 – Countries, 1:50m*. [Ficha oficial](https://www.naturalearthdata.com/downloads/50m-cultural-vectors/50m-admin-0-countries-2/)
+y [licencia de dominio público](https://www.naturalearthdata.com/about/terms-of-use/),
+consultadas el **13 de octubre de 2026**. `map_source.json` conserva la URL
+del GeoJSON original, su hash y la selección regional; el fondo se usa sin internet.
+Los segmentos de las figuras representan el orden de visita, no la geometría vial.
+
+Los metadatos de openrouteservice atribuyen sus datos a **© OpenStreetMap y
+colaboradores** (s. f.). *Copyright and license*:
+https://www.openstreetmap.org/copyright . Consulta: **13 de octubre de 2026**.
+La fecha de generación de las matrices viales consta en `matrices_ors_metadata.json`.
+Las 47 coordenadas preexistentes se contrastaron de forma independiente con
+**GeoNames** (s. f.), *GeoNames geographical database: Spain*,
+https://download.geonames.org/export/dump/ES.zip , consulta del **13 de octubre
+de 2026**, licencia CC BY 4.0. Se identificó la población más cercana de más
+de 15.000 habitantes, excluyendo barrios, y se revisaron las 47 correspondencias
+de nombres. Las separaciones entre puntos de referencia son de 0,006 a 1,608 km
+(máximo medido: 1,6071 km, redondeado hacia arriba). Son centros urbanos de
+referencia, no direcciones exactas. `coordinates_evidence.json` conserva los
+47 registros contrastados y los hashes del CSV y de la descarga. El CSV no se
+modifica y no se atribuye a GeoNames una procedencia histórica que no se conserva.
+Para repetir el contraste con una descarga nueva, ejecutar
+`python -m scripts.verify_tsp_coordinates --archive ruta/ES.zip` y revisar
+las correspondencias. Las nuevas versiones de GeoNames pueden cambiar.
+
+`total_cost_matrix.npz` archiva la matriz base y sus componentes monetarios en
+euros. `total_cost_matrix_metadata.json` fija tarifa, consumo, precio, factor
+de peajes, orden de ciudades y hashes de entrada y salida. Se reproduce con
+`python -m scripts.export_tsp_costs`, sin consultas externas. Los componentes
+originales de distancia, duración y peajes permanecen en `matrices.npz`.
