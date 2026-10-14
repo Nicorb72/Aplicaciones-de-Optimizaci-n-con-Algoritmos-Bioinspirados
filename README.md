@@ -410,3 +410,24 @@ La opción `--tsp-only` conserva los resultados y las imágenes publicados de la
 Parte 1; actualiza las tablas, los mapas, los GIF y la sensibilidad del TSP.
 El generador completo sigue disponible sin esa opción. Para publicar los cambios,
 deben incorporarse a Git y enviarse al repositorio.
+
+### Sensibilidad a los peajes provisionales
+
+```powershell
+python -m experiments.run_toll_study
+python -m scripts.build_blog --tsp-only
+```
+
+Ejecuta ACO y GA con factores de peaje 0, 1 y 2, para las semillas 42, 43 y 44
+(18 corridas), manteniendo 25 €/h y los parámetros actuales. Conserva cada ruta,
+el desglose, media y desviación muestral, y recalcula las rutas base en cada
+escenario. El estudio escribe `results/tsp/toll_sensitivity.json` y el blog
+publica `docs/datos/sensibilidad_peajes.json`. No reemplaza las rutas, mapas ni
+GIF principales. Se pueden elegir otras semillas con `--seeds 42 43 44` o
+cambiar la tarifa con `--hourly-rate` para un estudio independiente; la sección
+publicada del blog describe el estudio predeterminado de 25 €/h y semillas 42–44.
+
+El escenario 0 excluye el componente de peajes; no implica usar carreteras
+gratuitas. El escenario 2 duplica únicamente importes registrados, sin cubrir
+peajes desconocidos y sin constituir una cota superior real. Son supuestos para
+comparar el comportamiento del modelo, no tarifas verificadas.

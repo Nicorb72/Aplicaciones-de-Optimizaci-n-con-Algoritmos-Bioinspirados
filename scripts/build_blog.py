@@ -282,6 +282,10 @@ def main():
 
     generar_sensibilidad_tsp()
 
+    estudio_peajes = TSP / "toll_sensitivity.json"
+    if estudio_peajes.is_file():
+        shutil.copy2(estudio_peajes, DOCS / "datos/sensibilidad_peajes.json")
+
     # Sincronizar todas las gráficas y animaciones
     sincronizar_imagenes(solo_tsp=args.tsp_only)
 

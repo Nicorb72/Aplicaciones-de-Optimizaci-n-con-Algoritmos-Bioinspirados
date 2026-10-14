@@ -60,9 +60,12 @@ def compute_total_cost_matrix(
     consumption_l_per_100km=None,
     fuel_price_eur_per_l=None,
     data_dir=None,
+    toll_multiplier=1.0,
 ):
     """Calcula la matriz completa de costos C_ij en euros."""
 
+    if not np.isfinite(toll_multiplier) or toll_multiplier < 0:
+        raise ValueError("El multiplicador de peajes debe ser finito y no negativo.")
     data = load_tsp_data(data_dir)
 
     distances_km = data["distances_km"]
@@ -88,7 +91,7 @@ def compute_total_cost_matrix(
 
     total_cost = (
         time_cost
-        + tolls_eur
+        + toll_multiplier * tolls_eur
         + fuel_cost
     )
 
@@ -117,9 +120,12 @@ def get_tour_breakdown(
     tour,
     data_dir=None,
     hourly_rate=25.0,
+    toll_multiplier=1.0,
 ):
     """Desglosa distancia, tiempo, combustible, peajes y costo total."""
 
+    if not np.isfinite(toll_multiplier) or toll_multiplier < 0:
+        raise ValueError("El multiplicador de peajes debe ser finito y no negativo.")
     data = load_tsp_data(data_dir)
 
     distances = data["distances_km"]
@@ -147,7 +153,7 @@ def get_tour_breakdown(
 
         total_dist += distances[u, v]
         total_time += times[u, v]
-        total_tolls += tolls[u, v]
+        total_tolls += toll_multiplier * tolls[u, v]
 
     total_fuel = (
         consumption / 100.0

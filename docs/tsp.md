@@ -167,3 +167,29 @@ python -m experiments.run_tsp --config configs/tsp_aco.yaml --study-hourly-rates
 ```
 
 Los resultados se guardan en `results/tsp/aco/` y `results/tsp/ga/`.
+
+## 7. Escenarios de peajes provisionales
+
+El comando `python -m experiments.run_toll_study` ejecuta 18 corridas: ACO y GA,
+factores de peaje 0, 1 y 2, y semillas 42, 43 y 44. La tarifa del vendedor es
+25 €/h por defecto. Solo cambia el componente de peajes:
+
+$$ C_{ij}(s)=w t_{ij}+s p_{ij}+\frac{c}{100}d_{ij}\varphi. $$
+
+Se guardan las corridas, configuraciones, hashes de los datos, media, desviación
+muestral y mejor costo. Para cada semilla, la ruta obtenida con factor 1 se
+revalúa sin cambiar su orden en los tres escenarios. Así se distingue el efecto
+directo de cambiar un precio de la variabilidad de volver a ejecutar el método.
+Los cambios de ruta se comparan mediante aristas dirigidas, porque las matrices
+viales no son simétricas. Se conservan los distintos presupuestos de ACO y GA;
+el estudio no demuestra superioridad de un algoritmo.
+
+El resultado se publica con `python -m scripts.build_blog --tsp-only`, en la
+Tabla 4 del blog y `docs/datos/sensibilidad_peajes.json`. Los mapas y resultados
+principales siguen representando factor 1 y semilla 42.
+
+**Limitaciones:** el factor 0 significa excluir el componente monetario de
+peajes, no buscar carreteras gratuitas. El factor 2 duplica importes registrados,
+pero no completa los desconocidos ni es una cota superior real. Los ceros sin
+verificar siguen siendo cero. Se trata de escenarios hipotéticos y no de
+tarifas oficiales verificadas; tres semillas solo aportan evidencia exploratoria.

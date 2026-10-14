@@ -15,11 +15,11 @@ from tsp.genetic_tsp import run_genetic_tsp
 from visualization.plot_tsp import plot_spain_tour, animate_tsp_tour_evolution
 
 
-def run_single_tsp(config, hourly_rate=None):
+def run_single_tsp(config, hourly_rate=None, toll_multiplier=1.0):
     if hourly_rate is None:
         hourly_rate = float(config.get("hourly_rate", 25.0))
 
-    cost_matrix = compute_total_cost_matrix(hourly_rate=hourly_rate)
+    cost_matrix = compute_total_cost_matrix(hourly_rate=hourly_rate, toll_multiplier=toll_multiplier)
     method = config.get("method", "aco").lower()
 
     if method == "aco":
@@ -47,7 +47,8 @@ def run_single_tsp(config, hourly_rate=None):
         raise ValueError(f"Método desconocido: {method}. Debe ser 'aco' o 'ga'.")
 
     result["cost_matrix"] = cost_matrix
-    result["breakdown"] = get_tour_breakdown(result["best_tour"], hourly_rate=hourly_rate)
+    result["breakdown"] = get_tour_breakdown(result["best_tour"], hourly_rate=hourly_rate,
+                                            toll_multiplier=toll_multiplier)
     result["hourly_rate"] = hourly_rate
     return result
 
